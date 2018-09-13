@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "794629674870",
+    "firebase_url": "https://project1-faf42.firebaseio.com",
+    "project_id": "project1-faf42",
+    "storage_bucket": "project1-faf42.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:794629674870:android:cc621c57c76e9124",
+        "android_client_info": {
+          "package_name": "com.unimelb.projectinsta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "794629674870-50qto4kbnasumg4k7u6l2dd7g9radj9n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.unimelb.projectinsta",
+            "certificate_hash": "3a61bc731f9b9a97cce5483844ee1820621ea9c5"
+          }
+        },
+        {
+          "client_id": "794629674870-88gl7hhsu0t9nij6m1ja78curlvs58pb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoyQcZ4-FGuoSm0aK5aYzordqd8nlq4-c"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "794629674870-88gl7hhsu0t9nij6m1ja78curlvs58pb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
