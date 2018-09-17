@@ -31,7 +31,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.0.3'
     // FirebaseUI for Firebase Realtime Database
     implementation 'com.firebaseui:firebase-ui-database:4.1.0'
-
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
     // FirebaseUI for Cloud Firestore
     implementation 'com.firebaseui:firebase-ui-firestore:4.1.0'
 

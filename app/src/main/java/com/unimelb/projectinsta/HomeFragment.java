@@ -4,9 +4,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.unimelb.projectinsta.model.UserFeed;
+
+import java.util.ArrayList;
 
 
 /**
@@ -64,7 +71,13 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        View homeFragmentView = inflater.inflate(R.layout.fragment_home, container, false);
+        RecyclerView mUserFeedRecyclerView = (RecyclerView) homeFragmentView.findViewById(R.id.fragment_userfeed_recycler);
+        mUserFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mUserFeedRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        UserFeedAdapter mAdapter  = new UserFeedAdapter(getContext(),getUsers());
+        mUserFeedRecyclerView.setAdapter(mAdapter);
+        return homeFragmentView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -105,4 +118,14 @@ public class HomeFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    public ArrayList<UserFeed> getUsers(){
+        ArrayList<UserFeed> users=new ArrayList<>();
+        UserFeed u1=new UserFeed("ant1992","Melbourne, Australia",R.drawable.com_facebook_profile_picture_blank_portrait,"pehla");
+        users.add(u1);
+        UserFeed u2 = new UserFeed("sinsek1","Auckland,New Zealand",R.drawable.messenger_bubble_large_blue,"dusra");
+        users.add(u2);
+        return users;
+    }
+
 }
