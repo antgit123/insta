@@ -24,11 +24,11 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     Fragment home = new HomeFragment();
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.fragment_container, home).addToBackStack(null).commit();
                     return true;
                 case R.id.navigation_dashboard:
@@ -38,8 +38,12 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                     mTextMessage.setText(R.string.title_notifications);
                     return true;
                 case R.id.navigation_profile:
-                    mTextMessage.setText("Profile");
+                   // mTextMessage.setText("Profile");
+                    Fragment profile = new ProfileFragment();
+                    fragmentTransaction.replace(R.id.fragment_container, profile).addToBackStack(null).commit();
                     return true;
+
+
             }
             return false;
         }
