@@ -9,6 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.unimelb.projectinsta.model.UserFeed;
+
 public class ProfileFragment extends Fragment {
 
 
@@ -17,11 +21,13 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View profileFragmentView = inflater.inflate(R.layout.fragment_profile, container, false);
-      //  RecyclerView mUserFeedRecyclerView = (RecyclerView) homeFragmentView.findViewById(R.id.fragment_userfeed_recycler);
-     //   mUserFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-    //    mUserFeedRecyclerView.setItemAnimator(new DefaultItemAnimator());
-       // UserFeedAdapter mAdapter  = new UserFeedAdapter(getContext(),getUsers());
-     //   mUserFeedRecyclerView.setAdapter(mAdapter);
+        // Write a message to the database
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        DatabaseReference myRef = database.getReference("message");
+        UserFeed feed = new UserFeed("Sindhu", "Melbourne", 123, "HELLO");
+        myRef.child("feeds").child(feed.getM_UserName()).setValue(feed);
+//        myRef.setValue("Hello, World!");
         return profileFragmentView;
     }
 }
