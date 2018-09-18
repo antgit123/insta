@@ -32,10 +32,10 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                     fragmentTransaction.replace(R.id.fragment_container, home).addToBackStack(null).commit();
                     return true;
                 case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
+                   // mTextMessage.setText(R.string.title_dashboard);
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                  //  mTextMessage.setText(R.string.title_notifications);
                     return true;
                 case R.id.navigation_profile:
                    // mTextMessage.setText("Profile");
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         //on startup check if fragment is empty and load initial fragment
         loadFragment(new HomeFragment());
 
-        mTextMessage = (TextView) findViewById(R.id.message);
+      //  mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
