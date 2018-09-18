@@ -39,12 +39,20 @@
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="250dp"
             android:layout_margin="5dp"
             android:id="@+id/user_story_photo"
             android:layout_below="@id/feed_title" />
 
+        <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content" -->
+            <!--android:id="@+id/like_info"-->
+            <!--android:layout_below=""-->
+            <!--/>-->
+
         <TextView
+            android:layout_marginStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/user_story_photo"
