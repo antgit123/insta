@@ -112,6 +112,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
+        TextView goToRegister = findViewById(R.id.goTo_register);
+        goToRegister.setOnClickListener(
+                new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        goToRegister();
+                    }
+                }
+        );
+
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
@@ -388,6 +398,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         updateUI(null);
     }
 
+    private void goToRegister() {
+        Intent register = new Intent(this, Register.class);
+
+    }
 
     /**
      * Represents an asynchronous login/registration task used to authenticate

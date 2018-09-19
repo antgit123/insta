@@ -97,6 +97,14 @@
                 android:layout_marginBottom="8dp"
                 android:visibility="gone" />
 
+            <TextView
+                android:id="@+id/goTo_register"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/register_new_user"
+                android:clickable="true"
+                android:textStyle="bold"/>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

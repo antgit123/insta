@@ -8,11 +8,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener {
 
@@ -38,8 +39,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                   //  mTextMessage.setText(R.string.title_notifications);
                     return true;
                 case R.id.navigation_profile:
-                    Fragment profile = new ProfileFragment();
-                    fragmentTransaction.replace(R.id.fragment_container, profile).addToBackStack(null).commit();
+                   // Fragment profile = new ProfileFragment();
+                    //fragmentTransaction.replace(R.id.fragment_container, profile).addToBackStack(null).commit();
                     return true;
 
 
@@ -58,6 +59,13 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        Button mSignOutButton = (Button) findViewById(R.id.email_sign_out_button);
+        mSignOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signOut();
+            }
+        });
     }
 
     private boolean loadFragment(Fragment fragment) {
@@ -75,5 +83,10 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+    public void signOut() {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth.signOut();
+//        setContentView(R.layout.activity_login);
     }
 }
