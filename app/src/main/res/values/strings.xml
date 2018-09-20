@@ -5,6 +5,7 @@
     <string name="title_notifications">Notifications</string>
     <string name="title_profile">Profile</string>
     <string name="title_activity_login">Sign in</string>
+    <string name="user_story">User feed photo</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

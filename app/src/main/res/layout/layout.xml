@@ -1,65 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
+    android:theme="@style/Widget.MaterialComponents.CardView"
     >
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/profile_image"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:src="@drawable/com_facebook_profile_picture_blank_square"
-            android:layout_marginStart="5dp"
-            app:civ_border_width="2dp"
-            app:civ_border_color="#FF000000"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/username"
-            android:layout_toEndOf="@id/profile_image"
-            android:layout_marginStart="10dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/username"
-            android:layout_marginStart="10dp"
-            android:layout_toEndOf="@id/profile_image"
-            android:id="@+id/feed_title" />
-
-
-        <ImageView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_margin="5dp"
-            android:id="@+id/user_story_photo"
-            android:layout_below="@id/feed_title" />
+            android:layout_height="wrap_content"
+            android:id="@+id/userfeed_container">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:id="@+id/userfeed_details_container">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/profile_image"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:src="@drawable/com_facebook_profile_picture_blank_square"
+                    android:layout_marginStart="5dp"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
 
-        <!--<TextView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content" -->
-            <!--android:id="@+id/like_info"-->
-            <!--android:layout_below=""-->
-            <!--/>-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/username"
+                    android:layout_toEndOf="@id/profile_image"
+                    android:layout_marginStart="10dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/username"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@id/profile_image"
+                    android:id="@+id/feed_title" />
+            </RelativeLayout>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_margin="5dp"
+                android:id="@+id/user_story_photo"
+                android:layout_below="@id/userfeed_details_container"
+                android:contentDescription="@string/user_story" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:id="@+id/userfeed_icons"
+            android:layout_below="@id/userfeed_container">
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_favorite_border_24px"
+                android:id="@+id/like_button"
+                android:background="#ffffff"
+                />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_chat_bubble_outline_24px"
+                android:layout_toEndOf="@+id/like_button"
+                android:layout_marginStart="6dp"
+                android:id="@+id/comment_button"
+                android:background="#ffffff"
+                />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_bookmark_border_24px"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/bookmark_button"
+                android:background="#ffffff"
+                />
+
+        </RelativeLayout>
 
         <TextView
             android:layout_marginStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/user_story_photo"
+            android:layout_below="@id/userfeed_icons"
             android:id="@+id/user_story_photo_description" />
 
     </RelativeLayout>
 
-</android.support.design.card.MaterialCardView>
+</android.support.v7.widget.CardView>
 
 

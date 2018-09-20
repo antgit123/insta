@@ -75,7 +75,7 @@ public class HomeFragment extends Fragment {
         RecyclerView mUserFeedRecyclerView = (RecyclerView) homeFragmentView.findViewById(R.id.fragment_userfeed_recycler);
         mUserFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mUserFeedRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        UserFeedAdapter mAdapter  = new UserFeedAdapter(getContext(),getUsers());
+        UserFeedAdapter mAdapter  = new UserFeedAdapter(getContext(),getUserFeeds());
         mUserFeedRecyclerView.setAdapter(mAdapter);
         return homeFragmentView;
     }
@@ -119,7 +119,7 @@ public class HomeFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public ArrayList<UserFeed> getUsers(){
+    public ArrayList<UserFeed> getUserFeeds(){
         ArrayList<UserFeed> users=new ArrayList<>();
         UserFeed u1=new UserFeed("ant1992","Melbourne, Australia",R.drawable.com_facebook_profile_picture_blank_portrait,"pehla");
         users.add(u1);

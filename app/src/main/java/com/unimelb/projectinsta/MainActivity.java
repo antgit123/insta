@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
 
     private TextView mTextMessage;
     private FragmentManager mFragment = getSupportFragmentManager();
@@ -39,11 +39,9 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                   //  mTextMessage.setText(R.string.title_notifications);
                     return true;
                 case R.id.navigation_profile:
-                   // Fragment profile = new ProfileFragment();
-                    //fragmentTransaction.replace(R.id.fragment_container, profile).addToBackStack(null).commit();
+                    Fragment profile = new ProfileFragment();
+                    fragmentTransaction.replace(R.id.fragment_container, profile).addToBackStack(null).commit();
                     return true;
-
-
             }
             return false;
         }
@@ -59,13 +57,13 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        Button mSignOutButton = (Button) findViewById(R.id.email_sign_out_button);
-        mSignOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signOut();
-            }
-        });
+//        Button mSignOutButton = (Button) findViewById(R.id.email_sign_out_button);
+//        mSignOutButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                signOut();
+//            }
+//        });
     }
 
     private boolean loadFragment(Fragment fragment) {

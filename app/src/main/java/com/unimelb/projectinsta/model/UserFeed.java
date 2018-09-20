@@ -13,6 +13,7 @@ public class UserFeed {
     private Date date;
     private List<Like> likeList;
     private List<Comment> commentList;
+    private int feed_Id;
 
 
     private String m_UserName;
