@@ -3,7 +3,9 @@ package com.unimelb.projectinsta;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.LoaderManager;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -23,11 +25,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.unimelb.projectinsta.model.UserPojo;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private AutoCompleteTextView emailView;
     private EditText passwordView;
+    private AutoCompleteTextView usernameView;
     private FirebaseAuth authentication;
     private View progressView;
     private View registerFormView;
@@ -35,10 +41,11 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        authentication = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_register);
         // Set up the register form.
         emailView = (AutoCompleteTextView) findViewById(R.id.email);
-
+        usernameView = (AutoCompleteTextView) findViewById(R.id.userName);
         passwordView = (EditText) findViewById(R.id.password);
 
 
@@ -46,13 +53,25 @@ public class RegisterActivity extends AppCompatActivity {
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                attemptLogin();
                 String email = emailView.getText().toString();
                 String password = passwordView.getText().toString();
-                register(email,password);
+                String username = usernameView.getText().toString();
+                register(email,username, password);
             }
         });
+        registerFormView = findViewById(R.id.register_form);
+        progressView = findViewById(R.id.register_progress);
 
+        TextView goToLogin = findViewById(R.id.goTo_login);
+        goToLogin.setOnClickListener(
+
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        goToLogin();
+                    }
+                }
+        );
     }
 
     private boolean isEmailValid(String email) {
@@ -101,12 +120,12 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    private void register(String email, String password) {
+    private void register(final String email, final String username, final String password) {
 
         if (!isEmailValid(email) || !isPasswordValid(password)) {
             return;
         }
-        //showProgress(true);
+        showProgress(true);
 
         authentication.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -117,6 +136,14 @@ public class RegisterActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("debug", "createUserWithEmail:success");
                             FirebaseUser user = authentication.getCurrentUser();
+                            UserPojo currentUser = new UserPojo(user.getUid(),
+                                    username,
+                                    username,
+                                    user.getPhotoUrl(),
+                                    email,
+                                    password
+                            );
+
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -141,13 +168,18 @@ public class RegisterActivity extends AppCompatActivity {
             startActivity(mainActivity);
         } else {
             // Signed out
-          //  mLoginInfoView = findViewById(R.id.login_info);
+            registerInfoView = findViewById(R.id.register_info);
             Toast.makeText(RegisterActivity.this,"error logging in",Toast.LENGTH_SHORT).show();
             findViewById(R.id.email_sign_in_button).setVisibility(View.VISIBLE);
-         //   mLoginInfoView.setVisibility(View.VISIBLE);
+            registerInfoView.setVisibility(View.VISIBLE);
             findViewById(R.id.email).setVisibility(View.VISIBLE);
             findViewById(R.id.password).setVisibility(View.VISIBLE);
-            findViewById(R.id.email_sign_out_button).setVisibility(View.GONE);
         }
+    }
+
+    private void goToLogin() {
+        Intent login = new Intent(RegisterActivity.this, LoginActivity.class);
+        startActivity(login);
+        finish();
     }
 }

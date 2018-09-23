@@ -81,16 +81,6 @@
                 android:layout_marginTop="10dp"
                 />
 
-            <Button
-                android:id="@+id/email_sign_out_button"
-                style="?android:textAppearanceSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/action_sign_out"
-                android:textStyle="bold"
-                android:visibility="gone"/>
-
             <TextView
                 android:id="@+id/login_info"
                 style="?android:attr/text"

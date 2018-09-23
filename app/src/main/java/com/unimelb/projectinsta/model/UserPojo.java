@@ -1,34 +1,37 @@
 package com.unimelb.projectinsta.model;
 
+import android.util.AndroidRuntimeException;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class UserPojo {
-    private int userId;
+    private String userId;
     private String userName;
     private String userRealName;
-    private String profilePhoto;
+    private android.net.Uri profilePhoto;
     private String email;
     private String password;
     private List<UserPojo> followerList;
     private List<UserPojo> followingList;
 
-    public UserPojo(int userId, String userName, String userRealName, String profilePhoto, String email, String password, List<UserPojo> followerList, List<UserPojo> followingList) {
+    public UserPojo(String userId, String userName, String userRealName, android.net.Uri profilePhoto, String email, String password) {
         this.userId = userId;
         this.userName = userName;
         this.userRealName = userRealName;
         this.profilePhoto = profilePhoto;
         this.email = email;
         this.password = password;
-        this.followerList = followerList;
-        this.followingList = followingList;
+        this.followerList = new ArrayList<UserPojo>();
+        this.followingList = new ArrayList<UserPojo>();
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -48,11 +51,11 @@ public class UserPojo {
         this.userRealName = userRealName;
     }
 
-    public String getProfilePhoto() {
+    public android.net.Uri getProfilePhoto() {
         return profilePhoto;
     }
 
-    public void setProfilePhoto(String profilePhoto) {
+    public void setProfilePhoto(android.net.Uri profilePhoto) {
         this.profilePhoto = profilePhoto;
     }
 

@@ -104,14 +104,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        Button mSignOutButton = (Button) findViewById(R.id.email_sign_out_button);
-        mSignOutButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signOut();
-            }
-        });
-
         TextView goToRegister = findViewById(R.id.goTo_register);
         goToRegister.setOnClickListener(
 
@@ -156,7 +148,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mLoginInfoView.setVisibility(View.VISIBLE);
             findViewById(R.id.email).setVisibility(View.VISIBLE);
             findViewById(R.id.password).setVisibility(View.VISIBLE);
-            findViewById(R.id.email_sign_out_button).setVisibility(View.GONE);
         }
     }
 
@@ -393,17 +384,41 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // [END sign_in_with_email]
     }
 
-    private void signOut() {
-        Log.d("ui","in sign out");
-        mAuth.signOut();
-        updateUI(null);
+    private void goToRegister() {
+        Intent register = new Intent(LoginActivity.this, RegisterActivity.class);
+        startActivity(register);
+        finish();
     }
 
-    private void goToRegister() {
-        Log.d("debug"," reached goToRegister");
-        Intent register = new Intent(this, RegisterActivity.class);
-        startActivity(register);
+    private void register(String email, String password) {
+
+        if (!isEmailValid(email) || !isPasswordValid(password)) {
+            return;
+        }
+        showProgress(true);
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d("debug"," on complete create user");
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("debug", "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.d("debug", "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            updateUI(null);
+                        }
+                    }
+                });
+
     }
+
 
     /**
      * Represents an asynchronous login/registration task used to authenticate
