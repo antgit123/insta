@@ -7,7 +7,7 @@
     <string name="title_activity_login">Sign in</string>
     <string name="user_story">User feed photo</string>
 
-    <!-- Strings related to login -->
+    <!-- Strings related to login & register -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
     <string name="action_sign_in">Sign in or register</string>
@@ -21,6 +21,7 @@
         completions."
     </string>
     <string name="register_new_user">"Not a member yet? Register here!"</string>
+    <string name="action_register_in">"Register"</string>
 
     <!-- String related to profile -->
     <string name="profile_post">Posts</string>

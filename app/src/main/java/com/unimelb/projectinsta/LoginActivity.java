@@ -114,6 +114,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         TextView goToRegister = findViewById(R.id.goTo_register);
         goToRegister.setOnClickListener(
+
                 new OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -399,8 +400,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void goToRegister() {
-        Intent register = new Intent(this, Register.class);
-
+        Log.d("debug"," reached goToRegister");
+        Intent register = new Intent(this, RegisterActivity.class);
+        startActivity(register);
     }
 
     /**
