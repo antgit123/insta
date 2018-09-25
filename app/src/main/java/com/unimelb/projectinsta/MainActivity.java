@@ -45,6 +45,9 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                     Fragment profile = new ProfileFragment();
                     fragmentTransaction.replace(R.id.fragment_container, profile).addToBackStack(null).commit();
                     return true;
+                case R.id.navigation_upload:
+                    fragmentTransaction.replace(R.id.fragment_container, UploadFragment.newInstance()).addToBackStack(null).commit();
+                    return true;
             }
             return false;
         }
@@ -62,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
-    @Override
+   @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
@@ -77,6 +80,14 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
             return true;
         }
         return super.onOptionsItemSelected(item);
+//        Button mSignOutButton = (Button) findViewById(R.id.email_sign_out_button);
+//        mSignOutButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                signOut();
+//            }
+//        });
+
     }
 
     private boolean loadFragment(Fragment fragment) {
