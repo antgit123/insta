@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,13 +21,16 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.unimelb.projectinsta.model.UserFeed;
 import com.unimelb.projectinsta.model.UserPojo;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -42,9 +46,13 @@ public class HomeFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    public List<DocumentReference> followingList;
+    public List<DocumentReference> mFollowingList;
     public List<DocumentReference> feeds;
     public List<DocumentReference> comments;
+    public UserPojo loggedInUser = new UserPojo();
+    public RecyclerView mUserFeedRecyclerView;
+    public UserFeedAdapter mAdapter;
+    public FirebaseFirestore instadb = FirebaseFirestore.getInstance();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -88,12 +96,11 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         queryDB();
-        Log.i("sada",followingList.toString());
         View homeFragmentView = inflater.inflate(R.layout.fragment_home, container, false);
-        RecyclerView mUserFeedRecyclerView = (RecyclerView) homeFragmentView.findViewById(R.id.fragment_userfeed_recycler);
+        mUserFeedRecyclerView = (RecyclerView) homeFragmentView.findViewById(R.id.fragment_userfeed_recycler);
         mUserFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mUserFeedRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        UserFeedAdapter mAdapter  = new UserFeedAdapter(getContext(),getUserFeeds());
+        mAdapter = new UserFeedAdapter(getContext(),getUserFeeds());
         mUserFeedRecyclerView.setAdapter(mAdapter);
         return homeFragmentView;
     }
@@ -139,46 +146,66 @@ public class HomeFragment extends Fragment {
 
     public void queryDB(){
         //fetches user doc, followed by users following list and the feeds which have those users to display in home view
-        final FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+//        final FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+//        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+//                .setTimestampsInSnapshotsEnabled(true)
+//                .build();
+//        instadb.setFirestoreSettings(settings);
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
-        DocumentSnapshot userDocSnapshot;
         final String userId = user.getUid();
-        final UserPojo u1 = new UserPojo();
         CollectionReference userDocuments = instadb.collection("users");
-        //query to fetch logged in user doc, get users following list and check with feeds 
-        userDocuments.whereEqualTo("userId",userId).get();
-                userDocuments.whereEqualTo("userId",userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        //query to fetch logged in user doc, get users following list and check with feeds
+        userDocuments.whereEqualTo("userId",userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                //DocumentSnapshot d = null;
                 if (task.isSuccessful()) {
                     //retrieve user Details
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Log.i("DB Success", document.getId() + " => " + document.getData());
-                        DocumentSnapshot d = document;
-                        //UserPojo t = d.toObject(UserPojo.class);
-                        String userId = (String) document.getData().get("userId");
-                        String userName = (String) document.getData().get("userName");
-                        String realName = (String) document.getData().get("userRealName");
-                        String email =(String) document.getData().get("email");
-                        String password = (String) document.getData().get("password");
-                        u1.setUserId(userId);
-                        u1.setUserName(userName);
-                        u1.setEmail(email);
-                        u1.setPassword(password);
-                        u1.setUserRealName(realName);
-                        followingList = (List<DocumentReference>) document.getData().get("followingList");
+                        final List<UserPojo> followingUsers = new ArrayList<>();
+                        loggedInUser = returnUser(document);
+                        List<DocumentReference> followingList = (ArrayList<DocumentReference>) document.getData().get("followingList");
+                        mFollowingList = (ArrayList<DocumentReference>) document.getData().get("followingList");
+                        for(DocumentReference userFollowing : followingList){
+                            userFollowing.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                      if(task.isSuccessful()) {
+                                          if (task.getResult().getId() != null) {
+                                              UserPojo followingUser = task.getResult().toObject(UserPojo.class);
+                                              followingUsers.add(followingUser);
+                                          }
+                                      }
+                                }
+                            });
+                        }
+                        loggedInUser.setFollowingList(followingUsers);
+                        getFeeds();
+                        Log.i("Logged User",loggedInUser.getEmail());
                     }
                 } else {
                     Log.i("DB ERROR", "Error getting documents.", task.getException());
                 }
             }
         });
+
+    }
+
+    public UserPojo returnUser(DocumentSnapshot userDoc){
+        if(userDoc.getData().get("userId") != null) {
+            String userId = (String) userDoc.getData().get("userId");
+            String userName = (String) userDoc.getData().get("userName");
+            String realName = (String) userDoc.getData().get("userRealName");
+            String email = (String) userDoc.getData().get("email");
+            String password = (String) userDoc.getData().get("password");
+            UserPojo user = new UserPojo(userId, userName, realName, email, password);
+            return user;
+        }
+        return null;
     }
 
     public ArrayList<UserFeed> getUserFeeds(){
-
         ArrayList<UserFeed> users=new ArrayList<>();
         UserFeed u1=new UserFeed("ant1992","Melbourne, Australia",R.drawable.com_facebook_profile_picture_blank_portrait,"pehla");
         users.add(u1);
@@ -187,8 +214,15 @@ public class HomeFragment extends Fragment {
         return users;
     }
 
-    public void storeFollowingData(List<DocumentReference> followingDocs){
-        followingList = followingDocs;
+    public void getFeeds(){
+        List<UserPojo> following = loggedInUser.getFollowingList();
+        List<String> followingUserIds = new ArrayList<>();
+        for(UserPojo followingUser : following){
+           String uid = followingUser.getUserId();
+           followingUserIds.add(uid);
+        }
+        //query feeds
+//        instadb.collection("feeds").whereEqualTo()
     }
 
 }

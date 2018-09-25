@@ -148,6 +148,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 );
                                 FirebaseFirestore instadb = FirebaseFirestore.getInstance();
                                 instadb.collection("users").add(currentUser);
+
                             }
                             updateUI(user);
                         } else {

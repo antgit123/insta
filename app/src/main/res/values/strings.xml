@@ -37,8 +37,8 @@
     <string name="string_open_camera">Open Camera</string>
     <string name="picture">Picture</string>
     <string name="description_info">Description</string>
-    <string name="request_permission">Request Permission</string>
-    <string name="camera_error">Camera Error</string>
+    <string name="request_camera_permission">Request camera permission</string>
+    <string name="camera_error">Error with camera</string>
     <string name="intro_message">Introduction Message</string>
     <string name="Reverse_Camera">Reverse Camera</string>
 </resources>
