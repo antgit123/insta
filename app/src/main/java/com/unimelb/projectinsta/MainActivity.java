@@ -1,5 +1,6 @@
 package com.unimelb.projectinsta;
 
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,8 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.google.firebase.auth.FirebaseAuth;
+
 
 public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
 
@@ -54,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         //on startup check if fragment is empty and load initial fragment
         loadFragment(new HomeFragment());
 

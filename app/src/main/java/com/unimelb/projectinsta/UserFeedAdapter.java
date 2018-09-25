@@ -1,13 +1,19 @@
 package com.unimelb.projectinsta;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.unimelb.projectinsta.model.UserFeed;
 
 import java.util.ArrayList;
@@ -30,11 +36,27 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UserFeedHolder userFeedHolder, int i) {
+    public void onBindViewHolder(@NonNull final UserFeedHolder userFeedHolder, int i) {
         userFeedHolder.userName_txt.setText(userFeed.get(i).getM_UserName());
         userFeedHolder.description_txt.setText(userFeed.get(i).getM_Description());
         userFeedHolder.title.setText(userFeed.get(i).getM_Location());
-        userFeedHolder.img.setImageResource(userFeed.get(i).getM_Img());
+//        userFeedHolder.img.setImageResource(userFeed.get(i).getM_Img());
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        //adding image to view
+        storageRef.child("/appl.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Log.i("URI:",uri.toString());
+//                userFeedHolder.img.setImageURI(uri);
+
+                Glide.with(userFeedContext).load(uri.toString()).into(userFeedHolder.img);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
 
         userFeedHolder.setItemClickListener(new ItemClickListener() {
             @Override

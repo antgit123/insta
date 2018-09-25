@@ -10,7 +10,8 @@
     <!-- Strings related to login & register -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="promt_username">Name</string>
+    <string name="prompt_username">User Name</string>
+    <string name="prompt_realName">Real Name</string>
     <string name="action_sign_in">Log in</string>
     <string name="action_sign_out">Sign Out</string>
     <string name="action_sign_in_short">Sign in</string>

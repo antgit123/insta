@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.unimelb.projectinsta.model.UserPojo;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -38,16 +39,17 @@ public class RegisterActivity extends AppCompatActivity {
     private View progressView;
     private View registerFormView;
     private View registerInfoView;
+    private AutoCompleteTextView realNameView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         authentication = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_register);
         // Set up the register form.
-        emailView = (AutoCompleteTextView) findViewById(R.id.email);
-        usernameView = (AutoCompleteTextView) findViewById(R.id.userName);
-        passwordView = (EditText) findViewById(R.id.password);
-
+        emailView = (AutoCompleteTextView) findViewById(R.id.register_email);
+        usernameView = (AutoCompleteTextView) findViewById(R.id.register_userName);
+        passwordView = (EditText) findViewById(R.id.register_password);
+        realNameView = (AutoCompleteTextView) findViewById(R.id.register_realName);
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_register_in_button);
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
@@ -56,7 +58,8 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = emailView.getText().toString();
                 String password = passwordView.getText().toString();
                 String username = usernameView.getText().toString();
-                register(email,username, password);
+                String realName = realNameView.getText().toString();
+                register(email,username,realName, password);
             }
         });
         registerFormView = findViewById(R.id.register_form);
@@ -120,7 +123,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    private void register(final String email, final String username, final String password) {
+    private void register(final String email, final String username,final String realName, final String password) {
 
         if (!isEmailValid(email) || !isPasswordValid(password)) {
             return;
@@ -136,14 +139,16 @@ public class RegisterActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("debug", "createUserWithEmail:success");
                             FirebaseUser user = authentication.getCurrentUser();
-                            UserPojo currentUser = new UserPojo(user.getUid(),
-                                    username,
-                                    username,
-                                    user.getPhotoUrl(),
-                                    email,
-                                    password
-                            );
-
+                            if(user.getUid() != null) {
+                                UserPojo currentUser = new UserPojo(user.getUid(),
+                                        username,
+                                        realName,
+                                        email,
+                                        password
+                                );
+                                FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+                                instadb.collection("users").add(currentUser);
+                            }
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.

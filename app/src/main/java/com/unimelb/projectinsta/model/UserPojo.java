@@ -16,11 +16,14 @@ public class UserPojo {
     private List<UserPojo> followerList;
     private List<UserPojo> followingList;
 
-    public UserPojo(String userId, String userName, String userRealName, android.net.Uri profilePhoto, String email, String password) {
+    public UserPojo(){
+
+    }
+
+    public UserPojo(String userId, String userName, String userRealName, String email, String password) {
         this.userId = userId;
         this.userName = userName;
         this.userRealName = userRealName;
-        this.profilePhoto = profilePhoto;
         this.email = email;
         this.password = password;
         this.followerList = new ArrayList<UserPojo>();
