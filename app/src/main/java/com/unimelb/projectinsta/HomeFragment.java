@@ -144,27 +144,30 @@ public class HomeFragment extends Fragment {
         FirebaseUser user = mAuth.getCurrentUser();
         DocumentSnapshot userDocSnapshot;
         final String userId = user.getUid();
-        final UserPojo u1;
+        final UserPojo u1 = new UserPojo();
         CollectionReference userDocuments = instadb.collection("users");
         //query to fetch logged in user doc, get users following list and check with feeds 
         userDocuments.whereEqualTo("userId",userId).get();
                 userDocuments.whereEqualTo("userId",userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                DocumentSnapshot d = null;
+                //DocumentSnapshot d = null;
                 if (task.isSuccessful()) {
                     //retrieve user Details
                     for (QueryDocumentSnapshot document : task.getResult()) {
-//                        Log.i("DB Success", document.getId() + " => " + document.getData());
-//                        DocumentSnapshot d = document;
-//                        UserPojo t = d.toObject(UserPojo.class);
+                        Log.i("DB Success", document.getId() + " => " + document.getData());
+                        DocumentSnapshot d = document;
+                        //UserPojo t = d.toObject(UserPojo.class);
                         String userId = (String) document.getData().get("userId");
                         String userName = (String) document.getData().get("userName");
                         String realName = (String) document.getData().get("userRealName");
                         String email =(String) document.getData().get("email");
                         String password = (String) document.getData().get("password");
-//                        u1 = new UserPojo(userId, userName,realName,email,password);
-//                        String userName = (String) document.getData().get("userName");
+                        u1.setUserId(userId);
+                        u1.setUserName(userName);
+                        u1.setEmail(email);
+                        u1.setPassword(password);
+                        u1.setUserRealName(realName);
                         followingList = (List<DocumentReference>) document.getData().get("followingList");
                     }
                 } else {
