@@ -4,6 +4,7 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_profile">Profile</string>
+    <string name="title_upload">Upload</string>
     <string name="title_activity_login">Sign in</string>
     <string name="user_story">User feed photo</string>
 
@@ -33,4 +34,11 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="string_open_camera">Open Camera</string>
+    <string name="picture">Picture</string>
+    <string name="description_info">Description</string>
+    <string name="request_permission">Request Permission</string>
+    <string name="camera_error">Camera Error</string>
+    <string name="intro_message">Introduction Message</string>
+    <string name="Reverse_Camera">Reverse Camera</string>
 </resources>
