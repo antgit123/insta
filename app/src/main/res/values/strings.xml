@@ -41,4 +41,9 @@
     <string name="camera_error">Error with camera</string>
     <string name="intro_message">Introduction Message</string>
     <string name="Reverse_Camera">Reverse Camera</string>
+    <string name="_followers">14</string>
+    <string name="_followings">500</string>
+    <string name="_posts">300</string>
+    <string name="sindhu_sekar">Sindhu Sekar</string>
+    <string name="profile_pic">Profile pic</string>
 </resources>

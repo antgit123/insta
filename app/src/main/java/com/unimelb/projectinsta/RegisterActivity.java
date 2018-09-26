@@ -176,7 +176,7 @@ public class RegisterActivity extends AppCompatActivity {
             // Signed out
             registerInfoView = findViewById(R.id.register_info);
             Toast.makeText(RegisterActivity.this,"error logging in",Toast.LENGTH_SHORT).show();
-            findViewById(R.id.email_sign_in_button).setVisibility(View.VISIBLE);
+            findViewById(R.id.email_register_in_button).setVisibility(View.VISIBLE);
             registerInfoView.setVisibility(View.VISIBLE);
             findViewById(R.id.email).setVisibility(View.VISIBLE);
             findViewById(R.id.password).setVisibility(View.VISIBLE);
