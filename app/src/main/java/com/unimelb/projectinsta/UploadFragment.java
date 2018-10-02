@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.unimelb.projectinsta;
 
 import android.Manifest;
@@ -9,13 +25,12 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
-//import android.graphics.Camera;
-import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -28,10 +43,7 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -47,9 +59,12 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
-
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -71,12 +86,28 @@ public class UploadFragment extends Fragment
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
+    public OnPhotoListener mCallback;
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
         ORIENTATIONS.append(Surface.ROTATION_90, 0);
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
+    }
+
+    public interface OnPhotoListener {
+        void onPhotoCaptured(Bitmap mBitmap);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnPhotoListener) {
+            mCallback = (OnPhotoListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnPhotoListener");
+        }
     }
 
     /**
@@ -587,6 +618,9 @@ public class UploadFragment extends Fragment
         }
     }
 
+    /**
+     * Opens the camera specified by {@link UploadFragment#mCameraId}.
+     */
     private void openCamera(int width, int height) {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -880,20 +914,13 @@ public class UploadFragment extends Fragment
                 break;
             }
             case R.id.info: {
-                Log.d(TAG, "onClick: info");
-                openFrontFacingCamera();
-               /* Activity activity = getActivity();
+                Activity activity = getActivity();
                 if (null != activity) {
                     new AlertDialog.Builder(activity)
                             .setMessage(R.string.intro_message)
                             .setPositiveButton(android.R.string.ok, null)
                             .show();
-                }*/
-                break;
-            }
-            case R.id.reversecam:{
-                Log.d(TAG, "onClick: reverse");
-                openFrontFacingCamera();
+                }
                 break;
             }
         }
@@ -909,8 +936,8 @@ public class UploadFragment extends Fragment
     /**
      * Saves a JPEG {@link Image} into the specified {@link File}.
      */
-    private static class ImageSaver implements Runnable {
-
+    //was previously private static class, made it public to access outer callback variable
+    public class ImageSaver implements Runnable {
         /**
          * The JPEG image
          */
@@ -927,32 +954,17 @@ public class UploadFragment extends Fragment
 
         @Override
         public void run() {
-
-            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
-            File myDir = new File(root + "/saved_images_1");
-            myDir.mkdirs();
-            Random generator = new Random();
-            int n = 10000;
-            n = generator.nextInt(n);
-            String fname = "Image-" + n + ".jpg";
-            File file = new File(myDir, fname);
-            if (file.exists())
-                file.delete();
-            try {
-                FileOutputStream out = new FileOutputStream(file);
-                ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
-                byte[] bytes = new byte[buffer.remaining()];
-                out.write(bytes);
-                out.flush();
-                out.close();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            /*ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
+            ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
             byte[] bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
+            FileInputStream stream = null;
+            try {
+                stream = new FileInputStream(mFile);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
             FileOutputStream output = null;
             try {
                 output = new FileOutputStream(mFile);
@@ -961,6 +973,10 @@ public class UploadFragment extends Fragment
                 e.printStackTrace();
             } finally {
                 mImage.close();
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 16;
+                Bitmap photoBitmap = BitmapFactory.decodeStream(stream, null, options);
+                UploadFragment.this.mCallback.onPhotoCaptured(photoBitmap);
                 if (null != output) {
                     try {
                         output.close();
@@ -968,7 +984,7 @@ public class UploadFragment extends Fragment
                         e.printStackTrace();
                     }
                 }
-            }*/
+            }
         }
 
     }
@@ -1016,7 +1032,6 @@ public class UploadFragment extends Fragment
                     })
                     .create();
         }
-
     }
 
     /**
@@ -1049,26 +1064,6 @@ public class UploadFragment extends Fragment
                             })
                     .create();
         }
-    }
-
-    private Camera openFrontFacingCamera()
-    {
-        int cameraCount = 0;
-        Camera cam = null;
-        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-        cameraCount = Camera.getNumberOfCameras();
-        for ( int camIdx = 0; camIdx < cameraCount; camIdx++ ) {
-            Camera.getCameraInfo( camIdx, cameraInfo );
-            if ( cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT  ) {
-                try {
-                    cam = Camera.open( camIdx );
-                } catch (RuntimeException e) {
-                    Log.e(TAG, "Camera failed to open: " + e.getLocalizedMessage());
-                }
-            }
-        }
-
-        return cam;
     }
 
 }

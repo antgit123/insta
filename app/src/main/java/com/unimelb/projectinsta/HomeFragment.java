@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -28,9 +29,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.unimelb.projectinsta.model.UserFeed;
 import com.unimelb.projectinsta.model.UserPojo;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 
 /**
@@ -146,11 +146,6 @@ public class HomeFragment extends Fragment {
 
     public void queryDB(){
         //fetches user doc, followed by users following list and the feeds which have those users to display in home view
-//        final FirebaseFirestore instadb = FirebaseFirestore.getInstance();
-//        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-//                .setTimestampsInSnapshotsEnabled(true)
-//                .build();
-//        instadb.setFirestoreSettings(settings);
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         final String userId = user.getUid();
@@ -189,7 +184,6 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
-
     }
 
     public UserPojo returnUser(DocumentSnapshot userDoc){
@@ -199,6 +193,7 @@ public class HomeFragment extends Fragment {
             String realName = (String) userDoc.getData().get("userRealName");
             String email = (String) userDoc.getData().get("email");
             String password = (String) userDoc.getData().get("password");
+
             UserPojo user = new UserPojo(userId, userName, realName, email, password);
             return user;
         }
@@ -222,7 +217,20 @@ public class HomeFragment extends Fragment {
            followingUserIds.add(uid);
         }
         //query feeds
-//        instadb.collection("feeds").whereEqualTo()
+        for(DocumentReference followingDocRef: mFollowingList){
+            Query feedQuery = instadb.collection("feeds").whereEqualTo("user",followingDocRef);
+            feedQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if(task.isSuccessful()){
+                        for(QueryDocumentSnapshot d2: task.getResult()){
+                            Log.i("feed1",d2.getId());
+                        }
+                    }
+                }
+            });
+        }
+
     }
 
 }

@@ -23,7 +23,6 @@ public class UserFeedHolder extends RecyclerView.ViewHolder implements View.OnCl
     @Override
     public void onClick(View v) {
         this.itemClickListener.onItemClick(v,getLayoutPosition());
-
     }
 
     public void setItemClickListener(ItemClickListener ic)

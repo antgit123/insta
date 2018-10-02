@@ -2,6 +2,7 @@ package com.unimelb.projectinsta;
 
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,10 +19,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
+import java.io.ByteArrayOutputStream;
 
+public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, UploadFragment.OnPhotoListener {
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
-
+    static
+    {
+        System.loadLibrary("NativeImageProcessor");
+    }
     private TextView mTextMessage;
     private FragmentManager mFragment = getSupportFragmentManager();
 
@@ -47,7 +53,11 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                     fragmentTransaction.replace(R.id.fragment_container, profile).addToBackStack(null).commit();
                     return true;
                 case R.id.navigation_upload:
-                    fragmentTransaction.replace(R.id.fragment_container, UploadFragment.newInstance()).addToBackStack(null).commit();
+//                    UploadFragment uploadFragment = new UploadFragment();
+//                    fragmentTransaction.replace(R.id.fragment_container, uploadFragment).addToBackStack(null).commit();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, UploadFragment.newInstance()).addToBackStack(null)
+                            .commit();
                     return true;
             }
             return false;
@@ -113,4 +123,16 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         startActivity(intent);
         finish();
     }
+
+    @Override
+    public void onPhotoCaptured(Bitmap mBitmap) {
+        Log.i("Bitmap Success",mBitmap.toString());
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        Intent filterEditActivity = new Intent(this,PhotoViewPager.class);
+        filterEditActivity.putExtra("imageBitmap",byteArray);
+        startActivity(filterEditActivity);
+    }
+
 }
