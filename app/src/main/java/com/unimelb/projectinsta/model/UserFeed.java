@@ -14,6 +14,7 @@ public class UserFeed {
     private List<Like> likeList;
     private List<Comment> commentList;
     private int feed_Id;
+    private int comments;
 
 
     private String m_UserName;

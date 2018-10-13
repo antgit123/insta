@@ -2,9 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.unimelb.projectinsta">
 
-    <uses-permission android:name="android.permission.CAMERA" android:required="false" />
-    <uses-feature android:name="android.hardware.camera.front" android:required="false"/>
-    <uses-permission android:name="android.permission.INTERNET" android:required="false"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        android:required="false" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -12,6 +20,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -38,6 +47,9 @@
         <activity
             android:name=".RegisterActivity"
             android:label="Register" />
+        <activity
+            android:name=".PhotoViewPager"
+            android:label="@string/title_activity_photo_view_pager"></activity>
     </application>
 
 </manifest>
