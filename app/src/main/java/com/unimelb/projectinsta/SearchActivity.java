@@ -19,15 +19,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.unimelb.projectinsta.model.UserPojo;
-import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
-import com.unimelb.projectinsta.Utils.BottomNavigationViewHelper;
+//import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+//import com.unimelb.projectinsta.Utils.BottomNavigationViewHelper;
 import java.util.List;
 
-//
 
-/**
- * Created by User on 5/28/2017.c
- */
 
 public class SearchActivity extends AppCompatActivity{
     private static final String TAG = "SearchActivity";
@@ -49,7 +45,7 @@ public class SearchActivity extends AppCompatActivity{
         Log.d(TAG, "onCreate: started.");
 
         hideSoftKeyboard();
-        setupBottomNavigationView();
+
     }
 
 
@@ -91,16 +87,5 @@ public class SearchActivity extends AppCompatActivity{
     }
 
 
-    /**
-     * BottomNavigationView setup
-     */
-    private void setupBottomNavigationView(){
-        Log.d(TAG, "setupBottomNavigationView: setting up BottomNavigationView");
-        BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
-        BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
-        BottomNavigationViewHelper.enableNavigation(mContext, this,bottomNavigationViewEx);
-        Menu menu = bottomNavigationViewEx.getMenu();
-        MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
-        menuItem.setChecked(true);
-    }
+
 }
