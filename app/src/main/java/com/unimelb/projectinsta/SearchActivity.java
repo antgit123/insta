@@ -18,7 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.unimelb.projectinsta.model.User;
+import com.unimelb.projectinsta.model.UserPojo;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.unimelb.projectinsta.Utils.BottomNavigationViewHelper;
 import java.util.List;
@@ -40,7 +40,7 @@ public class SearchActivity extends AppCompatActivity{
     private ListView mListView;
 
     //vars
-    private List<User> mUserList;
+    private List<UserPojo> mUserList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,14 +62,14 @@ public class SearchActivity extends AppCompatActivity{
         }else{
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
             Query query = reference.child(getString(R.string.dbname_users))
-                    .orderByChild(getString(R.string.field_username)).equalTo(keyword);
+                    .orderByChild(getString(R.string.field_username)).startAt(keyword).endAt(keyword);
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for(DataSnapshot singleSnapshot :  dataSnapshot.getChildren()){
-                        Log.d(TAG, "onDataChange: found user:" + singleSnapshot.getValue(User.class).toString());
+                        Log.d(TAG, "onDataChange: found user:" + singleSnapshot.getValue(UserPojo.class).toString());
 
-                        mUserList.add(singleSnapshot.getValue(User.class));
+                        mUserList.add(singleSnapshot.getValue(UserPojo.class));
                         //update the users list view
                     }
                 }
