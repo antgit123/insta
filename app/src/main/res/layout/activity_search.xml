@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorInstaBackground">
+    >
     <RelativeLayout android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <RelativeLayout android:layout_width="match_parent"
@@ -18,7 +19,9 @@
             android:layout_below="@+id/relLayout1">
 
         </ListView>
+
     </RelativeLayout>
-    <include layout="@layout/layout_bottom_navigation_view"/>
+
+
 
 </RelativeLayout>
