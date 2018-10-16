@@ -5,6 +5,7 @@ import android.app.ActionBar;
 //import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,11 +18,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.zomato.photofilters.imageprocessors.Filter;
+import com.zomato.photofilters.imageprocessors.subfilters.BrightnessSubFilter;
+import com.zomato.photofilters.imageprocessors.subfilters.ContrastSubFilter;
+import com.zomato.photofilters.imageprocessors.subfilters.SaturationSubfilter;
 
 import java.util.List;
 
-public class PhotoViewPager extends AppCompatActivity implements FilterListFragment.OnListFragmentInteractionListener {
+public class PhotoViewPager extends AppCompatActivity implements FilterListFragment.OnListFragmentInteractionListener,EditPhotoFragment.OnFragmentInteractionListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -34,6 +41,15 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
     private SectionsPagerAdapter mSectionsPagerAdapter;
     public byte[] bitmapArray;
     public Bitmap imageBitmap;
+
+    Bitmap originalImage;
+    Bitmap filteredImage;
+    Bitmap finalImage;
+    FilterListFragment filterListFragment;
+    EditPhotoFragment editPhotoFragment;
+    int brightnessFinal = 0;
+    float saturationFinal, contrastFinal = 1.0f;
+    ImageView editPhotoView,filterPhotoView;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -53,6 +69,8 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+//        editPhotoView = findViewById(R.id.edit_photo_image_view);
+//        filterPhotoView = findViewById(R.id.image_clicked);
         // Set up the action bar.
 //        final ActionBar actionBar = getActionBar();
 //        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -109,6 +127,70 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
 
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+//    @Override
+//    public void onBrightnessChanged(int brightness) {
+//        brightnessFinal = brightness;
+//        Filter brightnessFilter = new Filter();
+//        brightnessFilter.addSubFilter(new BrightnessSubFilter(brightness));
+//        editPhotoView.setImageBitmap(brightnessFilter.processFilter(finalImage.copy(Bitmap.Config.ARGB_8888, true)));
+//    }
+//
+//    @Override
+//    public void onSaturationChanged(float saturation) {
+//        saturationFinal = saturation;
+//        Filter saturationFilter = new Filter();
+//        saturationFilter.addSubFilter(new SaturationSubfilter(saturation));
+//        editPhotoView.setImageBitmap(saturationFilter.processFilter(finalImage.copy(Bitmap.Config.ARGB_8888, true)));
+//    }
+//
+//    @Override
+//    public void onContrastChanged(float contrast) {
+//        contrastFinal = contrast;
+//        Filter contrastFilter = new Filter();
+//        contrastFilter.addSubFilter(new ContrastSubFilter(contrast));
+//        editPhotoView.setImageBitmap(contrastFilter.processFilter(finalImage.copy(Bitmap.Config.ARGB_8888,true)));
+//    }
+//
+//    @Override
+//    public void onEditStarted() {
+//
+//    }
+//
+//    @Override
+//    public void onEditCompleted() {
+//        final Bitmap imageBitmap = filteredImage.copy(Bitmap.Config.ARGB_8888, true);
+//        Filter editFilter = new Filter();
+//        editFilter.addSubFilter(new BrightnessSubFilter(brightnessFinal));
+//        editFilter.addSubFilter(new SaturationSubfilter(saturationFinal));
+//        editFilter.addSubFilter(new ContrastSubFilter(contrastFinal));
+//        finalImage = editFilter.processFilter(imageBitmap);
+//    }
+//
+//    private void resetControls() {
+//        if (editPhotoFragment != null) {
+//            editPhotoFragment.resetControls();
+//        }
+//        brightnessFinal = 0;
+//        saturationFinal = 1.0f;
+//        contrastFinal = 1.0f;
+//    }
+//
+//    @Override
+//    public void onFilterSelected(Filter filter) {
+//        // reset image controls
+//        resetControls();
+//        // applying the selected filter
+//        filteredImage = originalImage.copy(Bitmap.Config.ARGB_8888, true);
+//        // preview filtered image
+//        filterPhotoView.setImageBitmap(filter.processFilter(filteredImage));
+//        finalImage = filteredImage.copy(Bitmap.Config.ARGB_8888, true);
+//    }
+
 //    @Override
 //    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
 //        // When the given tab is selected, switch to the corresponding page in
@@ -143,8 +225,11 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
                         args.putByteArray("photo",bitmapArray);
                         filterListFragment.setArguments(args);
                         return filterListFragment;
-//                case 0: ProfileFragment frag = new ProfileFragment();
-//                        return frag;
+                case 1: Fragment editPhotoFragment = new EditPhotoFragment();
+                        Bundle edit_args = new Bundle();
+                        edit_args.putByteArray("photo",bitmapArray);
+                        editPhotoFragment.setArguments(edit_args);
+                        return editPhotoFragment;
                 default: return null;
             }
         }
@@ -152,7 +237,7 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         @Override
         public int getCount() {
             // Show 2 total pages.
-            return 1;
+            return 2;
         }
 
         @Override
@@ -160,8 +245,8 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
             switch (position) {
                 case 0:
                     return getString(R.string.filter_fragment_title);
-//                case 1:
-//                    return getString(R.string.edit_fragment_title);
+                case 1:
+                    return getString(R.string.edit_fragment_title);
             }
             return null;
         }
