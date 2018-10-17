@@ -10,7 +10,7 @@ public class UserPojo {
     private String userId;
     private String userName;
     private String userRealName;
-    private android.net.Uri profilePhoto;
+    private String profilePhoto;
     private String email;
     private String password;
     private List<UserPojo> followerList;
@@ -54,11 +54,11 @@ public class UserPojo {
         this.userRealName = userRealName;
     }
 
-    public android.net.Uri getProfilePhoto() {
+    public String getProfilePhoto() {
         return profilePhoto;
     }
 
-    public void setProfilePhoto(android.net.Uri profilePhoto) {
+    public void setProfilePhoto(String profilePhoto) {
         this.profilePhoto = profilePhoto;
     }
 

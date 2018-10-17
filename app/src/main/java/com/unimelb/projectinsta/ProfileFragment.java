@@ -7,7 +7,11 @@ import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -19,14 +23,37 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.facebook.internal.LockOnGetVariable;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.unimelb.projectinsta.model.UserPojo;
+import com.unimelb.projectinsta.util.DatabaseUtil;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,11 +74,17 @@ public class ProfileFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private ImageView profileImageView;
+    private UserPojo currentUser = null;
+    private GridView gridViewofPost;
+    FirebaseUser user;
+    String userId;
 
     private OnFragmentInteractionListener mListener;
 
     public ProfileFragment() {
         // Required empty public constructor
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore instadb = FirebaseFirestore.getInstance();
     }
 
     /**
@@ -69,6 +102,9 @@ public class ProfileFragment extends Fragment {
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
+
+
+
         return fragment;
     }
 
@@ -89,6 +125,15 @@ public class ProfileFragment extends Fragment {
 
         profileImageView = profileFragmentView.findViewById(R.id.profile_pic);
         registerForContextMenu(profileImageView);
+
+        gridViewofPost = profileFragmentView.findViewById(R.id.gridView);
+
+//        DatabaseUtil db = new DatabaseUtil();
+//        ArrayList<Uri> imageList = db.getImagesPosted();
+//        ProfileViewImageAdapter imageAdapter = new ProfileViewImageAdapter(getContext(), imageList);
+//        gridViewofPost.setAdapter(imageAdapter);
+
+        addUserDetails(profileFragmentView);
         return profileFragmentView;
     }
     @Override
@@ -102,12 +147,11 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        if(item.getTitle().equals("Upload profile pic")){ //Add pic
+        if(item.getTitle().equals("Upload profile pic")) { //Add pic
             Log.d("debug", "onContextItemSelected: profile pic");
             Intent intent = new Intent(Intent.ACTION_PICK);
             intent.setType("image/*");
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-
         } else { //Remove pic
             Log.d("debug", "onContextItemSelected: remove pic");
             profileImageView.setImageResource(R.drawable.com_facebook_profile_picture_blank_portrait);
@@ -126,11 +170,104 @@ public class ProfileFragment extends Fragment {
             final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
             final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
             profileImageView.setImageBitmap(selectedImage);
+            encodeBitmapAndSaveToFirebase(selectedImage);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
+    public void encodeBitmapAndSaveToFirebase(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,80,baos);
+        byte[] data = baos.toByteArray();
+        final UploadTask uploadtask;
+        int n = 100;
+        n = new Random().nextInt(n);
+        String fname = "Image-" + n ;
+        String path = "images/"+fname;
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imageRef = storageRef.child(path);
+
+        uploadtask = imageRef.putBytes(data);
+        uploadtask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.i("PHOTO FAIL", "Upload Failed");
+
+
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Log.d("test", "onSuccess: uri= "+ uri.toString());
+                        updateUserProfile(currentUser, uri.toString());
+                    }
+                });
+            }
+        });
+    }
+
+    private void updateUserProfile(UserPojo user, String uri) {
+        user.setProfilePhoto(uri);
+        FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+        DocumentReference userRef = instadb.collection("users")
+                .document(user.getUserId());
+        userRef.set(user);
+    }
+
+    private void addUserDetails(final View v) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String userId = user.getUid();
+        FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+        CollectionReference userDocuments = instadb.collection("users");
+
+        userDocuments.whereEqualTo("userId",userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    //retrieve user Details
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.i("DB Success", document.getId() + " => " + document.getData());
+                        currentUser = document.toObject(UserPojo.class);
+                        TextView name = (TextView) v.findViewById(R.id.profile_name);
+                        TextView posts = (TextView) v.findViewById(R.id.no_of_posts);
+                        TextView followers = (TextView) v.findViewById(R.id.no_of_followers);
+                        TextView followings = (TextView) v.findViewById(R.id.no_of_followings);
+                        ImageView profilePic = v.findViewById(R.id.profile_pic);
+                        int followersValue = currentUser.getFollowerList().size();
+                        int followingValue= currentUser.getFollowingList().size();
+                        String realName = currentUser.getUserRealName();
+                        String url = currentUser.getProfilePhoto();
+                        name.setText(realName);
+                        followers.setText(Integer.toString(followersValue));
+                        followings.setText(Integer.toString(followingValue));
+
+                        if(url != null) {
+                            Glide.with(ProfileFragment.this)
+                                .load(url)
+                                .into(profilePic);
+                        }
+                    }
+                } else {
+                    Log.i("DB ERROR", "Error getting documents.", task.getException());
+                }
+            }
+        });
+        //query to fetch logged in user doc, get users following list and check with feeds
+        userDocuments.whereEqualTo("userId",userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+
+                }
+            }
+        });
+
+    }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
