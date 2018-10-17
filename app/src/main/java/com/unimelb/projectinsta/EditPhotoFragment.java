@@ -107,11 +107,11 @@ public class EditPhotoFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof EditPhotoFragmentListener) {
+            photoListener = (EditPhotoFragmentListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement EditPhotoFragmentListener");
         }
     }
 
@@ -175,11 +175,11 @@ public class EditPhotoFragment extends Fragment {
 //            photoListener.onEditCompleted();
 //    }
 //
-//    public void resetControls() {
-//        brightnessSeekbar.setProgress(100);
-//        contrastSeekbar.setProgress(0);
-//        saturationSeekbar.setProgress(10);
-//    }
+    public void resetControls() {
+        brightnessSeekbar.setProgress(100);
+        contrastSeekbar.setProgress(0);
+        saturationSeekbar.setProgress(10);
+    }
 
     public interface EditPhotoFragmentListener {
         void onBrightnessChanged(int brightness);

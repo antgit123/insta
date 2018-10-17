@@ -35,7 +35,7 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    private FiltersListFragmentListener mListener;
     RecyclerView thumbNailListView;
     ImageView photoClickedView;
     ThumbnailAdapter mAdapter;
@@ -103,11 +103,11 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof FiltersListFragmentListener) {
+            listener = (FiltersListFragmentListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+                    + " must implement FiltersListFragmentListener");
         }
     }
 
