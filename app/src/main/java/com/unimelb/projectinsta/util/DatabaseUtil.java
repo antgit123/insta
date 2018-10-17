@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.auth.data.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -18,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.unimelb.projectinsta.model.UserPojo;
 
 import java.util.ArrayList;
 
@@ -25,7 +27,7 @@ public class DatabaseUtil {
 
     DatabaseReference db= FirebaseDatabase.getInstance().getReference();;
 //    StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-    ArrayList<Uri> imageList = new ArrayList<>();
+    ArrayList<String> imageList = new ArrayList<>();
     ArrayList<String> imageListString = new ArrayList<String>();
 
     public DatabaseUtil() {
@@ -33,8 +35,8 @@ public class DatabaseUtil {
     }
 
     //Retrieve
-    public ArrayList<Uri> getImagesPosted() {
-        fetchData();
+    public ArrayList<String> getImagesPosted(UserPojo user) {
+        fetchData(user);
 
         db.addChildEventListener(new ChildEventListener() {
             @Override
@@ -105,6 +107,9 @@ public class DatabaseUtil {
         imagesRef.addListenerForSingleValueEvent(valueEventListener);
     }
 
+    private void  fetchData(UserPojo user) {
+
+    }
     private void fetchData(DataSnapshot dataSnapshot) {
 
 

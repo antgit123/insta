@@ -13,9 +13,9 @@ import java.util.ArrayList;
 public class ProfileViewImageAdapter extends BaseAdapter {
 
     Context context;
-    ArrayList<Uri> imageList;
+    ArrayList<String> imageList;
 
-    ProfileViewImageAdapter(Context context, ArrayList<Uri> imageList) {
+    ProfileViewImageAdapter(Context context, ArrayList<String> imageList) {
         this.context = context;
         this.imageList = imageList;
     }
@@ -46,7 +46,7 @@ public class ProfileViewImageAdapter extends BaseAdapter {
         }
 
         ImageView image = (ImageView) grid.findViewById(R.id.myPostedImage);
-        image.setImageURI(imageList.get(position));
+//        image.setImageURI(imageList.get(position));
         return grid;
     }
 }
