@@ -30,6 +30,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.unimelb.projectinsta.model.UserPojo;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class RegisterActivity extends AppCompatActivity {
 
     private AutoCompleteTextView emailView;
@@ -146,8 +149,9 @@ public class RegisterActivity extends AppCompatActivity {
                                         email,
                                         password
                                 );
+                                Map<String, UserPojo> users = new HashMap<>();
                                 FirebaseFirestore instadb = FirebaseFirestore.getInstance();
-                                instadb.collection("users").add(currentUser);
+                                instadb.collection("users").add(users.put(user.getUid(),currentUser));
 
                             }
                             updateUI(user);
