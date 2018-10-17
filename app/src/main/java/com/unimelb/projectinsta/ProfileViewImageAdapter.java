@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+
 import java.util.ArrayList;
 
 public class ProfileViewImageAdapter extends BaseAdapter {
@@ -32,7 +35,7 @@ public class ProfileViewImageAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return imageList.get(position);
     }
 
     @Override
@@ -46,6 +49,13 @@ public class ProfileViewImageAdapter extends BaseAdapter {
         }
 
         ImageView image = (ImageView) grid.findViewById(R.id.myPostedImage);
+
+        RequestOptions options = new RequestOptions();
+        options.centerCrop();
+        Glide.with(context)
+                .load(imageList.get(position))
+                .apply(options)
+                .into(image);
 //        image.setImageURI(imageList.get(position));
         return grid;
     }

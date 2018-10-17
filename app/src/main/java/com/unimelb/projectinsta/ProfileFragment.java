@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.facebook.internal.LockOnGetVariable;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -128,11 +129,6 @@ public class ProfileFragment extends Fragment {
 
         gridViewofPost = profileFragmentView.findViewById(R.id.gridView);
 
-        DatabaseUtil db = new DatabaseUtil();
-        ArrayList<String> imageList = db.getImagesPosted(currentUser);
-        ProfileViewImageAdapter imageAdapter = new ProfileViewImageAdapter(getContext(), imageList);
-        gridViewofPost.setAdapter(imageAdapter);
-
         addUserDetails(profileFragmentView);
         return profileFragmentView;
     }
@@ -155,6 +151,7 @@ public class ProfileFragment extends Fragment {
         } else { //Remove pic
             Log.d("debug", "onContextItemSelected: remove pic");
             profileImageView.setImageResource(R.drawable.com_facebook_profile_picture_blank_portrait);
+            updateUserProfile(currentUser, "");
         }
 
         return super.onContextItemSelected(item);
@@ -246,10 +243,20 @@ public class ProfileFragment extends Fragment {
                     followings.setText(Integer.toString(followingValue));
 
                     if(url != "") {
+                        RequestOptions options = new RequestOptions();
+                        options.centerCrop();
+
                         Glide.with(ProfileFragment.this)
-                                .load(url)
-                                .into(profilePic);
+                            .load(url)
+                            .apply(options)
+                            .into(profilePic);
                     }
+
+                    //Read all the images:
+                    DatabaseUtil db = new DatabaseUtil();
+                    ArrayList<String> imageList = db.getImagesPosted(currentUser);
+                    ProfileViewImageAdapter imageAdapter = new ProfileViewImageAdapter(getContext(), imageList);
+                    gridViewofPost.setAdapter(imageAdapter);
                 } else {
                     Log.i("DB ERROR", "Error getting documents.", task.getException());
                 }

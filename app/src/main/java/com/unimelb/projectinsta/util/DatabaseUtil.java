@@ -25,115 +25,21 @@ import java.util.ArrayList;
 
 public class DatabaseUtil {
 
-    DatabaseReference db= FirebaseDatabase.getInstance().getReference();;
-//    StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+    DatabaseReference db= FirebaseDatabase.getInstance().getReference();
     ArrayList<String> imageList = new ArrayList<>();
-    ArrayList<String> imageListString = new ArrayList<String>();
 
     public DatabaseUtil() {
-//        this.db = db;
     }
 
     //Retrieve
     public ArrayList<String> getImagesPosted(UserPojo user) {
         fetchData(user);
-
-        db.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                fetchData(dataSnapshot);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                fetchData(dataSnapshot);
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
         return imageList;
     }
 
-    private void fetchData() {
-
-//        imageList.clear();
-//        for (DataSnapshot ds: dataSnapshot.getChildren()) {
-//            StorageReference storageRef = ds.getRef();
-//        }
-//        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-//        //adding image to view
-//        storageRef.child("images/").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//            @Override
-//            public void onSuccess(Uri uri) {
-//            Log.i("URI:",uri.toString());
-//            imageList.add(uri);
-//
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception exception) {
-//                // Handle any errors
-//            }
-//        });
-
-        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference imagesRef = rootRef.child("images");
-        ValueEventListener valueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                    String url = ds.getValue(String.class);
-                    Log.d("TAG", url);
-                    imageListString.add(url);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        };
-        imagesRef.addListenerForSingleValueEvent(valueEventListener);
-    }
-
     private void  fetchData(UserPojo user) {
-
-    }
-    private void fetchData(DataSnapshot dataSnapshot) {
-
-
-//        DatabaseReference imagesRef = db.child("images");
-//        ValueEventListener valueEventListener = new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for(DataSnapshot ds : dataSnapshot.getChildren()) {
-//                    String url = ds.getValue(String.class);
-//                    Log.d("TAG", url);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {}
-//        };
-//        imagesRef.addListenerForSingleValueEvent(valueEventListener);
-
-        imageList.clear();
-        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-            String url = ds.getValue(String.class);
-            imageListString.add(url);
+        for(int i = 0; i<10 ; i++) {
+            imageList.add(user.getProfilePhoto());
         }
     }
-
-
 }
