@@ -64,6 +64,12 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
                 Snackbar.make(v,userFeed.get(pos).getM_UserName(),Snackbar.LENGTH_SHORT).show();
             }
         });
+        userFeedHolder.setItemClickListener(new ItemClickListener() {
+            @Override
+            public void onItemClick(View v, int pos) {
+                Snackbar.make(v,userFeed.get(pos).getM_UserName(),Snackbar.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
