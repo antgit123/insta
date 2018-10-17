@@ -93,8 +93,8 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
         thumbNailListView.setItemAnimator(new DefaultItemAnimator());
         imageBytes = (byte []) getArguments().get("photo");
         imageBitmap = BitmapFactory.decodeByteArray(imageBytes,0,imageBytes.length);
-        photoClickedView = view.findViewById(R.id.image_clicked);
-        photoClickedView.setImageBitmap(imageBitmap);
+//        photoClickedView = view.findViewById(R.id.image_clicked);
+//        photoClickedView.setImageBitmap(imageBitmap);
         prepareThumbnail(imageBitmap);
         thumbNailListView.setAdapter(mAdapter);
         return view;

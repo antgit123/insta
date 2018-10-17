@@ -5,6 +5,7 @@ import android.app.ActionBar;
 //import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
@@ -70,7 +71,9 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
 //        editPhotoView = findViewById(R.id.edit_photo_image_view);
-//        filterPhotoView = findViewById(R.id.image_clicked);
+        filterPhotoView = findViewById(R.id.image_clicked);
+        imageBitmap = BitmapFactory.decodeByteArray(bitmapArray,0,bitmapArray.length);
+        filterPhotoView.setImageBitmap(imageBitmap);
         // Set up the action bar.
 //        final ActionBar actionBar = getActionBar();
 //        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);

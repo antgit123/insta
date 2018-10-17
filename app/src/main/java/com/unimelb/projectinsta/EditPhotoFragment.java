@@ -78,7 +78,7 @@ public class EditPhotoFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.edit_photo_fragment,container,false);
-        editphotoView = view.findViewById(R.id.edit_photo_image_view);
+//        editphotoView = view.findViewById(R.id.edit_photo_image_view);
         bitmapArray = (byte []) getArguments().get("photo");
         if(bitmapArray != null) {
             bitmapImage = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
@@ -93,7 +93,7 @@ public class EditPhotoFragment extends Fragment {
 //        brightnessSeekbar.setOnSeekBarChangeListener(this);
 //        contrastSeekbar.setOnSeekBarChangeListener(this);
 //        saturationSeekbar.setOnSeekBarChangeListener(this);
-        editphotoView.setImageBitmap(bitmapImage);
+//        editphotoView.setImageBitmap(bitmapImage);
         return view;
     }
 
