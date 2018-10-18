@@ -60,6 +60,7 @@
     <string name="next_action">Next</string>
     <string name="select_gallery_photo">Select Photo From Gallery</string>
     <string name="crop_existing_photo"> Crop Photo</string>
+    <string name="hint_comment">Add a comment...</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
     <!-- Firebase database fields -->

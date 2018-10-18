@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/description_username"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="ant1992"
+        android:textColor="@color/black"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/description_username"
+        android:layout_marginLeft="5dp"
+        android:id="@+id/user_story_photo_description" />
+
+
+</merge>

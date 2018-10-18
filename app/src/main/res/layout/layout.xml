@@ -21,8 +21,8 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/profile_image"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:src="@drawable/com_facebook_profile_picture_blank_square"
                     android:layout_marginStart="5dp"
                     app:civ_border_width="2dp"
@@ -65,6 +65,17 @@
                 android:src="@drawable/ic_baseline_favorite_border_24px"
                 android:id="@+id/like_button"
                 android:background="#ffffff"
+                android:visibility="visible"
+                />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_heart_red"
+                android:id="@+id/like_button_red"
+                android:layout_toEndOf="@id/like_button"
+                android:background="#ffffff"
+                android:visibility="invisible"
                 />
             <ImageButton
                 android:layout_width="wrap_content"
@@ -88,11 +99,42 @@
         </RelativeLayout>
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:id="@+id/liked_by"
+            android:textColor="@color/black"
+            android:layout_below="@+id/userfeed_icons"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="20 Likes"
+            android:textStyle="bold" />
+
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/userfeed_icons"
-            android:id="@+id/user_story_photo_description" />
+            android:layout_marginStart="10dp"
+            android:id="@+id/userfeed_post_details_container"
+            android:layout_below="@id/liked_by">
+            <include layout="@layout/layout_user_story_description"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:id="@+id/userfeed_comment_container"
+            android:layout_below="@id/userfeed_post_details_container">
+            <include layout="@layout/layout_comment_container"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_below="@id/userfeed_comment_container"
+            android:id="@+id/post_comment_container">
+            <include layout="@layout/layout_comment_post"/>
+        </RelativeLayout>
 
     </RelativeLayout>
 
