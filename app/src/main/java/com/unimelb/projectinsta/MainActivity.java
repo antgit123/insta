@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import java.io.ByteArrayOutputStream;
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, UploadFragment.OnPhotoListener {
+public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, UploadFragment.OnPhotoListener, SearchFragment.OnFragmentInteractionListener {
 
     static
     {
@@ -43,7 +43,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                     fragmentTransaction.replace(R.id.fragment_container, home).addToBackStack(null).commit();
                     return true;
                 case R.id.navigation_dashboard:
-                   // mTextMessage.setText(R.string.title_dashboard);
+                    Fragment search = new SearchFragment();
+                    fragmentTransaction.replace(R.id.fragment_container, search).addToBackStack(null).commit();
                     return true;
                 case R.id.navigation_notifications:
                   //  mTextMessage.setText(R.string.title_notifications);
