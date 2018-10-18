@@ -321,6 +321,15 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
             performCrop(clickedImageUri);
             return true;
         }
+        if(id == R.id.next_edit_action){
+            //send final image to share Activity
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            finalImage.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+            byte[] byteArray = stream.toByteArray();
+            Intent shareActivity = new Intent(this,LocationActivity.class);
+            shareActivity.putExtra("shareImage",byteArray);
+            startActivity(shareActivity);
+        }
 
         return super.onOptionsItemSelected(item);
     }

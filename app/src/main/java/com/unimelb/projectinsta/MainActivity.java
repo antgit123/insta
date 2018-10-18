@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
     public void onPhotoCaptured(Bitmap mBitmap) {
         Log.i("Bitmap Success",mBitmap.toString());
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        mBitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
         byte[] byteArray = stream.toByteArray();
         Intent filterEditActivity = new Intent(this,PhotoViewPager.class);
         filterEditActivity.putExtra("imageBitmap",byteArray);
