@@ -5,8 +5,8 @@
     android:padding="10dp">
     
     <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="175dp"
+        android:layout_height="175dp"
         android:src="@drawable/vignette"
         android:id="@+id/myPostedImage"/>
 

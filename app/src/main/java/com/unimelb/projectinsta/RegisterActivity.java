@@ -149,10 +149,8 @@ public class RegisterActivity extends AppCompatActivity {
                                         email,
                                         password
                                 );
-                                Map<String, UserPojo> users = new HashMap<>();
                                 FirebaseFirestore instadb = FirebaseFirestore.getInstance();
-                                instadb.collection("users").add(users.put(user.getUid(),currentUser));
-
+                                instadb.collection("users").document(user.getUid()).set(currentUser);
                             }
                             updateUI(user);
                         } else {

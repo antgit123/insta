@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.facebook.internal.LockOnGetVariable;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -128,11 +129,6 @@ public class ProfileFragment extends Fragment {
 
         gridViewofPost = profileFragmentView.findViewById(R.id.gridView);
 
-//        DatabaseUtil db = new DatabaseUtil();
-//        ArrayList<Uri> imageList = db.getImagesPosted();
-//        ProfileViewImageAdapter imageAdapter = new ProfileViewImageAdapter(getContext(), imageList);
-//        gridViewofPost.setAdapter(imageAdapter);
-
         addUserDetails(profileFragmentView);
         return profileFragmentView;
     }
@@ -155,6 +151,7 @@ public class ProfileFragment extends Fragment {
         } else { //Remove pic
             Log.d("debug", "onContextItemSelected: remove pic");
             profileImageView.setImageResource(R.drawable.com_facebook_profile_picture_blank_portrait);
+            updateUserProfile(currentUser, "");
         }
 
         return super.onContextItemSelected(item);
@@ -224,49 +221,47 @@ public class ProfileFragment extends Fragment {
         String userId = user.getUid();
         FirebaseFirestore instadb = FirebaseFirestore.getInstance();
         CollectionReference userDocuments = instadb.collection("users");
-
-        userDocuments.whereEqualTo("userId",userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        userDocuments.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     //retrieve user Details
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.i("DB Success", document.getId() + " => " + document.getData());
-                        currentUser = document.toObject(UserPojo.class);
-                        TextView name = (TextView) v.findViewById(R.id.profile_name);
-                        TextView posts = (TextView) v.findViewById(R.id.no_of_posts);
-                        TextView followers = (TextView) v.findViewById(R.id.no_of_followers);
-                        TextView followings = (TextView) v.findViewById(R.id.no_of_followings);
-                        ImageView profilePic = v.findViewById(R.id.profile_pic);
-                        int followersValue = currentUser.getFollowerList().size();
-                        int followingValue= currentUser.getFollowingList().size();
-                        String realName = currentUser.getUserRealName();
-                        String url = currentUser.getProfilePhoto();
-                        name.setText(realName);
-                        followers.setText(Integer.toString(followersValue));
-                        followings.setText(Integer.toString(followingValue));
+                    DocumentSnapshot document = task.getResult();
+                    Log.i("DB Success", document.getId() + " => " + document.getData());
+                    currentUser = document.toObject(UserPojo.class);
+                    TextView name = (TextView) v.findViewById(R.id.profile_name);
+                    TextView posts = (TextView) v.findViewById(R.id.no_of_posts);
+                    TextView followers = (TextView) v.findViewById(R.id.no_of_followers);
+                    TextView followings = (TextView) v.findViewById(R.id.no_of_followings);
+                    ImageView profilePic = v.findViewById(R.id.profile_pic);
+                    int followersValue = currentUser.getFollowerList().size();
+                    int followingValue= currentUser.getFollowingList().size();
+                    String realName = currentUser.getUserRealName();
+                    String url = currentUser.getProfilePhoto();
+                    name.setText(realName);
+                    followers.setText(Integer.toString(followersValue));
+                    followings.setText(Integer.toString(followingValue));
 
-                        if(url != null) {
-                            Glide.with(ProfileFragment.this)
-                                .load(url)
-                                .into(profilePic);
-                        }
+                    if(url != "") {
+                        RequestOptions options = new RequestOptions();
+                        options.centerCrop();
+
+                        Glide.with(ProfileFragment.this)
+                            .load(url)
+                            .apply(options)
+                            .into(profilePic);
                     }
+
+                    //Read all the images:
+                    DatabaseUtil db = new DatabaseUtil();
+                    ArrayList<String> imageList = db.getImagesPosted(currentUser);
+                    ProfileViewImageAdapter imageAdapter = new ProfileViewImageAdapter(getContext(), imageList);
+                    gridViewofPost.setAdapter(imageAdapter);
                 } else {
                     Log.i("DB ERROR", "Error getting documents.", task.getException());
                 }
             }
         });
-        //query to fetch logged in user doc, get users following list and check with feeds
-        userDocuments.whereEqualTo("userId",userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-
-                }
-            }
-        });
-
     }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
