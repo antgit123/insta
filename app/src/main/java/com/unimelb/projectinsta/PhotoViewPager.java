@@ -12,6 +12,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -24,6 +30,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,17 +39,29 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.unimelb.projectinsta.util.BitmapUtils;
+import com.unimelb.projectinsta.util.DatabaseUtil;
 import com.zomato.photofilters.imageprocessors.Filter;
 import com.zomato.photofilters.imageprocessors.subfilters.BrightnessSubFilter;
 import com.zomato.photofilters.imageprocessors.subfilters.ContrastSubFilter;
 import com.zomato.photofilters.imageprocessors.subfilters.SaturationSubfilter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
-public class PhotoViewPager extends AppCompatActivity implements FilterListFragment.FiltersListFragmentListener,EditPhotoFragment.EditPhotoFragmentListener,ActivityCompat.OnRequestPermissionsResultCallback {
+public class PhotoViewPager extends AppCompatActivity implements FilterListFragment.FiltersListFragmentListener,
+        EditPhotoFragment.EditPhotoFragmentListener,ActivityCompat.OnRequestPermissionsResultCallback,
+        LocationCaptionFragment.OnFragmentInteractionListener{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -55,6 +74,10 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
     private SectionsPagerAdapter mSectionsPagerAdapter;
     public byte[] bitmapArray;
     public Bitmap imageBitmap;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private Location myLocation;
+    public String address;
 
     Bitmap originalImage;
     Bitmap filteredImage;
@@ -103,6 +126,49 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         }
         filterPhotoView.setImageBitmap(imageBitmap);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                Log.d("location", "onLocationChanged: "+ location);
+                myLocation = location;
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        };
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+        }else {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            /*if (locationManager != null){
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            }*/
+        }
+        address = getAddreess(myLocation);
+        //TextView locationDetail = findViewById(R.id.location_info);
+        //locationDetail.setText(address);
+
         // Set up the action bar.
 //        final ActionBar actionBar = getActionBar();
 //        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -152,6 +218,79 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             BitmapUtils.insertImage(getContentResolver(),originalImage,System.currentTimeMillis() + "_pic.jpg", null);
         }
+        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            }
+        }
+    }
+
+    private String getAddreess(Location location){
+        try {
+            Geocoder geocoder = new Geocoder(this);
+            List<Address> addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(),1);
+            String city = addressList.get(0).getLocality();
+            String country = addressList.get(0).getCountryName();
+            return country + ", "+city;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
+    public String onFragmentInteraction() {
+        return address;
+    }
+
+    public void share(View view) {
+        Log.d("test", "share: ");
+        savePost("test");
+        ImageView imageView = view.findViewById(R.id.imageView);
+        Bitmap bm=((BitmapDrawable)imageView.getDrawable()).getBitmap();
+        encodeBitmapAndSaveToFirebase(bm);
+
+    }
+    public void encodeBitmapAndSaveToFirebase(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,80,baos);
+        byte[] data = baos.toByteArray();
+        final UploadTask uploadtask;
+        int n = 100;
+        n = new Random().nextInt(n);
+        String fname = "Image-" + n ;
+        String path = "images/"+fname;
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imageRef = storageRef.child(path);
+
+        uploadtask = imageRef.putBytes(data);
+        uploadtask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.i("PHOTO FAIL", "Upload Failed");
+
+
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Log.d("test", "onSuccess: uri= "+ uri.toString());
+                        savePost(uri.toString());
+                    }
+                });
+            }
+        });
+    }
+
+    private void savePost(String string) {
+        DatabaseUtil databaseUtil = new DatabaseUtil(PhotoViewPager.this);
+        databaseUtil.savePost(string);
+
     }
 
     @Override
@@ -326,21 +465,21 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
             // getItem is called to instantiate the fragment for the given page.
             switch(position){
                 case 0: Fragment filterListFragment = new FilterListFragment();
-                        Bundle args = new Bundle();
-                        args.putByteArray("photo",bitmapArray);
-                        filterListFragment.setArguments(args);
-                        if(!fragmentHashMap.containsKey(position)) {
-                            fragmentHashMap.put(position, filterListFragment);
-                        }
-                        return filterListFragment;
+                    Bundle args = new Bundle();
+                    args.putByteArray("photo",bitmapArray);
+                    filterListFragment.setArguments(args);
+                    if(!fragmentHashMap.containsKey(position)) {
+                        fragmentHashMap.put(position, filterListFragment);
+                    }
+                    return filterListFragment;
                 case 1: Fragment editPhotoFragment = new EditPhotoFragment();
-                        Bundle edit_args = new Bundle();
-                        edit_args.putByteArray("photo",bitmapArray);
-                        editPhotoFragment.setArguments(edit_args);
-                        if(!fragmentHashMap.containsKey(position)) {
-                            fragmentHashMap.put(position, editPhotoFragment);
-                        }
-                        return editPhotoFragment;
+                    Bundle edit_args = new Bundle();
+                    edit_args.putByteArray("photo",bitmapArray);
+                    editPhotoFragment.setArguments(edit_args);
+                    if(!fragmentHashMap.containsKey(position)) {
+                        fragmentHashMap.put(position, editPhotoFragment);
+                    }
+                    return editPhotoFragment;
                 default: return null;
             }
         }

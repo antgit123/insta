@@ -22,6 +22,10 @@ public class UserFeed {
     private int m_Img;
     private String m_Description;
 
+    public UserFeed(){
+
+    }
+
     public UserFeed(String userName, String location, int image_resource, String description){
         this.m_UserName = userName;
         this.m_Location = location;

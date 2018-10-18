@@ -67,5 +67,16 @@
     <string name="dbname_users">users</string>
     <string name="field_username">username</string>
 
-
+    <string name="gallery">Gallery</string>
+    <string name="photo">Photo</string>
+    <string name="string_next">Next</string>
+    <string name="selected_bitmap">selected_bitmap</string>
+    <string name="return_to_fragment">return to fragment</string>
+    <string name="edit_profile_fragment">Edit Profile</string>
+    <string name="selected_image">Selected Image</string>
+    <string name="following">FOLLOWING</string>
+    <string name="you">YOU</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_location">LocationActivity</string>
+    <string name="string_share">Share</string>
 </resources>
