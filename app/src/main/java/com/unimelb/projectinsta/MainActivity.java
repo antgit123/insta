@@ -21,7 +21,10 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import java.io.ByteArrayOutputStream;
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, UploadFragment.OnPhotoListener {
+public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener,
+        ProfileFragment.OnFragmentInteractionListener, UploadFragment.OnPhotoListener,
+        NotificationFragment.OnFragmentInteractionListener, FollowingFragment.OnFragmentInteractionListener,
+        YouFragment.OnFragmentInteractionListener{
 
     static
     {
@@ -46,10 +49,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                    // mTextMessage.setText(R.string.title_dashboard);
                     return true;
                 case R.id.navigation_notifications:
-                    Log.d("test", "onNavigationItemSelected: ");
-                    fragmentTransaction.replace(R.id.fragment_container, new ActivityFeed()).addToBackStack(null).commit();
-                    /*Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
-                    MainActivity.this.startActivity(intent);*/
+                    fragmentTransaction.replace(R.id.fragment_container, new NotificationFragment()).addToBackStack(null).commit();
                     return true;
                 case R.id.navigation_profile:
                     Fragment profile = new ProfileFragment();
