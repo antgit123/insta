@@ -102,6 +102,7 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
             clickedImageUri = Uri.parse(img_path);
         }
         filterPhotoView.setImageBitmap(imageBitmap);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // Set up the action bar.
 //        final ActionBar actionBar = getActionBar();
 //        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);

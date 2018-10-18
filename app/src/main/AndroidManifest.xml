@@ -50,7 +50,9 @@
             android:label="Register" />
         <activity
             android:name=".PhotoViewPager"
-            android:label="@string/title_activity_photo_view_pager"></activity>
+            android:label="@string/title_activity_photo_view_pager"
+            android:parentActivityName=".MainActivity" >
+            </activity>
     </application>
 
 </manifest>

@@ -1,6 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.unimelb.projectinsta.PhotoViewPager">
+
+    <item
+        android:id="@+id/next_edit_action"
+        app:showAsAction="always"
+        android:title="@string/next_action" />
 
     <item
         android:id="@+id/action_settings"
