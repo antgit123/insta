@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/comment_profile_image"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/com_facebook_profile_picture_blank_square"
+        android:layout_marginStart="5dp"
+        app:civ_border_width="2dp"
+        app:civ_border_color="#FF000000"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:layout_marginEnd="40dp"
+        android:layout_toEndOf="@id/comment_profile_image"
+        android:background="@android:color/transparent"
+        android:layout_marginStart="5dp"
+        android:layout_centerVertical="true"
+        android:inputType="text"
+        android:hint="@string/hint_comment"
+        android:textSize="14sp"
+        android:id="@+id/comment_post"/>
+
+</merge>

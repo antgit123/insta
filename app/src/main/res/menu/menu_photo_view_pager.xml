@@ -1,9 +1,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.unimelb.projectinsta.PhotoViewPager">
+
+    <item
+        android:id="@+id/next_edit_action"
+        app:showAsAction="always"
+        android:title="@string/next_action" />
 
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings" />
+
+    <item
+        android:id="@+id/select_gallery_photo"
+        android:orderInCategory="100"
+        android:title="@string/select_gallery_photo" />
+
+    <item
+        android:id="@+id/crop_existing_photo"
+        android:orderInCategory="100"
+        android:title="@string/crop_existing_photo" />
 </menu>

@@ -5,15 +5,18 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+
 import com.unimelb.projectinsta.util.ThumbnailFormatter;
 import com.zomato.photofilters.FilterPack;
 import com.zomato.photofilters.imageprocessors.Filter;
@@ -29,7 +32,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class FilterListFragment extends Fragment implements  ThumbnailAdapter.ThumbnailImageListener{
+public class FilterListFragment extends Fragment implements  ThumbnailAdapter.ThumbnailImageListener, View.OnClickListener{
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -37,7 +40,6 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
     private int mColumnCount = 1;
     private FiltersListFragmentListener mListener;
     RecyclerView thumbNailListView;
-    ImageView photoClickedView;
     ThumbnailAdapter mAdapter;
     List<ThumbnailItem> thumbnailItemList;
     FiltersListFragmentListener listener;
@@ -74,6 +76,9 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_thumbnail_list, container, false);
+        Button nextButton = (Button) view.findViewById(R.id.button_next);
+        nextButton.setOnClickListener(this);
+
 
         // Set the adapter
 //        if (view instanceof RecyclerView) {
@@ -85,16 +90,18 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
 //                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
 //            }
 //        }
+
         thumbnailItemList = new ArrayList<>();
         thumbNailListView = view.findViewById(R.id.filter_list);
         mAdapter = new ThumbnailAdapter(getContext(), thumbnailItemList, this);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         thumbNailListView.setLayoutManager(mLayoutManager);
         thumbNailListView.setItemAnimator(new DefaultItemAnimator());
+        int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8,
+                getResources().getDisplayMetrics());
+        thumbNailListView.addItemDecoration(new ThumbnailFormatter(space));
         imageBytes = (byte []) getArguments().get("photo");
         imageBitmap = BitmapFactory.decodeByteArray(imageBytes,0,imageBytes.length);
-//        photoClickedView = view.findViewById(R.id.image_clicked);
-//        photoClickedView.setImageBitmap(imageBitmap);
         prepareThumbnail(imageBitmap);
         thumbNailListView.setAdapter(mAdapter);
         return view;
@@ -150,7 +157,11 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
                     return;
 
                 ThumbnailsManager.clearThumbs();
-                thumbnailItemList.clear();
+                if(thumbnailItemList != null) {
+                    thumbnailItemList.clear();
+                }else{
+                    thumbnailItemList = new ArrayList<>();
+                }
 
                 // add normal bitmap first
                 ThumbnailItem thumbnailItem = new ThumbnailItem();
@@ -190,5 +201,25 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
 
     public interface FiltersListFragmentListener {
         void onFilterSelected(Filter filter);
+    }
+
+    @Override
+    public void onClick(View view) {
+        Fragment fragment = null;
+        switch (view.getId()) {
+            case R.id.button_next:
+                fragment = new LocationCaptionFragment();
+                replaceFragment(fragment);
+                break;
+            case R.id.button_share:
+                Log.d("caption", "onClick: ");
+        }
+    }
+
+    public void replaceFragment(Fragment someFragment) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, someFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

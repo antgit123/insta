@@ -114,4 +114,18 @@ public class UserPojo {
 
         return Objects.hash(userId, userName, userRealName, profilePhoto, email, password, followerList, followingList);
     }
+
+    @Override
+    public String toString() {
+        return "UserPojo{" +
+                "userId='" + userId + '\'' +
+                ", userName='" + userName + '\'' +
+                ", userRealName='" + userRealName + '\'' +
+                ", profilePhoto=" + profilePhoto +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", followerList=" + followerList +
+                ", followingList=" + followingList +
+                '}';
+    }
 }

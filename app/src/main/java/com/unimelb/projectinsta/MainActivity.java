@@ -47,7 +47,10 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                     fragmentTransaction.replace(R.id.fragment_container, search).addToBackStack(null).commit();
                     return true;
                 case R.id.navigation_notifications:
-                  //  mTextMessage.setText(R.string.title_notifications);
+                    Log.d("test", "onNavigationItemSelected: ");
+                    fragmentTransaction.replace(R.id.fragment_container, new ActivityFeed()).addToBackStack(null).commit();
+                    /*Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
+                    MainActivity.this.startActivity(intent);*/
                     return true;
                 case R.id.navigation_profile:
                     Fragment profile = new ProfileFragment();

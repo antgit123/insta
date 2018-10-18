@@ -23,7 +23,7 @@ import java.nio.channels.SeekableByteChannel;
  * Use the {@link EditPhotoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class EditPhotoFragment extends Fragment {
+public class EditPhotoFragment extends Fragment implements SeekBar.OnSeekBarChangeListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -78,22 +78,24 @@ public class EditPhotoFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.edit_photo_fragment,container,false);
-//        editphotoView = view.findViewById(R.id.edit_photo_image_view);
         bitmapArray = (byte []) getArguments().get("photo");
         if(bitmapArray != null) {
             bitmapImage = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
         }
-//        brightnessSeekbar.setMax(200);
-//        brightnessSeekbar.setProgress(100);
-//        contrastSeekbar.setMax(20);
-//        contrastSeekbar.setProgress(0);
-//        saturationSeekbar.setMax(30);
-//        saturationSeekbar.setProgress(10);
+        brightnessSeekbar = view.findViewById(R.id.seekbar_brightness);
+        contrastSeekbar = view.findViewById(R.id.seekbar_contrast);
+        saturationSeekbar = view.findViewById(R.id.seekbar_saturation);
+        brightnessSeekbar.setMax(200);
+        brightnessSeekbar.setProgress(100);
+        contrastSeekbar.setMax(20);
+        contrastSeekbar.setProgress(0);
+        saturationSeekbar.setMax(30);
+        saturationSeekbar.setProgress(10);
+//
+        brightnessSeekbar.setOnSeekBarChangeListener(this);
+        contrastSeekbar.setOnSeekBarChangeListener(this);
+        saturationSeekbar.setOnSeekBarChangeListener(this);
 
-//        brightnessSeekbar.setOnSeekBarChangeListener(this);
-//        contrastSeekbar.setOnSeekBarChangeListener(this);
-//        saturationSeekbar.setOnSeekBarChangeListener(this);
-//        editphotoView.setImageBitmap(bitmapImage);
         return view;
     }
 
@@ -136,45 +138,45 @@ public class EditPhotoFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-//    @Override
-//    public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-//        if (photoListener != null) {
-//
-//            if (seekBar.getId() == R.id.seekbar_brightness) {
-//                // brightness values are b/w -100 to +100
-//                photoListener.onBrightnessChanged(progress - 100);
-//            }
-//
-//            if (seekBar.getId() == R.id.seekbar_contrast) {
-//                // converting int value to float
-//                // contrast values are b/w 1.0f - 3.0f
-//                // progress = progress > 10 ? progress : 10;
-//                progress += 10;
-//                float floatVal = .10f * progress;
-//                photoListener.onContrastChanged(floatVal);
-//            }
-//
-//            if (seekBar.getId() == R.id.seekbar_saturation) {
-//                // converting int value to float
-//                // saturation values are b/w 0.0f - 3.0f
-//                float floatVal = .10f * progress;
-//                photoListener.onSaturationChanged(floatVal);
-//            }
-//        }
-//    }
-//
-//    @Override
-//    public void onStartTrackingTouch(SeekBar seekBar) {
-//        if (photoListener != null)
-//            photoListener.onEditStarted();
-//    }
-//
-//    @Override
-//    public void onStopTrackingTouch(SeekBar seekBar) {
-//        if (photoListener != null)
-//            photoListener.onEditCompleted();
-//    }
-//
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+        if (photoListener != null) {
+
+            if (seekBar.getId() == R.id.seekbar_brightness) {
+                // brightness values are b/w -100 to +100
+                photoListener.onBrightnessChanged(progress - 100);
+            }
+
+            if (seekBar.getId() == R.id.seekbar_contrast) {
+                // converting int value to float
+                // contrast values are b/w 1.0f - 3.0f
+                // progress = progress > 10 ? progress : 10;
+                progress += 10;
+                float floatVal = .10f * progress;
+                photoListener.onContrastChanged(floatVal);
+            }
+
+            if (seekBar.getId() == R.id.seekbar_saturation) {
+                // converting int value to float
+                // saturation values are b/w 0.0f - 3.0f
+                float floatVal = .10f * progress;
+                photoListener.onSaturationChanged(floatVal);
+            }
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        if (photoListener != null)
+            photoListener.onEditStarted();
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        if (photoListener != null)
+            photoListener.onEditCompleted();
+    }
+
     public void resetControls() {
         brightnessSeekbar.setProgress(100);
         contrastSeekbar.setProgress(0);
