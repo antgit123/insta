@@ -6,4 +6,14 @@
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings" />
+
+    <item
+        android:id="@+id/select_gallery_photo"
+        android:orderInCategory="100"
+        android:title="@string/select_gallery_photo" />
+
+    <item
+        android:id="@+id/crop_existing_photo"
+        android:orderInCategory="100"
+        android:title="@string/crop_existing_photo" />
 </menu>

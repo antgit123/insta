@@ -1,16 +1,26 @@
 package com.unimelb.projectinsta;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActionBar;
 //import android.app.FragmentTransaction;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,16 +30,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import com.unimelb.projectinsta.util.BitmapUtils;
 import com.zomato.photofilters.imageprocessors.Filter;
 import com.zomato.photofilters.imageprocessors.subfilters.BrightnessSubFilter;
 import com.zomato.photofilters.imageprocessors.subfilters.ContrastSubFilter;
 import com.zomato.photofilters.imageprocessors.subfilters.SaturationSubfilter;
 
-import java.util.List;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.HashMap;
 
-public class PhotoViewPager extends AppCompatActivity implements FilterListFragment.FiltersListFragmentListener,EditPhotoFragment.EditPhotoFragmentListener {
+public class PhotoViewPager extends AppCompatActivity implements FilterListFragment.FiltersListFragmentListener,EditPhotoFragment.EditPhotoFragmentListener,ActivityCompat.OnRequestPermissionsResultCallback {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -46,11 +59,17 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
     Bitmap originalImage;
     Bitmap filteredImage;
     Bitmap finalImage;
+    Uri clickedImageUri;
     FilterListFragment filterListFragment;
     EditPhotoFragment editPhotoFragment;
     int brightnessFinal = 0;
     float saturationFinal, contrastFinal = 1.0f;
-    ImageView editPhotoView,filterPhotoView;
+    ImageView filterPhotoView;
+    public static final int PICK_IMAGE = 101;
+    public static final int CROP_IMAGE = 102;
+    public static final int REQUEST_WRITE_PERMISSION = 103;
+    private static final String FRAGMENT_DIALOG = "dialog";
+    private HashMap<Integer, Fragment> fragmentHashMap = new HashMap<>();
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -69,11 +88,19 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
-//        editPhotoView = findViewById(R.id.edit_photo_image_view);
         filterPhotoView = findViewById(R.id.image_clicked);
         imageBitmap = BitmapFactory.decodeByteArray(bitmapArray,0,bitmapArray.length);
         originalImage = imageBitmap;
+        finalImage = originalImage;
+        if (ContextCompat.checkSelfPermission(PhotoViewPager.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission not granted to write to external storage
+            requestWritePermission();
+        }else {
+            //permission granted store image
+            String img_path = BitmapUtils.insertImage(getContentResolver(), originalImage, System.currentTimeMillis() + "_pic.jpg", null);
+            clickedImageUri = Uri.parse(img_path);
+        }
         filterPhotoView.setImageBitmap(imageBitmap);
         // Set up the action bar.
 //        final ActionBar actionBar = getActionBar();
@@ -103,6 +130,28 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
 
     }
 
+    public void requestWritePermission() {
+        if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            new PhotoViewPager.ConfirmationDialog().show(getSupportFragmentManager(), FRAGMENT_DIALOG);
+        } else {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_PERMISSION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_WRITE_PERMISSION) {
+            if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                PhotoViewPager.ErrorDialog.newInstance(getString(R.string.request_write_permission))
+                        .show(getSupportFragmentManager(), FRAGMENT_DIALOG);
+            }
+        } else {
+            //for storing image on first request permission
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            BitmapUtils.insertImage(getContentResolver(),originalImage,System.currentTimeMillis() + "_pic.jpg", null);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -122,8 +171,41 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id ==R.id.select_gallery_photo){
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+            return true;
+        }
+        if (id == R.id.crop_existing_photo){
+            performCrop(clickedImageUri);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && (requestCode == PICK_IMAGE || requestCode == CROP_IMAGE)) {
+//            Bitmap bitmap = BitmapUtils.getBitmapFromGallery(this, data.getData(), 800, 800);
+            try {
+                final Uri imageUri = data.getData();
+                clickedImageUri = imageUri;
+                final InputStream imageStream = getApplicationContext().getContentResolver().openInputStream(imageUri);
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                // clear bitmap memory
+                originalImage.recycle();
+                finalImage.recycle();
+                originalImage = selectedImage.copy(Bitmap.Config.ARGB_8888, true);
+                finalImage = originalImage;
+                filterPhotoView.setImageBitmap(selectedImage);
+                FilterListFragment filterListFragment = (FilterListFragment) fragmentHashMap.get(0);
+                filterListFragment.prepareThumbnail(originalImage);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -131,7 +213,8 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         brightnessFinal = brightness;
         Filter brightnessFilter = new Filter();
         brightnessFilter.addSubFilter(new BrightnessSubFilter(brightness));
-        editPhotoView.setImageBitmap(brightnessFilter.processFilter(finalImage.copy(Bitmap.Config.ARGB_8888, true)));
+        filteredImage = originalImage.copy(Bitmap.Config.ARGB_8888,true);
+        filterPhotoView.setImageBitmap(brightnessFilter.processFilter(filteredImage));
     }
 
     @Override
@@ -139,7 +222,8 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         saturationFinal = saturation;
         Filter saturationFilter = new Filter();
         saturationFilter.addSubFilter(new SaturationSubfilter(saturation));
-        editPhotoView.setImageBitmap(saturationFilter.processFilter(finalImage.copy(Bitmap.Config.ARGB_8888, true)));
+        filteredImage = originalImage.copy(Bitmap.Config.ARGB_8888,true);
+        filterPhotoView.setImageBitmap(saturationFilter.processFilter(filteredImage));
     }
 
     @Override
@@ -147,7 +231,8 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         contrastFinal = contrast;
         Filter contrastFilter = new Filter();
         contrastFilter.addSubFilter(new ContrastSubFilter(contrast));
-        editPhotoView.setImageBitmap(contrastFilter.processFilter(finalImage.copy(Bitmap.Config.ARGB_8888,true)));
+        filteredImage = originalImage.copy(Bitmap.Config.ARGB_8888,true);
+        filterPhotoView.setImageBitmap(contrastFilter.processFilter(filteredImage));
     }
 
     @Override
@@ -183,6 +268,33 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         finalImage = filteredImage.copy(Bitmap.Config.ARGB_8888, true);
     }
 
+    private void performCrop(Uri picUri) {
+        try {
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            // indicate image type and Uri
+            cropIntent.setDataAndType(picUri, "image/*");
+            // set crop properties here
+            cropIntent.putExtra("crop", true);
+            // indicate aspect of desired crop
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            // indicate output X and Y
+            cropIntent.putExtra("outputX", 128);
+            cropIntent.putExtra("outputY", 128);
+            // retrieve data on return
+            cropIntent.putExtra("return-data", true);
+            startActivityForResult(cropIntent, CROP_IMAGE);
+        }
+        // error message where activity is not supported
+        catch (ActivityNotFoundException e) {
+            // display an error message
+            String errorMessage = e.getMessage();
+            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
+
+
 //    @Override
 //    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
 //        // When the given tab is selected, switch to the corresponding page in
@@ -216,11 +328,17 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
                         Bundle args = new Bundle();
                         args.putByteArray("photo",bitmapArray);
                         filterListFragment.setArguments(args);
+                        if(!fragmentHashMap.containsKey(position)) {
+                            fragmentHashMap.put(position, filterListFragment);
+                        }
                         return filterListFragment;
                 case 1: Fragment editPhotoFragment = new EditPhotoFragment();
                         Bundle edit_args = new Bundle();
                         edit_args.putByteArray("photo",bitmapArray);
                         editPhotoFragment.setArguments(edit_args);
+                        if(!fragmentHashMap.containsKey(position)) {
+                            fragmentHashMap.put(position, editPhotoFragment);
+                        }
                         return editPhotoFragment;
                 default: return null;
             }
@@ -243,4 +361,68 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
             return null;
         }
     }
+
+    /**
+     * Shows an error message dialog.
+     */
+    public static class ErrorDialog extends DialogFragment {
+
+        private static final String ARG_MESSAGE = "message";
+
+        public static PhotoViewPager.ErrorDialog newInstance(String message) {
+            PhotoViewPager.ErrorDialog dialog = new PhotoViewPager.ErrorDialog();
+            Bundle args = new Bundle();
+            args.putString(ARG_MESSAGE, message);
+            dialog.setArguments(args);
+            return dialog;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Activity activity = getActivity();
+            return new AlertDialog.Builder(activity)
+                    .setMessage(getArguments().getString(ARG_MESSAGE))
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            activity.finish();
+                        }
+                    })
+                    .create();
+        }
+    }
+
+    /**
+     * Shows OK/Cancel confirmation dialog for accessing storage permission.
+     */
+    public static class ConfirmationDialog extends DialogFragment {
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Fragment parent = getParentFragment();
+            return new AlertDialog.Builder(getActivity())
+                    .setMessage(R.string.request_write_permission)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            parent.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                    REQUEST_WRITE_PERMISSION);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Activity activity = parent.getActivity();
+                                    if (activity != null) {
+                                        activity.finish();
+                                    }
+                                }
+                            })
+                    .create();
+        }
+    }
+
 }

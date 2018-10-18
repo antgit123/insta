@@ -37,7 +37,6 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
     private int mColumnCount = 1;
     private FiltersListFragmentListener mListener;
     RecyclerView thumbNailListView;
-    ImageView photoClickedView;
     ThumbnailAdapter mAdapter;
     List<ThumbnailItem> thumbnailItemList;
     FiltersListFragmentListener listener;
@@ -91,10 +90,11 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         thumbNailListView.setLayoutManager(mLayoutManager);
         thumbNailListView.setItemAnimator(new DefaultItemAnimator());
+        int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8,
+                getResources().getDisplayMetrics());
+        thumbNailListView.addItemDecoration(new ThumbnailFormatter(space));
         imageBytes = (byte []) getArguments().get("photo");
         imageBitmap = BitmapFactory.decodeByteArray(imageBytes,0,imageBytes.length);
-//        photoClickedView = view.findViewById(R.id.image_clicked);
-//        photoClickedView.setImageBitmap(imageBitmap);
         prepareThumbnail(imageBitmap);
         thumbNailListView.setAdapter(mAdapter);
         return view;
@@ -150,7 +150,11 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
                     return;
 
                 ThumbnailsManager.clearThumbs();
-                thumbnailItemList.clear();
+                if(thumbnailItemList != null) {
+                    thumbnailItemList.clear();
+                }else{
+                    thumbnailItemList = new ArrayList<>();
+                }
 
                 // add normal bitmap first
                 ThumbnailItem thumbnailItem = new ThumbnailItem();

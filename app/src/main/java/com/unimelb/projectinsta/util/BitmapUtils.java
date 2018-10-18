@@ -56,25 +56,25 @@ public class BitmapUtils {
      *
      * @return
      */
-//    public static Bitmap getBitmapFromGallery(Context context, Uri path, int width, int height) {
-//        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-//        Cursor cursor = context.getContentResolver().query(path, filePathColumn, null, null, null);
-//        cursor.moveToFirst();
-//        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-//        String picturePath = cursor.getString(columnIndex);
-//        cursor.close();
-//
-//        final BitmapFactory.Options options = new BitmapFactory.Options();
-//        options.inJustDecodeBounds = true;
-//        BitmapFactory.decodeFile(picturePath, options);
-//
-//        // Calculate inSampleSize
-//        options.inSampleSize = calculateInSampleSize(options, width, height);
-//
-//        // Decode bitmap with inSampleSize set
-//        options.inJustDecodeBounds = false;
-//        return BitmapFactory.decodeFile(picturePath, options);
-//    }
+    public static Bitmap getBitmapFromGallery(Context context, Uri path, int width, int height) {
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        Cursor cursor = context.getContentResolver().query(path, filePathColumn, null, null, null);
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String picturePath = cursor.getString(columnIndex);
+        cursor.close();
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(picturePath, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, width, height);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(picturePath, options);
+    }
 
     private static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
@@ -146,7 +146,7 @@ public class BitmapUtils {
             if (source != null) {
                 OutputStream imageOut = cr.openOutputStream(url);
                 try {
-                    source.compress(Bitmap.CompressFormat.JPEG, 50, imageOut);
+                    source.compress(Bitmap.CompressFormat.JPEG, 80, imageOut);
                 } finally {
                     imageOut.close();
                 }

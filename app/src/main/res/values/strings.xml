@@ -46,6 +46,7 @@
     <string name="picture">Picture</string>
     <string name="description_info">Description</string>
     <string name="request_camera_permission">Request camera permission</string>
+    <string name="request_write_permission">Request external storage write permission</string>
     <string name="camera_error">Error with camera</string>
     <string name="intro_message">Introduction Message</string>
     <string name="Reverse_Camera">Reverse Camera</string>
@@ -56,6 +57,8 @@
     <string name="profile_pic">Profile pic</string>
     <string name="title_activity_photo_view_pager">Edit Photo</string>
     <string name="action_settings">Settings</string>
+    <string name="select_gallery_photo">Select Photo From Gallery</string>
+    <string name="crop_existing_photo"> Crop Photo</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
     <!-- Firebase database fields -->
