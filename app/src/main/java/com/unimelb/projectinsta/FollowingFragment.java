@@ -4,10 +4,23 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.unimelb.projectinsta.util.DatabaseUtil;
+
+import java.util.ArrayList;
 
 
 /**
@@ -29,6 +42,9 @@ public class FollowingFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private ListView followingListView;
+    ArrayList<String> followingList = new ArrayList<>();
+    NotificationCustomAdapter notificationAdapter;
 
     public FollowingFragment() {
         // Required empty public constructor
@@ -65,7 +81,42 @@ public class FollowingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_following, container, false);
+        View view = inflater.inflate(R.layout.fragment_following, container, false);
+
+
+        followingListView = view.findViewById(R.id.followingListView);
+        //Read all the images:
+        DatabaseUtil dbHelper = new DatabaseUtil();
+
+//        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, dbHelper.getFollowingNotifications());
+//        ArrayList<String> followingNotificationList =
+        getFollowingNotifications();
+        notificationAdapter = new NotificationCustomAdapter(getContext(), followingList);
+        followingListView.setAdapter(notificationAdapter);
+        return view;
+    }
+
+    public void getFollowingNotifications() {
+        FirebaseFirestore.getInstance().collection("users")
+            .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value,
+                                    @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w("fail", "Listen failed.", e);
+                        return;
+                    }
+
+                    for (QueryDocumentSnapshot doc : value) {
+                        String profilePhoto = (String) doc.getData().get("profilePhoto");
+                        if (profilePhoto != null) {
+                            followingList.add(profilePhoto);
+                            notificationAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+            });
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
