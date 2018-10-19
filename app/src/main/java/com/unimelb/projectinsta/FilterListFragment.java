@@ -216,9 +216,9 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
         }
     }
 
-    public void replaceFragment(Fragment someFragment) {
+    public void replaceFragment(Fragment filterFragment) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, someFragment);
+        transaction.replace(R.id.fragment_container, filterFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }

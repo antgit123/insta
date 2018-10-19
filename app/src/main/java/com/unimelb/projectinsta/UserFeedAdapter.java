@@ -6,6 +6,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.unimelb.projectinsta.likes.LikesFragment;
 import com.unimelb.projectinsta.model.UserFeed;
 
 import java.util.ArrayList;
@@ -31,6 +34,7 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
     ItemClickListener listener;
     DecelerateInterpolator decelerate = new DecelerateInterpolator();
     AccelerateInterpolator accelerate = new AccelerateInterpolator();
+    View userFeedView;
 
     public UserFeedAdapter(Context userFeedContext, ArrayList<UserFeed> userFeed){
         this.userFeedContext = userFeedContext;
@@ -39,7 +43,7 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
     @NonNull
     @Override
     public UserFeedHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View userFeedView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout,null);
+        userFeedView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout,null);
         UserFeedHolder feedHolder = new UserFeedHolder(userFeedView);
         return feedHolder;
     }
@@ -74,6 +78,11 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
                 }
                 if(v.getId() == userFeedHolder.red_heart_icon.getId()){
                     toggleLike(pos,true,userFeedHolder);
+                }
+                if(v.getId() == userFeedHolder.like_by.getId()){
+                    LikesFragment fragment  = new LikesFragment();
+                    MainActivity mainActivity = (MainActivity)userFeedContext;
+                    mainActivity.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
                 }
             }
         });
