@@ -77,15 +77,17 @@ public class ProfileFragment extends Fragment {
     private ImageView profileImageView;
     private UserPojo currentUser = null;
     private GridView gridViewofPost;
+    private ArrayList<String> postedImagesList = new ArrayList<>();
     FirebaseUser user;
     String userId;
+    private FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+    private ProfileViewImageAdapter imageAdapter;
 
     private OnFragmentInteractionListener mListener;
 
     public ProfileFragment() {
         // Required empty public constructor
         user = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseFirestore instadb = FirebaseFirestore.getInstance();
     }
 
     /**
@@ -132,6 +134,7 @@ public class ProfileFragment extends Fragment {
         addUserDetails(profileFragmentView);
         return profileFragmentView;
     }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -210,7 +213,6 @@ public class ProfileFragment extends Fragment {
 
     private void updateUserProfile(UserPojo user, String uri) {
         user.setProfilePhoto(uri);
-        FirebaseFirestore instadb = FirebaseFirestore.getInstance();
         DocumentReference userRef = instadb.collection("users")
                 .document(user.getUserId());
         userRef.set(user);
@@ -218,8 +220,7 @@ public class ProfileFragment extends Fragment {
 
     private void addUserDetails(final View v) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String userId = user.getUid();
-        FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+        userId = user.getUid();
         CollectionReference userDocuments = instadb.collection("users");
         userDocuments.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -229,40 +230,66 @@ public class ProfileFragment extends Fragment {
                     DocumentSnapshot document = task.getResult();
                     Log.i("DB Success", document.getId() + " => " + document.getData());
                     currentUser = document.toObject(UserPojo.class);
-                    TextView name = (TextView) v.findViewById(R.id.profile_name);
-                    TextView posts = (TextView) v.findViewById(R.id.no_of_posts);
-                    TextView followers = (TextView) v.findViewById(R.id.no_of_followers);
-                    TextView followings = (TextView) v.findViewById(R.id.no_of_followings);
-                    ImageView profilePic = v.findViewById(R.id.profile_pic);
-                    int followersValue = currentUser.getFollowerList().size();
-                    int followingValue= currentUser.getFollowingList().size();
-                    String realName = currentUser.getUserRealName();
-                    String url = currentUser.getProfilePhoto();
-                    name.setText(realName);
-                    followers.setText(Integer.toString(followersValue));
-                    followings.setText(Integer.toString(followingValue));
-
-                    if(url != "") {
-                        RequestOptions options = new RequestOptions();
-                        options.centerCrop();
-
-                        Glide.with(ProfileFragment.this)
-                            .load(url)
-                            .apply(options)
-                            .into(profilePic);
-                    }
-
-                    //Read all the images:
-                    DatabaseUtil db = new DatabaseUtil();
-                    ArrayList<String> imageList = db.getImagesPosted(currentUser);
-                    ProfileViewImageAdapter imageAdapter = new ProfileViewImageAdapter(getContext(), imageList);
-                    gridViewofPost.setAdapter(imageAdapter);
+                    addPostedImages(v);
+                    setValuesToProfile(v);
                 } else {
                     Log.i("DB ERROR", "Error getting documents.", task.getException());
                 }
             }
         });
     }
+
+    private void addPostedImages(View view) {
+        postedImagesList = getImagesPosted(view);
+        imageAdapter = new ProfileViewImageAdapter(getContext(), postedImagesList);
+        gridViewofPost.setAdapter(imageAdapter);
+    }
+
+    private ArrayList<String> getImagesPosted(final View view) {
+        CollectionReference feedsDocuments = instadb.collection("feeds");
+        feedsDocuments.whereEqualTo("userId", userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    //retrieve user Details
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        postedImagesList.add((String) document.get("photo"));
+                    }
+                    imageAdapter.notifyDataSetChanged();
+                    TextView posts = (TextView)view.findViewById(R.id.no_of_posts);
+                    posts.setText((Integer.toString(postedImagesList.size())));
+                }
+            }
+        });
+
+        return postedImagesList;
+
+    }
+
+    private void setValuesToProfile(View view) {
+        TextView name = (TextView) view.findViewById(R.id.profile_name);
+        TextView followers = (TextView) view.findViewById(R.id.no_of_followers);
+        TextView followings = (TextView) view.findViewById(R.id.no_of_followings);
+        ImageView profilePic = view.findViewById(R.id.profile_pic);
+        int followersValue = currentUser.getFollowerList().size();
+        int followingValue= currentUser.getFollowingList().size();
+        String realName = currentUser.getUserRealName();
+        String url = currentUser.getProfilePhoto();
+        name.setText(realName);
+        followers.setText(Integer.toString(followersValue));
+        followings.setText(Integer.toString(followingValue));
+
+        if(url != "") {
+            RequestOptions options = new RequestOptions();
+            options.centerCrop();
+
+            Glide.with(ProfileFragment.this)
+                    .load(url)
+                    .apply(options)
+                    .into(profilePic);
+        }
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

@@ -64,7 +64,7 @@ public class LikesArrayAdapter extends RecyclerView.Adapter<LikesHolder> {
             }
         });
     }
-    
+
     @Override
     public int getItemCount() {
         return userList.size();
