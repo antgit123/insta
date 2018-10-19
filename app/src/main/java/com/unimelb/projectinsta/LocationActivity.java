@@ -296,16 +296,16 @@ public class LocationActivity extends AppCompatActivity implements LocationListe
                     @Override
                     public void onSuccess(Uri uri) {
                         Log.d("test", "onSuccess: uri= "+ uri.toString());
-                        savePost(uri.toString());
+                        savePost(uri.toString(), caption, myLocation);
                     }
                 });
             }
         });
     }
 
-    private void savePost(String string) {
+    private void savePost(String uri, String caption, Location location) {
         DatabaseUtil databaseUtil = new DatabaseUtil(LocationActivity.this);
-        databaseUtil.savePost(string);
+        databaseUtil.savePost(uri, caption, location);
 
     }
 

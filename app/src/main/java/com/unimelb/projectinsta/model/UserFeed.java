@@ -9,7 +9,7 @@ import java.util.List;
 public class UserFeed {
     private UserPojo user;
     private String photo;
-    private String location;
+    private Location location;
     private String caption;
     private Date date;
     private List<Like> likeList = new ArrayList<>();
@@ -21,7 +21,7 @@ public class UserFeed {
 
     }
 
-    public UserFeed(UserPojo user, String photo, String location, String caption, Date date, Like like, Comment comment, int feed_Id) {
+    public UserFeed(UserPojo user, String photo, Location location, String caption, Date date, Like like, Comment comment, int feed_Id) {
         this.user = user;
         this.photo = photo;
         this.location = location;
@@ -48,11 +48,11 @@ public class UserFeed {
         this.photo = photo;
     }
 
-    public String getLocation() {
+    public Location getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
 

@@ -2,6 +2,7 @@ package com.unimelb.projectinsta.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -87,11 +88,12 @@ public class DatabaseUtil {
     }
 
 
-    public void savePost(String uri) {
+    public void savePost(String uri, String caption, Location location) {
         Log.d("test", "savePost: "+userID);
         UserFeed feed = new UserFeed();
         feed.setPhoto(uri);
-
+        feed.setCaption(caption);
+        feed.setLocation(location);
         CollectionReference userDocuments = instadb.collection("users");
         //query to fetch logged in user doc, get users following list and check with feeds
         userDocuments.whereEqualTo("userId",userID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
