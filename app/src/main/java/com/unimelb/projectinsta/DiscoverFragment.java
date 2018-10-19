@@ -7,6 +7,14 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.unimelb.projectinsta.model.UserPojo;
+
+import java.util.List;
 
 
 /**
@@ -16,7 +24,6 @@ import android.view.ViewGroup;
  * to handle interaction events.
  * Use the {@link DiscoverFragment#newInstance} factory method to
  * create an instance of this fragment.
- *
  */
 public class DiscoverFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -27,8 +34,16 @@ public class DiscoverFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private ListView listView;
+    public FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+    private List<UserPojo> mUserList;
+    private List<UserPojo> mSuggestList;
 
     private OnFragmentInteractionListener mListener;
+
+    public DiscoverFragment() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -47,9 +62,6 @@ public class DiscoverFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-    public DiscoverFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,7 +76,18 @@ public class DiscoverFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_discover, container, false);
+        View view= inflater.inflate(R.layout.fragment_discover, container, false);
+        listView=view.findViewById(R.id.list_view);
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+
+
+
+
+
+        return view;
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

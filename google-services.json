@@ -15,6 +15,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "794629674870-50qto4kbnasumg4k7u6l2dd7g9radj9n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.unimelb.projectinsta",
+            "certificate_hash": "3a61bc731f9b9a97cce5483844ee1820621ea9c5"
+          }
+        },
+        {
+          "client_id": "794629674870-v0tb2jmt23hl06bea0ak7th1flb7jipp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.unimelb.projectinsta",
+            "certificate_hash": "19e392003fae4923eb4850d04fd24c947e0c86e3"
+          }
+        },
+        {
+          "client_id": "794629674870-4a7atl6ufupohu8s16vsckenebdg2udl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.unimelb.projectinsta",
+            "certificate_hash": "84f144049ff5fedc88ae078d724988f2a68645bc"
+          }
+        },
+        {
           "client_id": "794629674870-88gl7hhsu0t9nij6m1ja78curlvs58pb.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +53,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "794629674870-88gl7hhsu0t9nij6m1ja78curlvs58pb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

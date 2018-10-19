@@ -3,10 +3,17 @@ package com.unimelb.projectinsta;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -16,7 +23,6 @@ import android.view.ViewGroup;
  * to handle interaction events.
  * Use the {@link SearchDiscover#newInstance} factory method to
  * create an instance of this fragment.
- *
  */
 public class SearchDiscover extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -29,6 +35,10 @@ public class SearchDiscover extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    public SearchDiscover() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -47,9 +57,6 @@ public class SearchDiscover extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-    public SearchDiscover() {
-        // Required empty public constructor
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,7 +71,21 @@ public class SearchDiscover extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search_discover, container, false);
+        View view = inflater.inflate(R.layout.fragment_search_discover, container, false);
+        ViewPager viewPager = (ViewPager) view.findViewById(R.id.searchDiscoverViewpager);
+        setupViewPager(viewPager);
+        // Set Tabs inside Toolbar
+        TabLayout tabs = (TabLayout) view.findViewById(R.id.searchDiscoverResult_tabs);
+        tabs.setupWithViewPager(viewPager);
+
+        return view;
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        Adapter adapter = new Adapter(getChildFragmentManager());
+        adapter.addFragment(new SearchFragment(), "Search Users");
+        adapter.addFragment(new YouFragment(), "You");
+        viewPager.setAdapter(adapter);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -104,5 +125,34 @@ public class SearchDiscover extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    static class Adapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public Adapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(android.support.v4.app.Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
     }
 }
