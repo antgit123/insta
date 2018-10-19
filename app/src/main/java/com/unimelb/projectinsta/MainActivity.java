@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         ProfileFragment.OnFragmentInteractionListener, UploadFragment.OnPhotoListener,
         LikesFragment.OnListFragmentInteractionListener,
         NotificationFragment.OnFragmentInteractionListener, FollowingFragment.OnFragmentInteractionListener,
-        YouFragment.OnFragmentInteractionListener{
+        YouFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener {
 
     static
     {
@@ -48,7 +48,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                     fragmentTransaction.replace(R.id.fragment_container, home).addToBackStack(null).commit();
                     return true;
                 case R.id.navigation_dashboard:
-                   // mTextMessage.setText(R.string.title_dashboard);
+                    Fragment search = new SearchFragment();
+                    fragmentTransaction.replace(R.id.fragment_container, search).addToBackStack(null).commit();
                     return true;
                 case R.id.navigation_notifications:
                     fragmentTransaction.replace(R.id.fragment_container, new NotificationFragment()).addToBackStack(null).commit();

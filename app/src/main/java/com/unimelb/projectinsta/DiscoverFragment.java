@@ -3,35 +3,22 @@ package com.unimelb.projectinsta;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.unimelb.projectinsta.util.DatabaseUtil;
-
-import java.util.ArrayList;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link FollowingFragment.OnFragmentInteractionListener} interface
+ * {@link DiscoverFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link FollowingFragment#newInstance} factory method to
+ * Use the {@link DiscoverFragment#newInstance} factory method to
  * create an instance of this fragment.
+ *
  */
-public class FollowingFragment extends Fragment {
+public class DiscoverFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -42,13 +29,6 @@ public class FollowingFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-    private ListView followingListView;
-    ArrayList<String> followingList = new ArrayList<>();
-    NotificationCustomAdapter notificationAdapter;
-
-    public FollowingFragment() {
-        // Required empty public constructor
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -56,16 +36,19 @@ public class FollowingFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment FollowingFragment.
+     * @return A new instance of fragment DiscoverFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FollowingFragment newInstance(String param1, String param2) {
-        FollowingFragment fragment = new FollowingFragment();
+    public static DiscoverFragment newInstance(String param1, String param2) {
+        DiscoverFragment fragment = new DiscoverFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
+    }
+    public DiscoverFragment() {
+        // Required empty public constructor
     }
 
     @Override
@@ -81,42 +64,7 @@ public class FollowingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_following, container, false);
-
-
-        followingListView = view.findViewById(R.id.followingListView);
-        //Read all the images:
-        DatabaseUtil dbHelper = new DatabaseUtil();
-
-//        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, dbHelper.getFollowingNotifications());
-//        ArrayList<String> followingNotificationList =
-        getFollowingNotifications();
-        notificationAdapter = new NotificationCustomAdapter(getContext(), followingList);
-        followingListView.setAdapter(notificationAdapter);
-        return view;
-    }
-
-    public void getFollowingNotifications() {
-        FirebaseFirestore.getInstance().collection("users")
-            .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot value,
-                                    @Nullable FirebaseFirestoreException e) {
-                    if (e != null) {
-                        Log.w("fail", "Listen failed.", e);
-                        return;
-                    }
-
-                    for (QueryDocumentSnapshot doc : value) {
-                        String profilePhoto = (String) doc.getData().get("profilePhoto");
-                        if (profilePhoto != null) {
-                            followingList.add(profilePhoto);
-                            notificationAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-            });
-
+        return inflater.inflate(R.layout.fragment_discover, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

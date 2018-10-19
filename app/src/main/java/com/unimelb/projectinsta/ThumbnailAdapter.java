@@ -26,6 +26,7 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailHolder> {
         this.listener = listener;
     }
 
+
     @NonNull
     @Override
     public ThumbnailHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {

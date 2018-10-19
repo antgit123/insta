@@ -69,7 +69,8 @@
 
     <!-- Firebase database fields -->
     <string name="dbname_users">users</string>
-    <string name="field_username">username</string>
+    <string name="field_username">userName</string>
+    <string name="field_userid">userId</string>
 
     <string name="gallery">Gallery</string>
     <string name="photo">Photo</string>

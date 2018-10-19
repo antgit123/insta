@@ -3,9 +3,7 @@ package com.unimelb.projectinsta;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,26 +12,23 @@ import android.view.ViewGroup;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ActivityFeed.OnFragmentInteractionListener} interface
+ * {@link SearchDiscover.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ActivityFeed#newInstance} factory method to
+ * Use the {@link SearchDiscover#newInstance} factory method to
  * create an instance of this fragment.
+ *
  */
-public class ActivityFeed extends Fragment{
-
+public class SearchDiscover extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-
-    public ActivityFeed() {
-        // Required empty public constructor
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -41,16 +36,19 @@ public class ActivityFeed extends Fragment{
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ActivityFeed.
+     * @return A new instance of fragment SearchDiscover.
      */
     // TODO: Rename and change types and number of parameters
-    public static ActivityFeed newInstance(String param1, String param2) {
-        ActivityFeed fragment = new ActivityFeed();
+    public static SearchDiscover newInstance(String param1, String param2) {
+        SearchDiscover fragment = new SearchDiscover();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
+    }
+    public SearchDiscover() {
+        // Required empty public constructor
     }
 
     @Override
@@ -66,10 +64,7 @@ public class ActivityFeed extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        ViewGroup rootView = (ViewGroup) inflater.inflate(
-                R.layout.fragment_activity_feed, container, false);
-
-        return rootView;
+        return inflater.inflate(R.layout.fragment_search_discover, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -110,7 +105,4 @@ public class ActivityFeed extends Fragment{
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
-
 }

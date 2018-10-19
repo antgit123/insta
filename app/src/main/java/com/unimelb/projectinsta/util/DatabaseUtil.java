@@ -89,32 +89,52 @@ public class DatabaseUtil {
 
 
     public void savePost(String uri, String caption, Location location) {
-        Log.d("test", "savePost: " + userID);
-        UserFeed feed = new UserFeed();
+        Log.d("test", "savePost: "+userID);
+        final UserFeed feed = new UserFeed();
         feed.setPhoto(uri);
         feed.setCaption(caption);
         feed.setLocation(location);
         feed.setUserId(userID);
+        int n = 1000;
+        final int feedId = new Random().nextInt(n);
         CollectionReference userDocuments = instadb.collection("users");
+        userDocuments.document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+           @Override
+           public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+               if (task.isSuccessful()) {
+                   //retrieve user Details
+                   DocumentSnapshot document = task.getResult();
+                   Log.i("DB Success", document.getId() + " => " + document.getData());
+                   loggedInUser = document.toObject(UserPojo.class);
+                   feed.setUser(loggedInUser);
+                   feed.setDate(new Date());
+                   feed.setFeed_Id(feedId);
+                   FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+                   instadb.collection("feeds").document(String.valueOf(feedId)).set(feed);
+               }
+           }
+       });
+
         //query to fetch logged in user doc, get users following list and check with feeds
-        userDocuments.whereEqualTo("userId", userID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    //retrieve user Details
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.i("DB Success", document.getId() + " => " + document.getData());
-                        final List<UserPojo> followingUsers = new ArrayList<>();
-                        loggedInUser = returnUser(document);
-                        Log.i("Logged User", loggedInUser.getEmail());
-                    }
-                } else {
-                    Log.i("DB ERROR", "Error getting documents.", task.getException());
-                }
-            }
-        });
-        feed.setUser(loggedInUser);
-        feed.setDate(new Date());
+
+//        userDocuments.whereEqualTo("userId",userID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    //retrieve user Details
+//                    for (QueryDocumentSnapshot document : task.getResult()) {
+//                        Log.i("DB Success", document.getId() + " => " + document.getData());
+//                        final List<UserPojo> followingUsers = new ArrayList<>();
+//                        loggedInUser = returnUser(document);
+//                        Log.i("Logged User",loggedInUser.getEmail());
+//                    }
+//                } else {
+//                    Log.i("DB ERROR", "Error getting documents.", task.getException());
+//                }
+//            }
+//        });
+
+
     }
 
     public UserPojo returnUser(DocumentSnapshot userDoc) {
