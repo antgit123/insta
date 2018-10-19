@@ -9,7 +9,7 @@
                     android:textSize="25sp"
                     android:textColor="@color/black"
                     android:layout_marginStart="100dp"
-                    android:text="Discover people"
+                    android:text="Suggested Users"
                     android:textStyle="normal"
                     android:layout_marginLeft="15sp"/>
                 <ImageView
