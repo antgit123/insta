@@ -2,6 +2,7 @@ package com.unimelb.projectinsta.model;
 
 import android.location.Location;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,71 +10,31 @@ public class UserFeed {
     private UserPojo user;
     private String photo;
     private Location location;
-    private String hashtag;
+    private String caption;
     private Date date;
-    private List<Like> likeList;
-    private List<Comment> commentList;
+    private List<Like> likeList = new ArrayList<>();
+    private List<Comment> commentList = new ArrayList<>();
     private int feed_Id;
     private int comments;
-
-
-    private String m_UserName;
-    private String m_Location;
-    private int m_Img;
-    private String m_Description;
 
     public UserFeed(){
 
     }
 
-    public UserFeed(String userName, String location, int image_resource, String description){
-        this.m_UserName = userName;
-        this.m_Location = location;
-        this.m_Img = image_resource;
-        this.m_Description = description;
+    public UserFeed(UserPojo user,String location,int resid,String description){
+        this.user = user;
+
     }
 
-    public UserFeed(UserPojo user, String photo, Location location, String hashtag, Date date, List<Like> likeList, List<Comment> commentList, String m_Description) {
+    public UserFeed(UserPojo user, String photo, Location location, String caption, Date date, Like like, Comment comment, int feed_Id) {
         this.user = user;
         this.photo = photo;
         this.location = location;
-        this.hashtag = hashtag;
+        this.caption = caption;
         this.date = date;
-        this.likeList = likeList;
-        this.commentList = commentList;
-        this.m_Description = m_Description;
-    }
-
-    public String getM_UserName() {
-        return m_UserName;
-    }
-
-    public void setM_UserName(String m_UserName) {
-        this.m_UserName = m_UserName;
-    }
-
-    public int getM_Img() {
-        return m_Img;
-    }
-
-    public void setM_Img(int m_Img) {
-        this.m_Img = m_Img;
-    }
-
-    public String getM_Description() {
-        return m_Description;
-    }
-
-    public void setM_Description(String m_Description) {
-        this.m_Description = m_Description;
-    }
-
-    public String getM_Location() {
-        return m_Location;
-    }
-
-    public void setM_Location(String m_Location) {
-        this.m_Location = m_Location;
+        this.likeList.add(like);
+        this.commentList.add(comment);
+        this.feed_Id = feed_Id;
     }
 
     public UserPojo getUser() {
@@ -100,12 +61,12 @@ public class UserFeed {
         this.location = location;
     }
 
-    public String getHashtag() {
-        return hashtag;
+    public String getCaption() {
+        return caption;
     }
 
-    public void setHashtag(String hashtag) {
-        this.hashtag = hashtag;
+    public void setCaption(String caption) {
+        this.caption = caption;
     }
 
     public Date getDate() {
@@ -120,16 +81,44 @@ public class UserFeed {
         return likeList;
     }
 
-    public void setLikeList(List<Like> likeList) {
-        this.likeList = likeList;
+    public void addLikeList(Like like) {
+        this.likeList.add(like);
     }
 
     public List<Comment> getCommentList() {
         return commentList;
     }
 
-    public void setCommentList(List<Comment> commentList) {
-        this.commentList = commentList;
+    public void addCommentList(Comment comment) {
+        this.commentList.add(comment);
+    }
+
+    public int getFeed_Id() {
+        return feed_Id;
+    }
+
+    public void setFeed_Id(int feed_Id) {
+        this.feed_Id = feed_Id;
+    }
+
+    public int getComments() {
+        return commentList.size();
+    }
+
+
+    @Override
+    public String toString() {
+        return "UserFeed{" +
+                "user=" + user +
+                ", photo='" + photo + '\'' +
+                ", location='" + location + '\'' +
+                ", caption='" + caption + '\'' +
+                ", date=" + date +
+                ", likeList=" + likeList +
+                ", commentList=" + commentList +
+                ", feed_Id=" + feed_Id +
+                ", comments=" + comments +
+                '}';
     }
 }
 

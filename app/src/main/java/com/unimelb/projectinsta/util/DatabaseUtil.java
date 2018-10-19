@@ -2,6 +2,7 @@ package com.unimelb.projectinsta.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,7 +25,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -41,9 +44,7 @@ import java.util.Random;
 
 public class DatabaseUtil {
 
-    DatabaseReference db= FirebaseDatabase.getInstance().getReference();;
-//    StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-    ArrayList<String> imageList = new ArrayList<>();
+    private ArrayList<String> imageList = new ArrayList<>();
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mFirebaseDatabase;
@@ -53,6 +54,8 @@ public class DatabaseUtil {
     private Context mContext;
     public UserPojo loggedInUser = new UserPojo();
     public FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+    private ArrayList<String> followingNotificationList = new ArrayList<>();
+    private ArrayList<UserPojo> allUsers = new ArrayList<>();
 
     public DatabaseUtil() {
 //        this.db = db;
@@ -80,35 +83,56 @@ public class DatabaseUtil {
     private void fetchData(UserPojo user) {
         for(int i=0;i<10;i++){
             imageList.add(user.getProfilePhoto());
+//            followingNotificationList.add(user.getProfilePhoto());
         }
     }
 
 
-    public void savePost(String uri) {
+    public void savePost(String uri, String caption, Location location) {
         Log.d("test", "savePost: "+userID);
-        UserFeed feed = new UserFeed();
+        final UserFeed feed = new UserFeed();
         feed.setPhoto(uri);
-
+        feed.setCaption(caption);
+        feed.setLocation(location);
+        int n = 1000;
+        final int feedId = new Random().nextInt(n);
         CollectionReference userDocuments = instadb.collection("users");
+        userDocuments.document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+           @Override
+           public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+               if (task.isSuccessful()) {
+                   //retrieve user Details
+                   DocumentSnapshot document = task.getResult();
+                   Log.i("DB Success", document.getId() + " => " + document.getData());
+                   loggedInUser = document.toObject(UserPojo.class);
+                   feed.setUser(loggedInUser);
+                   feed.setDate(new Date());
+                   feed.setFeed_Id(feedId);
+                   FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+                   instadb.collection("feeds").document(String.valueOf(feedId)).set(feed);
+               }
+           }
+       });
+
         //query to fetch logged in user doc, get users following list and check with feeds
-        userDocuments.whereEqualTo("userId",userID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    //retrieve user Details
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.i("DB Success", document.getId() + " => " + document.getData());
-                        final List<UserPojo> followingUsers = new ArrayList<>();
-                        loggedInUser = returnUser(document);
-                        Log.i("Logged User",loggedInUser.getEmail());
-                    }
-                } else {
-                    Log.i("DB ERROR", "Error getting documents.", task.getException());
-                }
-            }
-        });
-        feed.setUser(loggedInUser);
-        feed.setDate(new Date());
+//        userDocuments.whereEqualTo("userId",userID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    //retrieve user Details
+//                    for (QueryDocumentSnapshot document : task.getResult()) {
+//                        Log.i("DB Success", document.getId() + " => " + document.getData());
+//                        final List<UserPojo> followingUsers = new ArrayList<>();
+//                        loggedInUser = returnUser(document);
+//                        Log.i("Logged User",loggedInUser.getEmail());
+//                    }
+//                } else {
+//                    Log.i("DB ERROR", "Error getting documents.", task.getException());
+//                }
+//            }
+//        });
+
+
     }
     public UserPojo returnUser(DocumentSnapshot userDoc){
         if(userDoc.getData().get("userId") != null) {
@@ -122,5 +146,48 @@ public class DatabaseUtil {
             return user;
         }
         return null;
+    }
+
+    public ArrayList<String> getFollowingNotifications() {
+//        fetchData(loggedInUser);
+        instadb.collection("users")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w("fail", "Listen failed.", e);
+                            return;
+                        }
+
+                        for (QueryDocumentSnapshot doc : value) {
+                            String profilePhoto = (String) doc.getData().get("profilePhoto");
+                            if (profilePhoto != null) {
+                                followingNotificationList.add(profilePhoto);
+                            }
+                        }
+                    }
+                });
+
+
+        return followingNotificationList;
+    }
+
+    public ArrayList<UserPojo> getUsersList() {
+        instadb.collection("users").get()
+            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+
+                            allUsers.add(document.toObject(UserPojo.class));
+                        }
+                    } else {
+                        Log.d("failed", "Error getting documents: ", task.getException());
+                    }
+                }
+            });
+        return allUsers;
     }
 }

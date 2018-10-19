@@ -1,9 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:weightSum="100"
+    android:orientation="vertical"
     tools:context=".LocationActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="40"
+        android:src="@drawable/com_facebook_profile_picture_blank_square" />
+
+    <EditText
+        android:id="@+id/caption"
+        android:layout_width="match_parent"
+        android:layout_height="92dp"
+        android:layout_weight="20"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Caption" />
+
+    <EditText
+        android:id="@+id/location_info"
+        style="?android:attr/text"
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:text="location detail" />
+
+    <Button
+        android:id="@+id/button_share"
+        style="?android:textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="18dp"
+        android:layout_marginBottom="5dp"
+        android:layout_weight="10"
+        android:background="@color/fui_bgTwitter"
+        android:onClick="share"
+        android:text="@string/string_share"
+        android:textStyle="bold"
+        android:theme="@style/Widget.MaterialComponents.Button" />
+
+
+</LinearLayout>

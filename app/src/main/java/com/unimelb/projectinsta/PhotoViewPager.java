@@ -60,8 +60,7 @@ import java.util.List;
 import java.util.Random;
 
 public class PhotoViewPager extends AppCompatActivity implements FilterListFragment.FiltersListFragmentListener,
-        EditPhotoFragment.EditPhotoFragmentListener,ActivityCompat.OnRequestPermissionsResultCallback,
-        LocationCaptionFragment.OnFragmentInteractionListener{
+        EditPhotoFragment.EditPhotoFragmentListener,ActivityCompat.OnRequestPermissionsResultCallback{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -74,10 +73,7 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
     private SectionsPagerAdapter mSectionsPagerAdapter;
     public byte[] bitmapArray;
     public Bitmap imageBitmap;
-    private LocationManager locationManager;
-    private LocationListener locationListener;
-    private Location myLocation;
-    public String address;
+
 
     Bitmap originalImage;
     Bitmap filteredImage;
@@ -126,75 +122,6 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         }
         filterPhotoView.setImageBitmap(imageBitmap);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                Log.d("location", "onLocationChanged: "+ location);
-                myLocation = location;
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-
-            }
-        };
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-        }else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-            myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            /*if (locationManager != null){
-                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            }*/
-        }
-        address = getAddreess(myLocation);
-        //TextView locationDetail = findViewById(R.id.location_info);
-        //locationDetail.setText(address);
-
-        // Set up the action bar.
-//        final ActionBar actionBar = getActionBar();
-//        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        // When swiping between different sections, select the corresponding
-        // tab. We can also use ActionBar.Tab#select() to do this if we have
-        // a reference to the Tab.
-//        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-//            @Override
-//            public void onPageSelected(int position) {
-//                actionBar.setSelectedNavigationItem(position);
-//            }
-//        });
-
-        // For each of the sections in the app, add a tab to the action bar.
-//        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-//            // Create a tab with text corresponding to the page title defined by
-//            // the adapter. Also specify this Activity object, which implements
-//            // the TabListener interface, as the callback (listener) for when
-//            // this tab is selected.
-//            actionBar.addTab(
-//                    actionBar.newTab()
-//                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-//                            .setTabListener(this));
-//        }
-
     }
 
     public void requestWritePermission() {
@@ -218,79 +145,6 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             BitmapUtils.insertImage(getContentResolver(),originalImage,System.currentTimeMillis() + "_pic.jpg", null);
         }
-        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-            }
-        }
-    }
-
-    private String getAddreess(Location location){
-        try {
-            Geocoder geocoder = new Geocoder(this);
-            List<Address> addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(),1);
-            String city = addressList.get(0).getLocality();
-            String country = addressList.get(0).getCountryName();
-            return country + ", "+city;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    @Override
-    public String onFragmentInteraction() {
-        return address;
-    }
-
-    public void share(View view) {
-        Log.d("test", "share: ");
-        savePost("test");
-        ImageView imageView = view.findViewById(R.id.imageView);
-        Bitmap bm=((BitmapDrawable)imageView.getDrawable()).getBitmap();
-        encodeBitmapAndSaveToFirebase(bm);
-
-    }
-    public void encodeBitmapAndSaveToFirebase(Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG,80,baos);
-        byte[] data = baos.toByteArray();
-        final UploadTask uploadtask;
-        int n = 100;
-        n = new Random().nextInt(n);
-        String fname = "Image-" + n ;
-        String path = "images/"+fname;
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        StorageReference imageRef = storageRef.child(path);
-
-        uploadtask = imageRef.putBytes(data);
-        uploadtask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-                Log.i("PHOTO FAIL", "Upload Failed");
-
-
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Log.d("test", "onSuccess: uri= "+ uri.toString());
-                        savePost(uri.toString());
-                    }
-                });
-            }
-        });
-    }
-
-    private void savePost(String string) {
-        DatabaseUtil databaseUtil = new DatabaseUtil(PhotoViewPager.this);
-        databaseUtil.savePost(string);
-
     }
 
     @Override
@@ -320,6 +174,15 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         if (id == R.id.crop_existing_photo){
             performCrop(clickedImageUri);
             return true;
+        }
+        if(id == R.id.next_edit_action){
+            //send final image to share Activity
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            finalImage.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+            byte[] byteArray = stream.toByteArray();
+            Intent shareActivity = new Intent(this,LocationActivity.class);
+            shareActivity.putExtra("shareImage",byteArray);
+            startActivity(shareActivity);
         }
 
         return super.onOptionsItemSelected(item);

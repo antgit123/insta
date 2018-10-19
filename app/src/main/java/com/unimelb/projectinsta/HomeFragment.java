@@ -202,10 +202,12 @@ public class HomeFragment extends Fragment {
 
     public ArrayList<UserFeed> getUserFeeds(){
         ArrayList<UserFeed> users=new ArrayList<>();
-        UserFeed u1=new UserFeed("ant1992","Melbourne, Australia",R.drawable.com_facebook_profile_picture_blank_portrait,"pehla");
-        users.add(u1);
-        UserFeed u2 = new UserFeed("sinsek1","Auckland,New Zealand",R.drawable.messenger_bubble_large_blue,"dusra");
-        users.add(u2);
+        UserPojo u1 = new UserPojo("ant_1192","ant_192" , "Ant", "Ant.mav@gmail.com", "abc123");
+        UserPojo u2 = new UserPojo("sin_1991","sin_1991" , "Sindhu", "sin.mav@gmail.com", "abc123");
+        UserFeed u1f=new UserFeed(u1,"Melbourne, Australia",R.drawable.com_facebook_profile_picture_blank_portrait,"pehla");
+        users.add(u1f);
+        UserFeed u2f = new UserFeed(u2,"Auckland,New Zealand",R.drawable.messenger_bubble_large_blue,"dusra");
+        users.add(u2f);
         return users;
     }
 

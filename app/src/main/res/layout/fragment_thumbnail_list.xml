@@ -29,14 +29,4 @@
         tools:context=".FilterListFragment"
         tools:listitem="@layout/thumbnail_items" />
 
-    <Button
-        android:id="@+id/button_next"
-        style="?android:textAppearanceSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/string_next"
-        android:theme="@style/Widget.MaterialComponents.Button"
-        android:background="@color/fui_bgTwitter"
-        android:textStyle="bold" />
 </LinearLayout>
