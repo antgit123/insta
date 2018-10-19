@@ -92,7 +92,7 @@ public class DiscoverFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_discover, container, false);
-        listView=view.findViewById(R.id.list_view);
+        listView=view.findViewById(R.id.suggestlist);
         getSuggestedUsers();
 
 
@@ -113,6 +113,7 @@ public class DiscoverFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         allUserList=new ArrayList<UserPojo>();
         mSuggestList=new ArrayList<UserPojo>();
+        mFollowingList=new ArrayList<String>();
         String userId = user.getUid();
 
 
@@ -143,26 +144,29 @@ public class DiscoverFragment extends Fragment {
                         //mUserList.add(documentSnapshot.toObject(UserPojo.class));
                         allUserList.add(documentSnapshot.toObject(UserPojo.class));
                     }
-                }
+                    for (int i = 0; i < allUserList.size(); i++) {
+                        if (allUserList.get(i).getUserName().equals(currentUser.getUserName())) {
+                            continue;
+                        } else if (mFollowingList.contains(allUserList.get(i).getUserId())) {
+                            continue;
+                        } else {
+                            List<String> templist = new ArrayList<String>(allUserList.get(i).getFollowingList());
+                            templist.retainAll(mFollowingList);
+                            if (templist != null) {
+                                if (templist.size() >= required_common_following) {
+                                    mSuggestList.add(allUserList.get(i));
+                                    updateSuggestionList();
+                                }
+                            }
+                        }
                     }
+                }
+
+                    }
+
         });
 
-    for (int i = 0; i < allUserList.size(); i++) {
-        if (allUserList.get(i) == currentUser) {
-            continue;
-        } else if (mFollowingList.contains(allUserList.get(i))) {
-            continue;
-        } else {
-            List<String> templist = new ArrayList<String>(allUserList.get(i).getFollowingList());
-            templist.retainAll(mFollowingList);
-            if (templist != null) {
-                if (templist.size() >= required_common_following) {
-                    mSuggestList.add(allUserList.get(i));
-                    updateSuggestionList();
-                }
-            }
-        }
-    }
+
 }
 
 
