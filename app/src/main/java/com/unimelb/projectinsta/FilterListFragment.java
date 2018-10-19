@@ -32,7 +32,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class FilterListFragment extends Fragment implements  ThumbnailAdapter.ThumbnailImageListener, View.OnClickListener{
+public class FilterListFragment extends Fragment implements  ThumbnailAdapter.ThumbnailImageListener{
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -76,9 +76,9 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_thumbnail_list, container, false);
-        Button nextButton = (Button) view.findViewById(R.id.button_next);
+        /*Button nextButton = (Button) view.findViewById(R.id.button_next);
         nextButton.setOnClickListener(this);
-
+*/
 
         // Set the adapter
 //        if (view instanceof RecyclerView) {
@@ -203,7 +203,7 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
         void onFilterSelected(Filter filter);
     }
 
-    @Override
+    /*@Override
     public void onClick(View view) {
         Fragment fragment = null;
         switch (view.getId()) {
@@ -211,15 +211,13 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
                 fragment = new LocationCaptionFragment();
                 replaceFragment(fragment);
                 break;
-            case R.id.button_share:
-                Log.d("caption", "onClick: ");
         }
-    }
+    }*/
 
-    public void replaceFragment(Fragment someFragment) {
+   /* public void replaceFragment(Fragment someFragment) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, someFragment);
         transaction.addToBackStack(null);
         transaction.commit();
-    }
+    }*/
 }
