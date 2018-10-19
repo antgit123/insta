@@ -3,17 +3,28 @@ package com.unimelb.projectinsta;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.unimelb.projectinsta.model.UserPojo;
+import com.unimelb.projectinsta.DiscoverUsersAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -36,8 +47,12 @@ public class DiscoverFragment extends Fragment {
     private String mParam2;
     private ListView listView;
     public FirebaseFirestore instadb = FirebaseFirestore.getInstance();
-    private List<UserPojo> mUserList;
+    private List<String> mFollowingList;
     private List<UserPojo> mSuggestList;
+    private List<UserPojo> allUserList;
+    private UserPojo currentUser = null;
+    private int required_common_following=1;
+    private DiscoverUsersAdapter discoverUsersAdapter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -78,8 +93,11 @@ public class DiscoverFragment extends Fragment {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_discover, container, false);
         listView=view.findViewById(R.id.list_view);
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        getSuggestedUsers();
+
+
+
+
 
 
 
@@ -87,6 +105,76 @@ public class DiscoverFragment extends Fragment {
 
 
         return view;
+
+    }
+
+    private void getSuggestedUsers() {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        allUserList=new ArrayList<UserPojo>();
+        mSuggestList=new ArrayList<UserPojo>();
+        String userId = user.getUid();
+
+
+        CollectionReference FollowingUserDocuments=instadb.collection("users");
+        FollowingUserDocuments.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    //retrieve user Details
+                    DocumentSnapshot document = task.getResult();
+                    currentUser = document.toObject(UserPojo.class);
+                    mFollowingList=currentUser.getFollowingList();
+
+                }
+
+
+                }
+        });
+
+
+        CollectionReference userDocuments = instadb.collection("users");
+        userDocuments.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                        //Log.d("jj", documentSnapshot.getId() + " => " + documentSnapshot.getData());
+                        //mUserList.add(documentSnapshot.toObject(UserPojo.class));
+                        allUserList.add(documentSnapshot.toObject(UserPojo.class));
+                    }
+                }
+                    }
+        });
+
+    for (int i = 0; i < allUserList.size(); i++) {
+        if (allUserList.get(i) == currentUser) {
+            continue;
+        } else if (mFollowingList.contains(allUserList.get(i))) {
+            continue;
+        } else {
+            List<String> templist = new ArrayList<String>(allUserList.get(i).getFollowingList());
+            templist.retainAll(mFollowingList);
+            if (templist != null) {
+                if (templist.size() >= required_common_following) {
+                    mSuggestList.add(allUserList.get(i));
+                    updateSuggestionList();
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+    private void updateSuggestionList() {
+        discoverUsersAdapter = new DiscoverUsersAdapter(getContext(), R.layout.discover_userlist, mSuggestList);
+        listView.setAdapter(discoverUsersAdapter);
+
+
 
     }
 
@@ -128,4 +216,5 @@ public class DiscoverFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 }

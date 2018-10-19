@@ -19,12 +19,6 @@
         android:layout_below="@+id/top_like_bar"
         android:layout_marginBottom="20dp">
 
-        <!--<ListView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:id="@+id/listView_followers">-->
-        <!--</ListView>-->
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/listView_followers"
             android:layout_width="match_parent"

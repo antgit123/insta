@@ -33,6 +33,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.unimelb.projectinsta.model.MyNotificationsPojo;
 import com.unimelb.projectinsta.model.UserFeed;
 import com.unimelb.projectinsta.model.UserPojo;
 
@@ -58,7 +59,14 @@ public class DatabaseUtil {
     private ArrayList<UserPojo> allUsers = new ArrayList<>();
 
     public DatabaseUtil() {
-//        this.db = db;
+        mAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        myRef = mFirebaseDatabase.getReference();
+        mStorageReference = FirebaseStorage.getInstance().getReference();
+
+        if (mAuth.getCurrentUser() != null) {
+            userID = mAuth.getCurrentUser().getUid();
+        }
     }
 
     public DatabaseUtil(Context context) {
@@ -114,41 +122,68 @@ public class DatabaseUtil {
                }
            }
        });
-
-        //query to fetch logged in user doc, get users following list and check with feeds
-
-//        userDocuments.whereEqualTo("userId",userID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    //retrieve user Details
-//                    for (QueryDocumentSnapshot document : task.getResult()) {
-//                        Log.i("DB Success", document.getId() + " => " + document.getData());
-//                        final List<UserPojo> followingUsers = new ArrayList<>();
-//                        loggedInUser = returnUser(document);
-//                        Log.i("Logged User",loggedInUser.getEmail());
-//                    }
-//                } else {
-//                    Log.i("DB ERROR", "Error getting documents.", task.getException());
-//                }
-//            }
-//        });
-
-
     }
 
-    public UserPojo returnUser(DocumentSnapshot userDoc) {
-        if (userDoc.getData().get("userId") != null) {
-            String userId = (String) userDoc.getData().get("userId");
-            String userName = (String) userDoc.getData().get("userName");
-            String realName = (String) userDoc.getData().get("userRealName");
-            String email = (String) userDoc.getData().get("email");
-            String password = (String) userDoc.getData().get("password");
+    public void followFunction(UserPojo follower) {
+        addFollowing(follower);
+        addFollowers(follower);
+    }
 
-            UserPojo user = new UserPojo(userId, userName, realName, email, password);
-            return user;
+    private void addFollowing(final UserPojo user) {
+        if(loggedInUser.getUserId() != null) {
+            updateFollowingList(loggedInUser, user.getUserId());
+        } else {
+            CollectionReference userDocuments = instadb.collection("users");
+            userDocuments.document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        //retrieve user Details
+                        DocumentSnapshot document = task.getResult();
+                        Log.i("DB Success", document.getId() + " => " + document.getData());
+                        loggedInUser = document.toObject(UserPojo.class);
+                        updateFollowingList(loggedInUser, user.getUserId());
+                    }
+                }
+            });
         }
-        return null;
+    }
+
+    private void updateFollowingList(UserPojo user, String followingUserId) {
+        user.getFollowingList().add(followingUserId);
+        DocumentReference userRef = instadb.collection("users")
+                .document(userID);
+        userRef.set(user);
+    }
+
+    private void addFollowers(final UserPojo user) {
+        user.getFollowerList().add(userID);
+        DocumentReference userRef = instadb.collection("users")
+                .document(user.getUserId());
+        userRef.set(user);
+
+        final String type = "follow";
+        if(loggedInUser.getUserId() != null && loggedInUser.getUserRealName() != null) {
+            String feedDescription = loggedInUser.getUserRealName() + " started following you";
+            MyNotificationsPojo notification = new MyNotificationsPojo(user.getUserId(),type, feedDescription, loggedInUser, new Date());
+            instadb.collection("myNotifications").add(notification);
+        } else {
+            CollectionReference userDocuments = instadb.collection("users");
+            userDocuments.document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        //retrieve user Details
+                        DocumentSnapshot document = task.getResult();
+                        Log.i("DB Success", document.getId() + " => " + document.getData());
+                        loggedInUser = document.toObject(UserPojo.class);
+                        String feedDescription = loggedInUser.getUserRealName() + " started following you";
+                        MyNotificationsPojo notification = new MyNotificationsPojo(user.getUserId(),type, feedDescription, loggedInUser, new Date());
+                        instadb.collection("myNotifications").add(notification);
+                    }
+                }
+            });
+        }
     }
 
 }

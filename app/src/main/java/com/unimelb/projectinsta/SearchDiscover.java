@@ -84,7 +84,7 @@ public class SearchDiscover extends Fragment {
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
         adapter.addFragment(new SearchFragment(), "Search Users");
-        adapter.addFragment(new YouFragment(), "You");
+        adapter.addFragment(new DiscoverFragment(), "Discover Users");
         viewPager.setAdapter(adapter);
     }
 
