@@ -21,7 +21,7 @@ public class UserFeed {
 
     }
 
-    public UserFeed(UserPojo user, String photo, String location, String caption, Date date, Like like, Comment comment, int feed_Id, int comments) {
+    public UserFeed(UserPojo user, String photo, String location, String caption, Date date, Like like, Comment comment, int feed_Id) {
         this.user = user;
         this.photo = photo;
         this.location = location;
@@ -30,7 +30,6 @@ public class UserFeed {
         this.likeList.add(like);
         this.commentList.add(comment);
         this.feed_Id = feed_Id;
-        this.comments = comments;
     }
 
     public UserPojo getUser() {
@@ -77,7 +76,7 @@ public class UserFeed {
         return likeList;
     }
 
-    public void setLikeList(Like like) {
+    public void addLikeList(Like like) {
         this.likeList.add(like);
     }
 
@@ -85,7 +84,7 @@ public class UserFeed {
         return commentList;
     }
 
-    public void setCommentList(Comment comment) {
+    public void addCommentList(Comment comment) {
         this.commentList.add(comment);
     }
 
@@ -98,12 +97,9 @@ public class UserFeed {
     }
 
     public int getComments() {
-        return comments;
+        return commentList.size();
     }
 
-    public void setComments(int comments) {
-        this.comments = comments;
-    }
 
     @Override
     public String toString() {
