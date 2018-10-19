@@ -76,10 +76,6 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_thumbnail_list, container, false);
-        /*Button nextButton = (Button) view.findViewById(R.id.button_next);
-        nextButton.setOnClickListener(this);
-*/
-
         // Set the adapter
 //        if (view instanceof RecyclerView) {
 //            Context context = view.getContext();
@@ -202,22 +198,4 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
     public interface FiltersListFragmentListener {
         void onFilterSelected(Filter filter);
     }
-
-    /*@Override
-    public void onClick(View view) {
-        Fragment fragment = null;
-        switch (view.getId()) {
-            case R.id.button_next:
-                fragment = new LocationCaptionFragment();
-                replaceFragment(fragment);
-                break;
-        }
-    }*/
-
-   /* public void replaceFragment(Fragment someFragment) {
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, someFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }*/
 }

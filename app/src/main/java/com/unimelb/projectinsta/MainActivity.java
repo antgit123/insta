@@ -1,6 +1,5 @@
 package com.unimelb.projectinsta;
 
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -19,10 +18,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.unimelb.projectinsta.likes.LikesFragment;
+
 import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener,
         ProfileFragment.OnFragmentInteractionListener, UploadFragment.OnPhotoListener,
+        LikesFragment.OnListFragmentInteractionListener,
         NotificationFragment.OnFragmentInteractionListener, FollowingFragment.OnFragmentInteractionListener,
         YouFragment.OnFragmentInteractionListener{
 
@@ -56,8 +58,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                     fragmentTransaction.replace(R.id.fragment_container, profile).addToBackStack(null).commit();
                     return true;
                 case R.id.navigation_upload:
-//                    UploadFragment uploadFragment = new UploadFragment();
-//                    fragmentTransaction.replace(R.id.fragment_container, uploadFragment).addToBackStack(null).commit();
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, UploadFragment.newInstance()).addToBackStack(null)
                             .commit();
@@ -138,4 +138,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         startActivity(filterEditActivity);
     }
 
+    @Override
+    public void onListFragmentInteraction(String item) {
+
+    }
 }
