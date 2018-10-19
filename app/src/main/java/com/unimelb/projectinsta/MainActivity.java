@@ -14,10 +14,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.unimelb.projectinsta.activityfeeds.YouFragment;
 import com.unimelb.projectinsta.likes.LikesFragment;
 
 import java.io.ByteArrayOutputStream;

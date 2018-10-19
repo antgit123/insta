@@ -3,12 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".YouFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".activityfeeds.YouFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="hello_you_fragment" />
+        android:id="@+id/my_notifications_list_container"
+        android:layout_marginBottom="20dp">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/listView_myNotifications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:clipChildren="false"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:context=".activityfeeds.YouFragment"
+            tools:listitem="@layout/fragment_you_list_item" />
+
+    </RelativeLayout>
+
 
 </FrameLayout>

@@ -18,6 +18,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.unimelb.projectinsta.R;
 import com.unimelb.projectinsta.model.UserPojo;
+import com.unimelb.projectinsta.util.DatabaseUtil;
 
 public class LikesArrayAdapter extends RecyclerView.Adapter<LikesHolder> {
 
@@ -56,48 +57,14 @@ public class LikesArrayAdapter extends RecyclerView.Adapter<LikesHolder> {
         likesHolderObject.userFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            Log.i("debug", userList.get(position).getUserName());
-            addFollowing(userList.get(position));
-            addFollowers(userList.get(position));
+            DatabaseUtil dbHelper = new DatabaseUtil();
+            dbHelper.followFunction(userList.get(position));
             likesHolderObject.userFollowButton.setEnabled(false);
             likesHolderObject.userFollowButton.setText("Following");
             }
         });
     }
-
-    private void addFollowing(final UserPojo user) {
-        if(loggedInUser != null) {
-            updateFollowingList(loggedInUser, user.getUserId());
-        } else {
-            CollectionReference userDocuments = instadb.collection("users");
-            userDocuments.document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        //retrieve user Details
-                        DocumentSnapshot document = task.getResult();
-                        Log.i("DB Success", document.getId() + " => " + document.getData());
-                        loggedInUser = document.toObject(UserPojo.class);
-                        updateFollowingList(loggedInUser, user.getUserId());
-                    }
-                }
-            });
-        }
-    }
-
-    private void updateFollowingList(UserPojo user, String followingUserId) {
-        user.getFollowingList().add(followingUserId);
-        DocumentReference userRef = instadb.collection("users")
-                .document(currentUserId);
-        userRef.set(user);
-    }
-
-    private void addFollowers(UserPojo user) {
-        user.getFollowerList().add(currentUserId);
-        DocumentReference userRef = instadb.collection("users")
-                .document(user.getUserId());
-        userRef.set(user);
-    }
+    
     @Override
     public int getItemCount() {
         return userList.size();
