@@ -12,12 +12,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 import java.util.List;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -73,41 +77,49 @@ public class SearchUsersAdapter extends ArrayAdapter<UserPojo> {
         }
         holder.username.setText(getItem(position).getUserName());
         holder.email.setText(getItem(position).getEmail());
+        Glide.with(getContext())
+                .load(getItem(position).getProfilePhoto())
+                .into(holder.profileimage);
 
-
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseFirestore instadb = FirebaseFirestore.getInstance();
-
-
-        CollectionReference userDocuments = instadb.collection("users");
-
-        //com.google.firebase.firestore.Query query = userDocuments.whereEqualTo("UserId",position);
-        userDocuments.whereEqualTo("UserId",position).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        holder.profileimage.setImageURI(Uri.parse(document.getString("ProfilePhoto")));
-
-                        //Log.d(TAG, document.getId() + " => " + document.getData());
-                    }
-
-
-                    //retrieve user Details
-
-
-
-
-                }
-
-            }
-        });
-
-
-
-
+//        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+//        FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+//
+//
+//        CollectionReference userDocuments = instadb.collection("users");
+//
+//        //com.google.firebase.firestore.Query query = userDocuments.whereEqualTo("UserId",position);
+//        userDocuments.whereEqualTo("UserName",holder.username.toString()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    QuerySnapshot doc = task.getResult();
+//                    for (UserPojo user: task.getResult().toObjects(UserPojo.class)) {
+////                        UserPojo userInfo = document.toObject(UserPojo.class);
+//
+////                        holder.profileimage.setImageURI(Uri.parse(UserInfo.getProfilePhoto()));
+//                        Glide.with(getContext())
+//                                .load(user.getProfilePhoto())
+//                                .into(holder.profileimage);
+//
+//                        //Log.d(TAG, document.getId() + " => " + document.getData());
+//                    }
+//                }
+//            }
+//        });
         return convertView;
+    }
 
+    public UserPojo returnUser(DocumentSnapshot userDoc){
+        if(userDoc.getData().get("userId") != null) {
+            String userId = (String) userDoc.getData().get("userId");
+            String userName = (String) userDoc.getData().get("userName");
+            String realName = (String) userDoc.getData().get("userRealName");
+            String email = (String) userDoc.getData().get("email");
+            String password = (String) userDoc.getData().get("password");
+
+            UserPojo user = new UserPojo(userId, userName, realName, email, password);
+            return user;
+        }
+        return null;
     }
 }

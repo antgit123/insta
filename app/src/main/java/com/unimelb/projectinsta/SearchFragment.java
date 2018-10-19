@@ -2,6 +2,7 @@ package com.unimelb.projectinsta;
 
 import java.util.Locale;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -35,6 +36,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.unimelb.projectinsta.model.UserPojo;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,7 +129,7 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                String text = search_users.getText().toString().toLowerCase(Locale.getDefault());
+                String text = search_users.getText().toString();
                 searchForMatch(text);
 
             }
@@ -183,37 +185,29 @@ public class SearchFragment extends Fragment {
 
         } else {
 
-            FirebaseAuth mAuth = FirebaseAuth.getInstance();
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            //FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
 
             CollectionReference userDocuments = instadb.collection("users");
+
             //myRef.orderBy("name").startAt(searchText).endAt(searchText + "\uf8ff");
             //userDocuments.orderBy("UserName").startAt(keyword).
 
-            userDocuments.orderBy("UserName").startAt(keyword).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            userDocuments.orderBy("userName").startAt(keyword).endAt(keyword+"\uf8ff").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            mUserList.add(document.toObject(UserPojo.class));
+                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                            //Log.d("jj", documentSnapshot.getId() + " => " + documentSnapshot.getData());
+                            //mUserList.add(documentSnapshot.toObject(UserPojo.class));
+                            mUserList.add(documentSnapshot.toObject(UserPojo.class));
+
                             UpdateUsersList();
 
                             //Log.d(TAG, document.getId() + " => " + document.getData());
                         }
-
-
-                        //retrieve user Details
-                        //QuerySnapshot document = task.getResult();
-
-
-                        //UpdateUsersList();
-
-
-
-
                     }
-
                 }
             });
 
@@ -227,12 +221,16 @@ public class SearchFragment extends Fragment {
                 listView.setAdapter(searchUsersAdapter);
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
 
                     }
+
+
                 });
             }
-}
+
+   }
 
 
 
