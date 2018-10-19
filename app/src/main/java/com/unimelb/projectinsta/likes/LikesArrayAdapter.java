@@ -18,11 +18,11 @@ public class LikesArrayAdapter extends RecyclerView.Adapter<LikesHolder> {
     private UserItemListener listener;
     private Context mContext;
 
-    public LikesArrayAdapter(Context likesContext, List<UserPojo> userList, UserItemListener listener){
+    public LikesArrayAdapter(Context likesContext, List<UserPojo> userList){
         this.mContext = likesContext;
         this.userList = userList;
         Log.i("USERList",this.userList.get(0).getEmail());
-        this.listener = listener;
+//        this.listener = listener;
     }
 
     @NonNull

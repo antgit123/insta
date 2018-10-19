@@ -8,6 +8,7 @@ import java.util.List;
 
 public class UserFeed {
     private UserPojo user;
+    private String userId;
     private String photo;
     private Location location;
     private String caption;
@@ -43,6 +44,14 @@ public class UserFeed {
 
     public void setUser(UserPojo user) {
         this.user = user;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getPhoto() {

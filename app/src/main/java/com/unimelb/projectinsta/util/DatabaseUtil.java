@@ -68,7 +68,7 @@ public class DatabaseUtil {
         mStorageReference = FirebaseStorage.getInstance().getReference();
         mContext = context;
 
-        if(mAuth.getCurrentUser() != null){
+        if (mAuth.getCurrentUser() != null) {
             userID = mAuth.getCurrentUser().getUid();
         }
     }
@@ -81,7 +81,7 @@ public class DatabaseUtil {
     }
 
     private void fetchData(UserPojo user) {
-        for(int i=0;i<10;i++){
+        for (int i = 0; i < 10; i++) {
             imageList.add(user.getProfilePhoto());
 //            followingNotificationList.add(user.getProfilePhoto());
         }
@@ -89,14 +89,15 @@ public class DatabaseUtil {
 
 
     public void savePost(String uri, String caption, Location location) {
-        Log.d("test", "savePost: "+userID);
+        Log.d("test", "savePost: " + userID);
         UserFeed feed = new UserFeed();
         feed.setPhoto(uri);
         feed.setCaption(caption);
         feed.setLocation(location);
+        feed.setUserId(userID);
         CollectionReference userDocuments = instadb.collection("users");
         //query to fetch logged in user doc, get users following list and check with feeds
-        userDocuments.whereEqualTo("userId",userID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        userDocuments.whereEqualTo("userId", userID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -105,7 +106,7 @@ public class DatabaseUtil {
                         Log.i("DB Success", document.getId() + " => " + document.getData());
                         final List<UserPojo> followingUsers = new ArrayList<>();
                         loggedInUser = returnUser(document);
-                        Log.i("Logged User",loggedInUser.getEmail());
+                        Log.i("Logged User", loggedInUser.getEmail());
                     }
                 } else {
                     Log.i("DB ERROR", "Error getting documents.", task.getException());
@@ -115,8 +116,9 @@ public class DatabaseUtil {
         feed.setUser(loggedInUser);
         feed.setDate(new Date());
     }
-    public UserPojo returnUser(DocumentSnapshot userDoc){
-        if(userDoc.getData().get("userId") != null) {
+
+    public UserPojo returnUser(DocumentSnapshot userDoc) {
+        if (userDoc.getData().get("userId") != null) {
             String userId = (String) userDoc.getData().get("userId");
             String userName = (String) userDoc.getData().get("userName");
             String realName = (String) userDoc.getData().get("userRealName");
@@ -129,46 +131,4 @@ public class DatabaseUtil {
         return null;
     }
 
-    public ArrayList<String> getFollowingNotifications() {
-//        fetchData(loggedInUser);
-        instadb.collection("users")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value,
-                                        @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.w("fail", "Listen failed.", e);
-                            return;
-                        }
-
-                        for (QueryDocumentSnapshot doc : value) {
-                            String profilePhoto = (String) doc.getData().get("profilePhoto");
-                            if (profilePhoto != null) {
-                                followingNotificationList.add(profilePhoto);
-                            }
-                        }
-                    }
-                });
-
-
-        return followingNotificationList;
-    }
-
-    public ArrayList<UserPojo> getUsersList() {
-        instadb.collection("users").get()
-            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-
-                            allUsers.add(document.toObject(UserPojo.class));
-                        }
-                    } else {
-                        Log.d("failed", "Error getting documents: ", task.getException());
-                    }
-                }
-            });
-        return allUsers;
-    }
 }

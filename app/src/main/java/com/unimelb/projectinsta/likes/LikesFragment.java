@@ -2,6 +2,7 @@ package com.unimelb.projectinsta.likes;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.data.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.unimelb.projectinsta.R;
 import com.unimelb.projectinsta.model.UserPojo;
 
@@ -78,9 +89,7 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
         } else {
             userListView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        LikesArrayAdapter adapter = new LikesArrayAdapter(getContext(),getUserLikes(),this);
-        userListView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        queryUserLikes();
 //        }
         return view;
     }
@@ -103,14 +112,34 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
         mListener = null;
     }
 
-    public List<UserPojo> getUserLikes(){
-        UserPojo u1 = new UserPojo("ant_1192","ant_192" , "Ant", "Ant.mav@gmail.com", "abc123");
-        UserPojo u2 = new UserPojo("sin_1991","sin_1991" , "Sindhu", "sin.mav@gmail.com", "abc123");
-        UserPojo u3 = new UserPojo("tej_1992","tej_1992" , "Tejal", "tej.mav@gmail.com", "abc123");
-        userLikes.add(u1);
-        userLikes.add(u2);
-        userLikes.add(u3);
-        return userLikes;
+    public void queryUserLikes(){
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        final String userId = user.getUid();
+        FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+        final List<UserPojo> users = new ArrayList<>();
+        CollectionReference userDocuments = instadb.collection("users");
+        userDocuments.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    //retrieve user Details
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.i("DB Success", document.getId() + " => " + document.getData());
+
+                        UserPojo user = document.toObject(UserPojo.class);
+                        if(user != null && (user.getUserId() != userId) ) {
+                            users.add(user);
+                        }
+                    }
+                    LikesArrayAdapter adapter = new LikesArrayAdapter(getContext(),users);
+                    userListView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Log.i("Db Users Error", "Error fettching documents.", task.getException());
+                }
+            }
+        });
     }
 
     @Override

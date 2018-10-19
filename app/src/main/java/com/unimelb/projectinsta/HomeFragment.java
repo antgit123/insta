@@ -150,55 +150,78 @@ public class HomeFragment extends Fragment {
         FirebaseUser user = mAuth.getCurrentUser();
         final String userId = user.getUid();
         CollectionReference userDocuments = instadb.collection("users");
+        userDocuments.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+           @Override
+           public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+               if (task.isSuccessful()) {
+                   //retrieve user Details
+                   DocumentSnapshot document = task.getResult();
+                   Log.i("DB Success", document.getId() + " => " + document.getData());
+                   loggedInUser = document.toObject(UserPojo.class);
+//                   for(String follower: loggedInUser.getFollowingList()) {
+//                       CollectionReference userDocuments = instadb.collection("users");
+//                       userDocuments.document(follower).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                           @Override
+//                           public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                               if (task.isSuccessful()) {
+//                                   //retrieve user Details
+//                                   DocumentSnapshot document = task.getResult();
+//                                   Log.i("DB Success", document.getId() + " => " + document.getData());
+//                                   currentUser = d
+//                   }
+
+               }
+           }
+       });
         //query to fetch logged in user doc, get users following list and check with feeds
-        userDocuments.whereEqualTo("userId",userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    //retrieve user Details
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.i("DB Success", document.getId() + " => " + document.getData());
-                        final List<UserPojo> followingUsers = new ArrayList<>();
-                        loggedInUser = returnUser(document);
-                        List<DocumentReference> followingList = (ArrayList<DocumentReference>) document.getData().get("followingList");
-                        mFollowingList = (ArrayList<DocumentReference>) document.getData().get("followingList");
-                        for(DocumentReference userFollowing : followingList){
-                            userFollowing.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                      if(task.isSuccessful()) {
-                                          if (task.getResult().getId() != null) {
-                                              UserPojo followingUser = task.getResult().toObject(UserPojo.class);
-                                              followingUsers.add(followingUser);
-                                          }
-                                      }
-                                }
-                            });
-                        }
-                        loggedInUser.setFollowingList(followingUsers);
-                        getFeeds();
-                        Log.i("Logged User",loggedInUser.getEmail());
-                    }
-                } else {
-                    Log.i("DB ERROR", "Error getting documents.", task.getException());
-                }
-            }
-        });
+//        userDocuments.whereEqualTo("userId",userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    //retrieve user Details
+//                    for (QueryDocumentSnapshot document : task.getResult()) {
+//                        Log.i("DB Success", document.getId() + " => " + document.getData());
+//                        final List<UserPojo> followingUsers = new ArrayList<>();
+//                        loggedInUser = returnUser(document);
+//                        List<DocumentReference> followingList = (ArrayList<DocumentReference>) document.getData().get("followingList");
+//                        mFollowingList = (ArrayList<DocumentReference>) document.getData().get("followingList");
+//                        for(DocumentReference userFollowing : followingList){
+//                            userFollowing.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                                      if(task.isSuccessful()) {
+//                                          if (task.getResult().getId() != null) {
+//                                              UserPojo followingUser = task.getResult().toObject(UserPojo.class);
+//                                              followingUsers.add(followingUser);
+//                                          }
+//                                      }
+//                                }
+//                            });
+//                        }
+//                        loggedInUser.setFollowingList(followingUsers);
+//                        getFeeds();
+//                        Log.i("Logged User",loggedInUser.getEmail());
+//                    }
+//                } else {
+//                    Log.i("DB ERROR", "Error getting documents.", task.getException());
+//                }
+//            }
+//        });
     }
 
-    public UserPojo returnUser(DocumentSnapshot userDoc){
-        if(userDoc.getData().get("userId") != null) {
-            String userId = (String) userDoc.getData().get("userId");
-            String userName = (String) userDoc.getData().get("userName");
-            String realName = (String) userDoc.getData().get("userRealName");
-            String email = (String) userDoc.getData().get("email");
-            String password = (String) userDoc.getData().get("password");
-
-            UserPojo user = new UserPojo(userId, userName, realName, email, password);
-            return user;
-        }
-        return null;
-    }
+//    public UserPojo returnUser(DocumentSnapshot userDoc){
+//        if(userDoc.getData().get("userId") != null) {
+//            String userId = (String) userDoc.getData().get("userId");
+//            String userName = (String) userDoc.getData().get("userName");
+//            String realName = (String) userDoc.getData().get("userRealName");
+//            String email = (String) userDoc.getData().get("email");
+//            String password = (String) userDoc.getData().get("password");
+//
+//            UserPojo user = new UserPojo(userId, userName, realName, email, password);
+//            return user;
+//        }
+//        return null;
+//    }
 
     public ArrayList<UserFeed> getUserFeeds(){
         ArrayList<UserFeed> users=new ArrayList<>();
@@ -212,12 +235,8 @@ public class HomeFragment extends Fragment {
     }
 
     public void getFeeds(){
-        List<UserPojo> following = loggedInUser.getFollowingList();
-        List<String> followingUserIds = new ArrayList<>();
-        for(UserPojo followingUser : following){
-           String uid = followingUser.getUserId();
-           followingUserIds.add(uid);
-        }
+        List<String> followingUserIds = loggedInUser.getFollowingList();
+
         //query feeds
         for(DocumentReference followingDocRef: mFollowingList){
             Query feedQuery = instadb.collection("feeds").whereEqualTo("user",followingDocRef);

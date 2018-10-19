@@ -13,8 +13,8 @@ public class UserPojo {
     private String profilePhoto;
     private String email;
     private String password;
-    private List<UserPojo> followerList;
-    private List<UserPojo> followingList;
+    private List<String> followerList;
+    private List<String> followingList;
 
     public UserPojo(){
 
@@ -26,8 +26,8 @@ public class UserPojo {
         this.userRealName = userRealName;
         this.email = email;
         this.password = password;
-        this.followerList = new ArrayList<UserPojo>();
-        this.followingList = new ArrayList<UserPojo>();
+        this.followerList = new ArrayList<String>();
+        this.followingList = new ArrayList<String>();
     }
 
     public String getUserId() {
@@ -78,19 +78,19 @@ public class UserPojo {
         this.password = password;
     }
 
-    public List<UserPojo> getFollowerList() {
+    public List<String> getFollowerList() {
         return followerList;
     }
 
-    public void setFollowerList(List<UserPojo> followerList) {
+    public void setFollowerList(List<String> followerList) {
         this.followerList = followerList;
     }
 
-    public List<UserPojo> getFollowingList() {
+    public List<String> getFollowingList() {
         return followingList;
     }
 
-    public void setFollowingList(List<UserPojo> followingList) {
+    public void setFollowingList(List<String> followingList) {
         this.followingList = followingList;
     }
 
