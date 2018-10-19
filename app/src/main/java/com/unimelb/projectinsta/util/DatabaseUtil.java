@@ -33,6 +33,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.unimelb.projectinsta.model.MyNotificationsPojo;
 import com.unimelb.projectinsta.model.UserFeed;
 import com.unimelb.projectinsta.model.UserPojo;
 
@@ -155,11 +156,34 @@ public class DatabaseUtil {
         userRef.set(user);
     }
 
-    private void addFollowers(UserPojo user) {
+    private void addFollowers(final UserPojo user) {
         user.getFollowerList().add(userID);
         DocumentReference userRef = instadb.collection("users")
                 .document(user.getUserId());
         userRef.set(user);
+
+        final String type = "follow";
+        if(loggedInUser.getUserId() != null && loggedInUser.getUserRealName() != null) {
+            String feedDescription = loggedInUser.getUserRealName() + " started following you";
+            MyNotificationsPojo notification = new MyNotificationsPojo(user.getUserId(),type, feedDescription, loggedInUser, new Date());
+            instadb.collection("myNotifications").add(notification);
+        } else {
+            CollectionReference userDocuments = instadb.collection("users");
+            userDocuments.document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        //retrieve user Details
+                        DocumentSnapshot document = task.getResult();
+                        Log.i("DB Success", document.getId() + " => " + document.getData());
+                        loggedInUser = document.toObject(UserPojo.class);
+                        String feedDescription = loggedInUser.getUserRealName() + " started following you";
+                        MyNotificationsPojo notification = new MyNotificationsPojo(user.getUserId(),type, feedDescription, loggedInUser, new Date());
+                        instadb.collection("myNotifications").add(notification);
+                    }
+                }
+            });
+        }
     }
 
 }

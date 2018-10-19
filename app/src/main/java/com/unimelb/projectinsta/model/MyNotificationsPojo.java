@@ -7,6 +7,12 @@ public class MyNotificationsPojo {
     private String feedDescription;
     private UserPojo user;
     private Date notificationTimestamp;
+    private String userId;
+
+
+    public MyNotificationsPojo() {
+
+    }
 
     public String getType() {
         return type;
@@ -14,6 +20,14 @@ public class MyNotificationsPojo {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getFeedDescription() {
@@ -40,11 +54,12 @@ public class MyNotificationsPojo {
         this.notificationTimestamp = notificationTimestamp;
     }
 
-    public  MyNotificationsPojo(String type, String feedDescription,UserPojo user, Date notificationTimestamp){
+    public  MyNotificationsPojo(String userId, String type, String feedDescription,UserPojo user, Date notificationTimestamp){
         this.type = type;
         this.feedDescription = feedDescription;
         this.user = user;
         this.notificationTimestamp = notificationTimestamp;
+        this.userId = userId;
 
     }
 }

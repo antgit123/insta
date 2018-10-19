@@ -3,12 +3,20 @@ package com.unimelb.projectinsta.activityfeeds;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.unimelb.projectinsta.R;
 import com.unimelb.projectinsta.likes.LikesArrayAdapter;
 import com.unimelb.projectinsta.model.MyNotificationsPojo;
@@ -36,11 +44,13 @@ public class YouFragment extends Fragment {
     private String mParam2;
     RecyclerView myFeedRecyclerView;
     private List<MyNotificationsPojo> myNotifications = new ArrayList<>();
-
+    private MyFeedAdapter adapter;
     private OnFragmentInteractionListener mListener;
+    private String currentUserId;
 
     public YouFragment() {
         // Required empty public constructor
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
     /**
@@ -77,9 +87,9 @@ public class YouFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_you, container, false);
         myFeedRecyclerView = view.findViewById(R.id.listView_myNotifications);
         //adapter logic
-        MyFeedAdapter adapter = new MyFeedAdapter(getContext(),myNotifications);
+        getMyNotifications();
+        adapter = new MyFeedAdapter(getContext(),myNotifications);
         myFeedRecyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
         return view;
     }
 
@@ -106,6 +116,30 @@ public class YouFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+    public void getMyNotifications() {
+        FirebaseFirestore.getInstance().collection("myNotifications")
+            .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value,
+                                    @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w("fail", "Listen failed.", e);
+                        return;
+                    }
+
+                    for (QueryDocumentSnapshot doc : value) {
+                        MyNotificationsPojo notification = doc.toObject(MyNotificationsPojo.class);
+                        if(notification.getUserId().equals(currentUserId)) {
+                            myNotifications.add(notification);
+                        }
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+            });
+
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
