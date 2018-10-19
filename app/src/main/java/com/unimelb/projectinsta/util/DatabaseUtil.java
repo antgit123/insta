@@ -24,7 +24,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -41,9 +43,7 @@ import java.util.Random;
 
 public class DatabaseUtil {
 
-    DatabaseReference db= FirebaseDatabase.getInstance().getReference();;
-//    StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-    ArrayList<String> imageList = new ArrayList<>();
+    private ArrayList<String> imageList = new ArrayList<>();
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mFirebaseDatabase;
@@ -53,6 +53,8 @@ public class DatabaseUtil {
     private Context mContext;
     public UserPojo loggedInUser = new UserPojo();
     public FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+    private ArrayList<String> followingNotificationList = new ArrayList<>();
+    private ArrayList<UserPojo> allUsers = new ArrayList<>();
 
     public DatabaseUtil() {
 //        this.db = db;
@@ -80,6 +82,7 @@ public class DatabaseUtil {
     private void fetchData(UserPojo user) {
         for(int i=0;i<10;i++){
             imageList.add(user.getProfilePhoto());
+//            followingNotificationList.add(user.getProfilePhoto());
         }
     }
 
@@ -122,5 +125,48 @@ public class DatabaseUtil {
             return user;
         }
         return null;
+    }
+
+    public ArrayList<String> getFollowingNotifications() {
+//        fetchData(loggedInUser);
+        instadb.collection("users")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w("fail", "Listen failed.", e);
+                            return;
+                        }
+
+                        for (QueryDocumentSnapshot doc : value) {
+                            String profilePhoto = (String) doc.getData().get("profilePhoto");
+                            if (profilePhoto != null) {
+                                followingNotificationList.add(profilePhoto);
+                            }
+                        }
+                    }
+                });
+
+
+        return followingNotificationList;
+    }
+
+    public ArrayList<UserPojo> getUsersList() {
+        instadb.collection("users").get()
+            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+
+                            allUsers.add(document.toObject(UserPojo.class));
+                        }
+                    } else {
+                        Log.d("failed", "Error getting documents: ", task.getException());
+                    }
+                }
+            });
+        return allUsers;
     }
 }
