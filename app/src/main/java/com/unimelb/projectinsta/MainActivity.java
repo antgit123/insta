@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         LikesFragment.OnListFragmentInteractionListener,
         NotificationFragment.OnFragmentInteractionListener, FollowingFragment.OnFragmentInteractionListener,
         YouFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener,
-        SearchDiscover.OnFragmentInteractionListener{
+        SearchDiscover.OnFragmentInteractionListener,DiscoverFragment.OnFragmentInteractionListener{
 
     static
     {
