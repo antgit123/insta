@@ -32,7 +32,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class FilterListFragment extends Fragment implements  ThumbnailAdapter.ThumbnailImageListener, View.OnClickListener{
+public class FilterListFragment extends Fragment implements  ThumbnailAdapter.ThumbnailImageListener{
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -76,10 +76,6 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_thumbnail_list, container, false);
-        Button nextButton = (Button) view.findViewById(R.id.button_next);
-        nextButton.setOnClickListener(this);
-
-
         // Set the adapter
 //        if (view instanceof RecyclerView) {
 //            Context context = view.getContext();
@@ -201,25 +197,5 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
 
     public interface FiltersListFragmentListener {
         void onFilterSelected(Filter filter);
-    }
-
-    @Override
-    public void onClick(View view) {
-        Fragment fragment = null;
-        switch (view.getId()) {
-            case R.id.button_next:
-                fragment = new LocationCaptionFragment();
-                replaceFragment(fragment);
-                break;
-            case R.id.button_share:
-                Log.d("caption", "onClick: ");
-        }
-    }
-
-    public void replaceFragment(Fragment filterFragment) {
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, filterFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
     }
 }
