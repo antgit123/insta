@@ -209,19 +209,7 @@ public class HomeFragment extends Fragment {
 //        });
     }
 
-//    public UserPojo returnUser(DocumentSnapshot userDoc){
-//        if(userDoc.getData().get("userId") != null) {
-//            String userId = (String) userDoc.getData().get("userId");
-//            String userName = (String) userDoc.getData().get("userName");
-//            String realName = (String) userDoc.getData().get("userRealName");
-//            String email = (String) userDoc.getData().get("email");
-//            String password = (String) userDoc.getData().get("password");
-//
-//            UserPojo user = new UserPojo(userId, userName, realName, email, password);
-//            return user;
-//        }
-//        return null;
-//    }
+
 
     public ArrayList<UserFeed> getUserFeeds(){
         ArrayList<UserFeed> users=new ArrayList<>();
