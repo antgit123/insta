@@ -51,9 +51,9 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
     @Override
     public void onBindViewHolder(@NonNull final UserFeedHolder userFeedHolder, int i) {
 
-        userFeedHolder.userName_txt.setText(userFeed.get(i).getM_UserName());
-        userFeedHolder.description_txt.setText(userFeed.get(i).getM_Description());
-        userFeedHolder.title.setText(userFeed.get(i).getM_Location());
+        userFeedHolder.userName_txt.setText(userFeed.get(i).getUser().getUserName());
+        userFeedHolder.description_txt.setText(userFeed.get(i).getCaption());
+        userFeedHolder.title.setText(userFeed.get(i).getUser().getEmail());
 //        userFeedHolder.img.setImageResource(userFeed.get(i).getM_Img());
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         //adding image to view

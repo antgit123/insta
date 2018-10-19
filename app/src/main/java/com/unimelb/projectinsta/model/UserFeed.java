@@ -21,6 +21,11 @@ public class UserFeed {
 
     }
 
+    public UserFeed(UserPojo user,String location,int resid,String description){
+        this.user = user;
+
+    }
+
     public UserFeed(UserPojo user, String photo, Location location, String caption, Date date, Like like, Comment comment, int feed_Id) {
         this.user = user;
         this.photo = photo;
