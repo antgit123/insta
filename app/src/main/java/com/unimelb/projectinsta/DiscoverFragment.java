@@ -128,43 +128,44 @@ public class DiscoverFragment extends Fragment {
                     mFollowingList=currentUser.getFollowingList();
 
                 }
-
-
-                }
-        });
-
-
-        CollectionReference userDocuments = instadb.collection("users");
-        userDocuments.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                        //Log.d("jj", documentSnapshot.getId() + " => " + documentSnapshot.getData());
-                        //mUserList.add(documentSnapshot.toObject(UserPojo.class));
-                        allUserList.add(documentSnapshot.toObject(UserPojo.class));
-                    }
-                    for (int i = 0; i < allUserList.size(); i++) {
-                        if (allUserList.get(i).getUserName().equals(currentUser.getUserName())) {
-                            continue;
-                        } else if (mFollowingList.contains(allUserList.get(i).getUserId())) {
-                            continue;
-                        } else {
-                            List<String> templist = new ArrayList<String>(allUserList.get(i).getFollowingList());
-                            templist.retainAll(mFollowingList);
-                            if (templist != null) {
-                                if (templist.size() >= required_common_following) {
-                                    mSuggestList.add(allUserList.get(i));
-                                    updateSuggestionList();
+                CollectionReference userDocuments = instadb.collection("users");
+                userDocuments.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                //Log.d("jj", documentSnapshot.getId() + " => " + documentSnapshot.getData());
+                                //mUserList.add(documentSnapshot.toObject(UserPojo.class));
+                                allUserList.add(documentSnapshot.toObject(UserPojo.class));
+                            }
+                            for (int i = 0; i < allUserList.size(); i++) {
+                                if (allUserList.get(i).getUserName().equals(currentUser.getUserName())) {
+                                    continue;
+                                } else if (mFollowingList.contains(allUserList.get(i).getUserId())) {
+                                    continue;
+                                } else {
+                                    List<String> templist = new ArrayList<String>(allUserList.get(i).getFollowingList());
+                                    templist.retainAll(mFollowingList);
+                                    if (templist != null) {
+                                        if (templist.size() >= required_common_following) {
+                                            mSuggestList.add(allUserList.get(i));
+                                            updateSuggestionList();
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                }
 
                     }
 
+                });
+
+
+
+            }
         });
+
+
 
 
 }
