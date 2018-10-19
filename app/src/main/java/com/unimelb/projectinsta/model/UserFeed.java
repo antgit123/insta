@@ -2,6 +2,7 @@ package com.unimelb.projectinsta.model;
 
 import android.location.Location;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,8 +12,8 @@ public class UserFeed {
     private String location;
     private String caption;
     private Date date;
-    private List<Like> likeList;
-    private List<Comment> commentList;
+    private List<Like> likeList = new ArrayList<>();
+    private List<Comment> commentList = new ArrayList<>();
     private int feed_Id;
     private int comments;
 
@@ -20,14 +21,14 @@ public class UserFeed {
 
     }
 
-    public UserFeed(UserPojo user, String photo, String location, String caption, Date date, List<Like> likeList, List<Comment> commentList, int feed_Id, int comments) {
+    public UserFeed(UserPojo user, String photo, String location, String caption, Date date, Like like, Comment comment, int feed_Id, int comments) {
         this.user = user;
         this.photo = photo;
         this.location = location;
         this.caption = caption;
         this.date = date;
-        this.likeList = likeList;
-        this.commentList = commentList;
+        this.likeList.add(like);
+        this.commentList.add(comment);
         this.feed_Id = feed_Id;
         this.comments = comments;
     }
@@ -76,16 +77,16 @@ public class UserFeed {
         return likeList;
     }
 
-    public void setLikeList(List<Like> likeList) {
-        this.likeList = likeList;
+    public void setLikeList(Like like) {
+        this.likeList.add(like);
     }
 
     public List<Comment> getCommentList() {
         return commentList;
     }
 
-    public void setCommentList(List<Comment> commentList) {
-        this.commentList = commentList;
+    public void setCommentList(Comment comment) {
+        this.commentList.add(comment);
     }
 
     public int getFeed_Id() {
