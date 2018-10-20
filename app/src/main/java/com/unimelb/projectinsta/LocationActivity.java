@@ -30,6 +30,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -306,7 +307,21 @@ public class LocationActivity extends AppCompatActivity implements LocationListe
     private void savePost(String uri, String caption, Location location) {
         DatabaseUtil databaseUtil = new DatabaseUtil(LocationActivity.this);
         databaseUtil.savePost(uri, caption, location);
+        Toast.makeText(LocationActivity.this,"Post Shared",Toast.LENGTH_SHORT).show();
+        Intent mainActivity = new Intent(this,MainActivity.class);
+        startActivity(mainActivity);
+    }
 
+    private boolean loadFragment(Fragment fragment) {
+        //check for empty fragment
+        if (fragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .commit();
+            return true;
+        }
+        return false;
     }
 
 
