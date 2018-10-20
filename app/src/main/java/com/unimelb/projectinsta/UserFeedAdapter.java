@@ -23,7 +23,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.unimelb.projectinsta.likes.LikesFragment;
+import com.unimelb.projectinsta.model.Comment;
+import com.unimelb.projectinsta.model.Like;
 import com.unimelb.projectinsta.model.UserFeed;
+import com.unimelb.projectinsta.model.UserPojo;
+import com.unimelb.projectinsta.util.CommonUtil;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -52,35 +56,35 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final UserFeedHolder userFeedHolder, int i) {
-        userFeedHolder.userName_txt.setText(userFeed.get(i).getUser().getUserName());
+        UserPojo currentUser = CommonUtil.getInstance().getLoggedInUser();
+        String currentUserProfilePhoto = currentUser.getProfilePhoto();
+        String userName = userFeed.get(i).getUser().getUserName();
+        userFeedHolder.userName_txt.setText(userName);
+        userFeedHolder.description_username.setText(userName);
         userFeedHolder.description_txt.setText(userFeed.get(i).getCaption());
         userFeedHolder.location.setText(userFeed.get(i).getLocationName());
         String photoUri = userFeed.get(i).getPhoto();
         String userPhoto = userFeed.get(i).getUser().getProfilePhoto();
+        List<Comment> commentsList = userFeed.get(i).getCommentList();
+        String commentString = "View all " + commentsList.size() + " comments";
+        userFeedHolder.comments_link.setText(commentString);
+        List<Like> likeList = userFeed.get(i).getLikeList();
+        String likeByString = likeList.size() + " likes";
+        userFeedHolder.like_by.setText(likeByString);
         if(userPhoto == null){
             Glide.with(userFeedContext).load(R.drawable.com_facebook_profile_picture_blank_square).into(userFeedHolder.userProfileImageView);
         }else{
             Glide.with(userFeedContext).load(userPhoto).into(userFeedHolder.userProfileImageView);
         }
+        if(currentUserProfilePhoto == null){
+            Glide.with(userFeedContext).load(R.drawable.com_facebook_profile_picture_blank_square).into(userFeedHolder.commentProfileImageView);
+        }else{
+            Glide.with(userFeedContext).load(userPhoto).into(userFeedHolder.commentProfileImageView);
+        }
         Glide.with(userFeedContext).load(photoUri).into(userFeedHolder.feedImageView);
 //        userFeedHolder.img.setImageResource(userFeed.get(i).getM_Img());
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        //adding image to view
-//        storageRef.child("/appl.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//            @Override
-//            public void onSuccess(Uri uri) {
-//                Log.i("URI:",uri.toString());
-//                Glide.with(userFeedContext).load(uri.toString()).into(userFeedHolder.img);
-////                Glide.with(userFeedContext).load(uri.toString()).into(userFeedHolder.img);
-//
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception exception) {
-//                // Handle any errors
-//                Toast.makeText(userFeedContext,"Failed getting image",Toast.LENGTH_SHORT);
-//            }
-//        });
+
 
         userFeedHolder.setItemClickListener(new ItemClickListener() {
             @Override
