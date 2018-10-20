@@ -18,7 +18,6 @@ public class FollowingFeedHolder extends RecyclerView.ViewHolder implements View
         super(myFeedView);
         this.feedDescription= (TextView) myFeedView.findViewById(R.id.following_feed_item_description);
         this.userProfileImage = (CircleImageView) myFeedView.findViewById(R.id.following_feed_user_profile_image);
-        this.userFollowButton = myFeedView.findViewById(R.id.following_feed_follow_user_button);
     }
 
     @Override

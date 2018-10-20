@@ -33,6 +33,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.unimelb.projectinsta.model.FollowingUserNotificationsPojo;
 import com.unimelb.projectinsta.model.MyNotificationsPojo;
 import com.unimelb.projectinsta.model.UserFeed;
 import com.unimelb.projectinsta.model.UserPojo;
@@ -101,6 +102,19 @@ public class DatabaseUtil {
     public void followFunction(UserPojo follower) {
         addFollowing(follower);
         addFollowers(follower);
+        notifyFollowers(follower);
+    }
+
+    private void notifyFollowers(UserPojo follower) {
+        String type = "follow";
+        String feedDescription = loggedInUser.getUserName() + " started following " + follower.getUserName();
+
+        List<String> followersList = loggedInUser.getFollowerList();
+        for(String followerId : followersList) {
+            FollowingUserNotificationsPojo notification = new FollowingUserNotificationsPojo
+                    (loggedInUser, follower, type, feedDescription, new Date(), followerId);
+            instadb.collection("followersNotifications").add(notification);
+        }
     }
 
     private void addFollowing(final UserPojo user) {

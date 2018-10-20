@@ -11,17 +11,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.unimelb.projectinsta.NotificationCustomAdapter;
 import com.unimelb.projectinsta.R;
 import com.unimelb.projectinsta.model.FollowingUserNotificationsPojo;
-import com.unimelb.projectinsta.util.DatabaseUtil;
+import com.unimelb.projectinsta.model.MyNotificationsPojo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,12 +46,13 @@ public class FollowingFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private RecyclerView followingFeedListView;
-//    ArrayList<String> followingList = new ArrayList<>();
-    List<FollowingUserNotificationsPojo> followingFeedList = new ArrayList<>();
-    NotificationCustomAdapter notificationAdapter;
+    private List<FollowingUserNotificationsPojo> followingFeedList = new ArrayList<>();
+    private FollowingFeedAdapter notificationAdapter;
+    private String currentUserId;
 
     public FollowingFragment() {
         // Required empty public constructor
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
     /**
@@ -88,38 +88,36 @@ public class FollowingFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_following, container, false);
         followingFeedListView = view.findViewById(R.id.listView_followingNotifications);
-        //Read all the images:
-        DatabaseUtil dbHelper = new DatabaseUtil();
 
-//        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, dbHelper.getFollowingNotifications());
-//        ArrayList<String> followingNotificationList =
         getFollowingNotifications();
-//        notificationAdapter = new FollowingFeedAdapter(getContext(), followingFeedList);
-//        followingFeedListView.setAdapter(notificationAdapter);
+        notificationAdapter = new FollowingFeedAdapter(getContext(), followingFeedList);
+        followingFeedListView.setAdapter(notificationAdapter);
         return view;
     }
 
-    public void getFollowingNotifications() {
-        FirebaseFirestore.getInstance().collection("users")
+    private void getFollowingNotifications() {
+        FirebaseFirestore.getInstance().collection("followersNotifications")
             .addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value,
                                     @Nullable FirebaseFirestoreException e) {
-                    if (e != null) {
-                        Log.w("fail", "Listen failed.", e);
-                        return;
-                    }
+                if (e != null) {
+                    Log.w("fail", "Listen failed.", e);
+                    return;
+                }
 
-                    for (QueryDocumentSnapshot doc : value) {
-                        String profilePhoto = (String) doc.getData().get("profilePhoto");
-                        if (profilePhoto != null) {
-//                            followingList.add(profilePhoto);
-//                            notificationAdapter.notifyDataSetChanged();
-                        }
+                for (QueryDocumentSnapshot doc : value) {
+                    FollowingUserNotificationsPojo notification = doc.toObject(FollowingUserNotificationsPojo.class);
+                    if(notification.getUserId().equals(currentUserId)) {
+                        followingFeedList.add(notification);
                     }
                 }
+                notificationAdapter.notifyDataSetChanged();
+                }
             });
+
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

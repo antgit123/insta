@@ -45,22 +45,10 @@ public class FollowingFeedAdapter extends RecyclerView.Adapter<FollowingFeedHold
         final UserPojo user2 = notification.getUser2();
         String feed_description = followingNotificationsList.get(position).getFeedDescription();
         followingFeedHolder.feedDescription.setText(feed_description);
-        UserPojo loggedInUser = CommonUtil.getInstance().getLoggedInUser();
-//        if(notification.getType().equals("follow") && !loggedInUser.getFollowingList().contains(user.getUserId())) {
-////            followingFeedHolder.userFollowButton.setVisibility(View.VISIBLE);
-////        } else {
-////            followingFeedHolder.userFollowButton.setVisibility(View.INVISIBLE);
-////        }
 
-        followingFeedHolder.userFollowButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DatabaseUtil dbHelper = new DatabaseUtil();
-//                dbHelper.followFunction(user);
-                followingFeedHolder.userFollowButton.setEnabled(false);
-                followingFeedHolder.userFollowButton.setText("Following");
-            }
-        });
+        if(user1.getProfilePhoto() != null) {
+            Glide.with(mContext).load(user1.getProfilePhoto()).into(followingFeedHolder.userProfileImage);
+        }
     }
 
     @Override

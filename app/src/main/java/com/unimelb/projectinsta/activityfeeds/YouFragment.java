@@ -123,21 +123,20 @@ public class YouFragment extends Fragment {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value,
                                     @Nullable FirebaseFirestoreException e) {
-                    if (e != null) {
-                        Log.w("fail", "Listen failed.", e);
-                        return;
-                    }
+                if (e != null) {
+                    Log.w("fail", "Listen failed.", e);
+                    return;
+                }
 
-                    for (QueryDocumentSnapshot doc : value) {
-                        MyNotificationsPojo notification = doc.toObject(MyNotificationsPojo.class);
-                        if(notification.getUserId().equals(currentUserId)) {
-                            myNotifications.add(notification);
-                        }
+                for (QueryDocumentSnapshot doc : value) {
+                    MyNotificationsPojo notification = doc.toObject(MyNotificationsPojo.class);
+                    if(notification.getUserId().equals(currentUserId)) {
+                        myNotifications.add(notification);
                     }
-                    adapter.notifyDataSetChanged();
+                }
+                adapter.notifyDataSetChanged();
                 }
             });
-
     }
 
 
