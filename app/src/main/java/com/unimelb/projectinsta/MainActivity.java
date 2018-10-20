@@ -153,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
 
     @Override
     public void onPhotoCaptured(Bitmap mBitmap) {
-        Log.i("Bitmap Success",mBitmap.toString());
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         mBitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
         byte[] byteArray = stream.toByteArray();

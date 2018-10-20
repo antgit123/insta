@@ -12,7 +12,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserFeedHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
     ImageView feedImageView;
-    TextView userName_txt,description_txt, location,description_username;
+    TextView userName_txt,description_txt, location,description_username,feedTimeStamp;
     public ImageButton white_heart_icon,red_heart_icon,chat_icon;
     public TextView like_by, comments_link, userFeedPostCommentText;
     public EditText userFeedEditComment;
@@ -35,6 +35,7 @@ public class UserFeedHolder extends RecyclerView.ViewHolder implements View.OnCl
         this.comments_link = itemView.findViewById(R.id.image_comments_link);
         this.userFeedEditComment = itemView.findViewById(R.id.userfeed_edit_comment);
         this.userFeedPostCommentText = itemView.findViewById(R.id.userfeed_post_comment_text);
+        this.feedTimeStamp = itemView.findViewById(R.id.userfeed_timestamp);
         this.white_heart_icon.setOnClickListener(this);
         this.red_heart_icon.setOnClickListener(this);
         this.chat_icon.setOnClickListener(this);

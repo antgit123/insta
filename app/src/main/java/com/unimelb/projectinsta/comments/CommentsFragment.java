@@ -84,6 +84,7 @@ public class CommentsFragment extends Fragment implements LikesArrayAdapter.User
         commentsListView = view.findViewById(R.id.listView_comments);
         postCommentText = view.findViewById(R.id.edit_comment);
         postComment = view.findViewById(R.id.post_comment_text);
+        commentsBackArrow = view.findViewById(R.id.backArrow_comments);
 
         postComment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +120,13 @@ public class CommentsFragment extends Fragment implements LikesArrayAdapter.User
         }else{
             postComment.setEnabled(false);
         }
+
+        commentsBackArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
         return view;
     }
 

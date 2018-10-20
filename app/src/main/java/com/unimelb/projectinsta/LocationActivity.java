@@ -256,7 +256,6 @@ public class LocationActivity extends AppCompatActivity implements LocationListe
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 

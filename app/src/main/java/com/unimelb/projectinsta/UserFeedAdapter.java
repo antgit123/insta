@@ -57,6 +57,8 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
         userFeedHolder.description_username.setText(userName);
         userFeedHolder.description_txt.setText(selectedUserFeed.getCaption());
         userFeedHolder.location.setText(selectedUserFeed.getLocationName());
+        String timeStamp = dbUtil.getTimestampDifference(selectedUserFeed.getDate());
+        userFeedHolder.feedTimeStamp.setText(timeStamp);
         String photoUri = selectedUserFeed.getPhoto();
         String userPhoto = selectedUserFeed.getUser().getProfilePhoto();
         String currentUserPhoto = currentUser.getProfilePhoto();
