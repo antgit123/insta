@@ -1,8 +1,9 @@
 package com.unimelb.projectinsta.model;
 
 import java.util.Date;
+import java.util.Objects;
 
-public class MyNotificationsPojo {
+public class MyNotificationsPojo implements Comparable<MyNotificationsPojo> {
     private String type;
     private String feedDescription;
     private UserPojo user;
@@ -60,6 +61,34 @@ public class MyNotificationsPojo {
         this.user = user;
         this.notificationTimestamp = notificationTimestamp;
         this.userId = userId;
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MyNotificationsPojo that = (MyNotificationsPojo) o;
+        return Objects.equals(type, that.type) &&
+                Objects.equals(feedDescription, that.feedDescription) &&
+                Objects.equals(user, that.user) &&
+                Objects.equals(notificationTimestamp, that.notificationTimestamp) &&
+                Objects.equals(userId, that.userId);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(type, feedDescription, user, notificationTimestamp, userId);
+    }
+
+    @Override
+    public int compareTo(MyNotificationsPojo o) {
+        if(getNotificationTimestamp() == null || o.getNotificationTimestamp() == null){
+            return 0;
+        }else{
+           return o.getNotificationTimestamp().compareTo(getNotificationTimestamp());
+        }
 
     }
 }
