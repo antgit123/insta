@@ -1,36 +1,26 @@
-package com.unimelb.projectinsta;
+package com.unimelb.projectinsta.profile;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Base64;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.facebook.internal.LockOnGetVariable;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,21 +29,20 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.unimelb.projectinsta.R;
 import com.unimelb.projectinsta.model.UserPojo;
-import com.unimelb.projectinsta.util.DatabaseUtil;
+import com.unimelb.projectinsta.util.CommonUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -78,16 +67,13 @@ public class ProfileFragment extends Fragment {
     private UserPojo currentUser = null;
     private GridView gridViewofPost;
     private ArrayList<String> postedImagesList = new ArrayList<>();
-    FirebaseUser user;
-    String userId;
     private FirebaseFirestore instadb = FirebaseFirestore.getInstance();
     private ProfileViewImageAdapter imageAdapter;
 
     private OnFragmentInteractionListener mListener;
 
     public ProfileFragment() {
-        // Required empty public constructor
-        user = FirebaseAuth.getInstance().getCurrentUser();
+        currentUser = CommonUtil.getInstance().getLoggedInUser();
     }
 
     /**
@@ -105,9 +91,6 @@ public class ProfileFragment extends Fragment {
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
-
-
-
         return fragment;
     }
 
@@ -118,7 +101,6 @@ public class ProfileFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
     @Override
@@ -219,24 +201,8 @@ public class ProfileFragment extends Fragment {
     }
 
     private void addUserDetails(final View v) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        userId = user.getUid();
-        CollectionReference userDocuments = instadb.collection("users");
-        userDocuments.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    //retrieve user Details
-                    DocumentSnapshot document = task.getResult();
-                    Log.i("DB Success", document.getId() + " => " + document.getData());
-                    currentUser = document.toObject(UserPojo.class);
-                    addPostedImages(v);
-                    setValuesToProfile(v);
-                } else {
-                    Log.i("DB ERROR", "Error getting documents.", task.getException());
-                }
-            }
-        });
+        addPostedImages(v);
+        setValuesToProfile(v);
     }
 
     private void addPostedImages(View view) {
@@ -247,7 +213,7 @@ public class ProfileFragment extends Fragment {
 
     private ArrayList<String> getImagesPosted(final View view) {
         CollectionReference feedsDocuments = instadb.collection("feeds");
-        feedsDocuments.whereEqualTo("userId", userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        feedsDocuments.whereEqualTo("userId", currentUser.getUserId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {

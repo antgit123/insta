@@ -63,6 +63,7 @@ public class DatabaseUtil {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         myRef = mFirebaseDatabase.getReference();
         mStorageReference = FirebaseStorage.getInstance().getReference();
+        loggedInUser = CommonUtil.getInstance().getLoggedInUser();
 
         if (mAuth.getCurrentUser() != null) {
             userID = mAuth.getCurrentUser().getUid();
@@ -75,26 +76,11 @@ public class DatabaseUtil {
         myRef = mFirebaseDatabase.getReference();
         mStorageReference = FirebaseStorage.getInstance().getReference();
         mContext = context;
-
+        loggedInUser = CommonUtil.getInstance().getLoggedInUser();
         if (mAuth.getCurrentUser() != null) {
             userID = mAuth.getCurrentUser().getUid();
         }
     }
-
-    //Retrieve
-    public ArrayList<String> getImagesPosted(UserPojo user) {
-        fetchData(user);
-        return imageList;
-
-    }
-
-    private void fetchData(UserPojo user) {
-        for (int i = 0; i < 10; i++) {
-            imageList.add(user.getProfilePhoto());
-//            followingNotificationList.add(user.getProfilePhoto());
-        }
-    }
-
 
     public void savePost(String uri, String caption, Location location) {
         Log.d("test", "savePost: "+userID);
@@ -104,24 +90,10 @@ public class DatabaseUtil {
         feed.setLocation(location);
         feed.setUserId(userID);
         int n = 1000;
-        final int feedId = new Random().nextInt(n);
-        CollectionReference userDocuments = instadb.collection("users");
-        userDocuments.document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-           @Override
-           public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-               if (task.isSuccessful()) {
-                   //retrieve user Details
-                   DocumentSnapshot document = task.getResult();
-                   Log.i("DB Success", document.getId() + " => " + document.getData());
-                   loggedInUser = document.toObject(UserPojo.class);
-                   feed.setUser(loggedInUser);
-                   feed.setDate(new Date());
-                   feed.setFeed_Id(feedId);
-                   FirebaseFirestore instadb = FirebaseFirestore.getInstance();
-                   instadb.collection("feeds").document(String.valueOf(feedId)).set(feed);
-               }
-           }
-       });
+        int feedId = new Random().nextInt(n);
+        feed.setUser(loggedInUser);
+        feed.setDate(new Date());
+        feed.setFeed_Id(feedId);
     }
 
     public void followFunction(UserPojo follower) {
@@ -130,23 +102,7 @@ public class DatabaseUtil {
     }
 
     private void addFollowing(final UserPojo user) {
-        if(loggedInUser.getUserId() != null) {
-            updateFollowingList(loggedInUser, user.getUserId());
-        } else {
-            CollectionReference userDocuments = instadb.collection("users");
-            userDocuments.document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        //retrieve user Details
-                        DocumentSnapshot document = task.getResult();
-                        Log.i("DB Success", document.getId() + " => " + document.getData());
-                        loggedInUser = document.toObject(UserPojo.class);
-                        updateFollowingList(loggedInUser, user.getUserId());
-                    }
-                }
-            });
-        }
+        updateFollowingList(loggedInUser, user.getUserId());
     }
 
     private void updateFollowingList(UserPojo user, String followingUserId) {
@@ -162,28 +118,9 @@ public class DatabaseUtil {
                 .document(user.getUserId());
         userRef.set(user);
 
-        final String type = "follow";
-        if(loggedInUser.getUserId() != null && loggedInUser.getUserRealName() != null) {
-            String feedDescription = loggedInUser.getUserRealName() + " started following you";
-            MyNotificationsPojo notification = new MyNotificationsPojo(user.getUserId(),type, feedDescription, loggedInUser, new Date());
-            instadb.collection("myNotifications").add(notification);
-        } else {
-            CollectionReference userDocuments = instadb.collection("users");
-            userDocuments.document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        //retrieve user Details
-                        DocumentSnapshot document = task.getResult();
-                        Log.i("DB Success", document.getId() + " => " + document.getData());
-                        loggedInUser = document.toObject(UserPojo.class);
-                        String feedDescription = loggedInUser.getUserRealName() + " started following you";
-                        MyNotificationsPojo notification = new MyNotificationsPojo(user.getUserId(),type, feedDescription, loggedInUser, new Date());
-                        instadb.collection("myNotifications").add(notification);
-                    }
-                }
-            });
-        }
+        String type = "follow";
+        String feedDescription = loggedInUser.getUserRealName() + " started following you";
+        MyNotificationsPojo notification = new MyNotificationsPojo(user.getUserId(),type, feedDescription, loggedInUser, new Date());
+        instadb.collection("myNotifications").add(notification);
     }
-
 }

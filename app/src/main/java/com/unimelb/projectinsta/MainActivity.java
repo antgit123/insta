@@ -19,6 +19,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.unimelb.projectinsta.activityfeeds.YouFragment;
 import com.unimelb.projectinsta.likes.LikesFragment;
 import com.unimelb.projectinsta.profile.EnlargedPostViewFragment;
+import com.unimelb.projectinsta.profile.ProfileFragment;
+import com.unimelb.projectinsta.util.CommonUtil;
 
 import java.io.ByteArrayOutputStream;
 
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         setContentView(R.layout.activity_main);
         //on startup check if fragment is empty and load initial fragment
         loadFragment(new HomeFragment());
-
+        CommonUtil.getInstance();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
