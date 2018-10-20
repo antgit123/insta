@@ -129,12 +129,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-            // testing Signed in by adding buttons and text fields
 
-//            findViewById(R.id.email).setVisibility(View.GONE);
-//            findViewById(R.id.password).setVisibility(View.GONE);
-//            findViewById(R.id.email_sign_in_button).setVisibility(View.GONE);
-//            findViewById(R.id.email_sign_out_button).setVisibility(View.VISIBLE);
             Toast.makeText(LoginActivity.this,"logged in",Toast.LENGTH_SHORT).show();
             //if user details found and logged in, start Intent and send user details to main screen activity
             Intent mainActivity = new Intent(this,MainActivity.class);
@@ -143,11 +138,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Signed out
             mLoginInfoView = findViewById(R.id.login_info);
-            Toast.makeText(LoginActivity.this,"error logging in",Toast.LENGTH_SHORT).show();
             findViewById(R.id.email_sign_in_button).setVisibility(View.VISIBLE);
             mLoginInfoView.setVisibility(View.VISIBLE);
-            findViewById(R.id.email).setVisibility(View.VISIBLE);
-            findViewById(R.id.password).setVisibility(View.VISIBLE);
         }
     }
 
@@ -360,28 +352,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-//                            Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
-//                            Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
 
-                        // [START_EXCLUDE]
-                        if (!task.isSuccessful()) {
-//                            mStatusTextView.setText(R.string.auth_failed);
-                            Toast.makeText(LoginActivity.this,"error",Toast.LENGTH_SHORT).show();
-                        }
-
                         showProgress(false);
-                        // [END_EXCLUDE]
                     }
                 });
-        // [END sign_in_with_email]
     }
 
     private void goToRegister() {
