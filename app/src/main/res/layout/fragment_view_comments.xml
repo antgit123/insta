@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -17,18 +19,22 @@
         android:layout_below="@+id/top_comment_bar"
         android:layout_marginBottom="50dp">
 
-        <ListView
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/listView_comments"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/listView_comments">
-        </ListView>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:clipChildren="false"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:context=".CommentsFragment"
+            tools:listitem="@layout/fragment_comment_item" />
 
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:id="@+id/relLayout3"
+        android:id="@+id/post_comment_list_container"
         android:layout_alignParentBottom="true"
         android:background="@drawable/white_grey_border_top">
 
@@ -42,15 +48,7 @@
             android:layout_centerVertical="true"
             android:hint="Add a comment..."
             android:textSize="14sp"
-            android:id="@+id/comment"/>
-
-        <!--<ImageView-->
-            <!--android:layout_width="40dp"-->
-            <!--android:layout_height="40dp"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:src="@drawable/ic_checkmark"-->
-            <!--android:id="@+id/ivPostComment"-->
-            <!--android:layout_alignParentEnd="true"/>-->
+            android:id="@+id/edit_comment"/>
 
         <TextView
             android:layout_width="40dp"

@@ -72,6 +72,7 @@ public class HomeFragment extends Fragment {
     public List<DocumentReference> comments;
     public UserPojo loggedInUser = new UserPojo();
     public RecyclerView mUserFeedRecyclerView;
+    private TextView nofeedsTextView;
     public UserFeedAdapter mAdapter;
     public FirebaseFirestore instadb = FirebaseFirestore.getInstance();
 
@@ -167,6 +168,8 @@ public class HomeFragment extends Fragment {
         mUserFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mUserFeedRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        nofeedsTextView = (TextView) homeFragmentView.findViewById(R.id.no_feed_display_text);
+
         mAdapter = new UserFeedAdapter(getContext(),feeds);
         mUserFeedRecyclerView.setAdapter(mAdapter);
 
@@ -234,7 +237,6 @@ public class HomeFragment extends Fragment {
 
     public void getFeeds() {
         final Boolean[] hasFeeds = {false};
-        final TextView nofeedsText = (TextView) getView().findViewById(R.id.no_feed_display_text);
         if (loggedInUser.getFollowingList().size() > 0) {
             List<String> followingUserIds = loggedInUser.getFollowingList();
             //query feeds
@@ -253,9 +255,9 @@ public class HomeFragment extends Fragment {
                             }
                         }
                         if(hasFeeds[0]) {
-                            nofeedsText.setVisibility(View.INVISIBLE);
+                            nofeedsTextView.setVisibility(View.INVISIBLE);
                         } else {
-                            nofeedsText.setVisibility(View.VISIBLE);
+                            nofeedsTextView.setVisibility(View.VISIBLE);
                         }
                         mAdapter.notifyDataSetChanged();
                     }
@@ -267,7 +269,7 @@ public class HomeFragment extends Fragment {
                 });
             }
         } else {
-            nofeedsText.setVisibility(View.VISIBLE);
+            nofeedsTextView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -295,13 +297,6 @@ public class HomeFragment extends Fragment {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
-
-
-        // make this device visible to others for 3000 seconds
-        Intent discoverableIntent = new
-                Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 3000);
-        startActivity(discoverableIntent);
 
         // start server
         becomeServer();

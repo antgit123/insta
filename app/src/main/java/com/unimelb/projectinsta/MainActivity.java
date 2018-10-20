@@ -1,5 +1,6 @@
 package com.unimelb.projectinsta;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.unimelb.projectinsta.activityfeeds.FollowingFragment;
 import com.unimelb.projectinsta.activityfeeds.YouFragment;
+import com.unimelb.projectinsta.comments.CommentsFragment;
 import com.unimelb.projectinsta.likes.LikesFragment;
 import com.unimelb.projectinsta.profile.EnlargedPostViewFragment;
 import com.unimelb.projectinsta.profile.ProfileFragment;
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         NotificationFragment.OnFragmentInteractionListener, FollowingFragment.OnFragmentInteractionListener,
         YouFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener,
         SearchDiscover.OnFragmentInteractionListener,DiscoverFragment.OnFragmentInteractionListener,
-        EnlargedPostViewFragment.OnFragmentInteractionListener {
+        EnlargedPostViewFragment.OnFragmentInteractionListener, CommentsFragment.OnListFragmentInteractionListener {
 
 
     static
@@ -83,6 +85,11 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         CommonUtil.getInstance();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        Intent discoverableIntent = new
+                Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 3000);
+        startActivity(discoverableIntent);
+
     }
 
    @Override
@@ -100,14 +107,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
             return true;
         }
         return super.onOptionsItemSelected(item);
-//        Button mSignOutButton = (Button) findViewById(R.id.email_sign_out_button);
-//        mSignOutButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                signOut();
-//            }
-//        });
-
     }
 
     private boolean loadFragment(Fragment fragment) {
