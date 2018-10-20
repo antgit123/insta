@@ -55,6 +55,8 @@ import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -451,6 +453,16 @@ public class UploadFragment extends Fragment
         view.findViewById(R.id.picture).setOnClickListener(this);
         view.findViewById(R.id.info).setOnClickListener(this);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem sortDateItem=menu.findItem(R.id.action_sortDate);
+        sortDateItem.setVisible(false);
+        MenuItem sortLocationItem=menu.findItem(R.id.action_sortLocation);
+        sortLocationItem.setVisible(false);
+
     }
 
     @Override
