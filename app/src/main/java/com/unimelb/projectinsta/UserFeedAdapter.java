@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -130,6 +132,14 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
                     MainActivity mainActivity = (MainActivity)userFeedContext;
                     mainActivity.getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+                }
+                if(v.getId() == userFeedHolder.userFeedPostCommentText.getId()){
+                    String commentDescription = userFeedHolder.userFeedEditComment.getText().toString();
+                    if(!commentDescription.equals("")){
+                        dbUtil.postComment(userFeedContext,selectedUserFeed,userFeedHolder,commentDescription);
+                    }else{
+                        Toast.makeText(userFeedContext,"Add some text",Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
