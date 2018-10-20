@@ -132,13 +132,54 @@
             <include layout="@layout/layout_comment_container"/>
         </RelativeLayout>
 
+        <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginStart="10dp"-->
+            <!--android:layout_below="@id/userfeed_comment_container"-->
+            <!--android:id="@+id/post_comment_container">-->
+            <!--<include layout="@layout/layout_comment_post"/>-->
+        <!--</RelativeLayout>-->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_below="@id/userfeed_comment_container"
-            android:id="@+id/post_comment_container">
-            <include layout="@layout/layout_comment_post"/>
+            android:layout_height="60dp"
+            android:id="@+id/post_comment_list_container"
+            android:layout_below="@+id/userfeed_comment_container">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/comment_profile_image"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/com_facebook_profile_picture_blank_square"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                app:civ_border_width="2dp"
+                app:civ_border_color="#FF000000"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:layout_toEndOf="@id/comment_profile_image"
+                android:background="@null"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="5dp"
+                android:layout_centerVertical="true"
+                android:hint="@string/hint_comment"
+                android:textSize="14sp"
+                android:id="@+id/userfeed_edit_comment"/>
+
+            <TextView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:paddingTop="7dp"
+                android:layout_centerVertical="true"
+                android:text="@string/post_comment"
+                android:id="@+id/userfeed_post_comment_text"
+                android:textColor="#64B5F6"
+                android:layout_marginEnd="5dp"
+                android:layout_alignParentEnd="true"/>
         </RelativeLayout>
 
     </RelativeLayout>

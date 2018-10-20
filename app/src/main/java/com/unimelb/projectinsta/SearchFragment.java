@@ -13,6 +13,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -102,6 +104,16 @@ public class SearchFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem sortDateItem=menu.findItem(R.id.action_sortDate);
+        sortDateItem.setVisible(false);
+        MenuItem sortLocationItem=menu.findItem(R.id.action_sortLocation);
+        sortLocationItem.setVisible(false);
+
     }
 
     @Override
@@ -112,7 +124,7 @@ public class SearchFragment extends Fragment {
         listView=view.findViewById(R.id.list_view);
 
         //listView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mUserList=new ArrayList<>();
+
 
         search_users=view.findViewById(R.id.search_users);
         search_users.addTextChangedListener(new TextWatcher() {
@@ -125,12 +137,16 @@ public class SearchFragment extends Fragment {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 //searchForMatch(charSequence.toString());
 
+
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-                String text = search_users.getText().toString();
+                listView.clearChoices();
+                mUserList=new ArrayList<>();
+                String text = editable.toString();
                 searchForMatch(text);
+
 
             }
         });
@@ -194,20 +210,30 @@ public class SearchFragment extends Fragment {
             //myRef.orderBy("name").startAt(searchText).endAt(searchText + "\uf8ff");
             //userDocuments.orderBy("UserName").startAt(keyword).
 
+
+
             userDocuments.orderBy("userName").startAt(keyword).endAt(keyword+"\uf8ff").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
+                        mUserList.clear();
                         for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                             //Log.d("jj", documentSnapshot.getId() + " => " + documentSnapshot.getData());
                             //mUserList.add(documentSnapshot.toObject(UserPojo.class));
-                            mUserList.add(documentSnapshot.toObject(UserPojo.class));
 
-                            UpdateUsersList();
+
+                                mUserList.add(documentSnapshot.toObject(UserPojo.class));
+
+
+
+
+
+
 
                             //Log.d(TAG, document.getId() + " => " + document.getData());
                         }
                     }
+                    UpdateUsersList();
                 }
             });
 
@@ -217,6 +243,7 @@ public class SearchFragment extends Fragment {
 
 
             private void UpdateUsersList() {
+        listView.setAdapter(null);
                 searchUsersAdapter = new SearchUsersAdapter(getContext(), R.layout.search_userlist, mUserList);
                 listView.setAdapter(searchUsersAdapter);
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

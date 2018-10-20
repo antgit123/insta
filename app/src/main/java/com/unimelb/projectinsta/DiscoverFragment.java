@@ -50,8 +50,11 @@ public class DiscoverFragment extends Fragment {
     private List<String> mFollowingList;
     private List<UserPojo> mSuggestList;
     private List<UserPojo> allUserList;
+    private List<String> mInterestList;
+    private String mSuburb;
     private UserPojo currentUser = null;
     private int required_common_following=1;
+    private int required_common_interests=1;
     private DiscoverUsersAdapter discoverUsersAdapter;
 
     private OnFragmentInteractionListener mListener;
@@ -114,6 +117,7 @@ public class DiscoverFragment extends Fragment {
         allUserList=new ArrayList<UserPojo>();
         mSuggestList=new ArrayList<UserPojo>();
         mFollowingList=new ArrayList<String>();
+        mInterestList=new ArrayList<String>();
         String userId = user.getUid();
 
 
@@ -126,6 +130,8 @@ public class DiscoverFragment extends Fragment {
                     DocumentSnapshot document = task.getResult();
                     currentUser = document.toObject(UserPojo.class);
                     mFollowingList=currentUser.getFollowingList();
+                    mInterestList=currentUser.getInterests();
+                    mSuburb=currentUser.getSuburb();
 
                 }
                 CollectionReference userDocuments = instadb.collection("users");
@@ -146,12 +152,30 @@ public class DiscoverFragment extends Fragment {
                                 } else {
                                     List<String> templist = new ArrayList<String>(allUserList.get(i).getFollowingList());
                                     templist.retainAll(mFollowingList);
-                                    if (templist != null) {
+                                    List<String> templist1 = new ArrayList<String>(allUserList.get(i).getInterests());
+                                    templist1.retainAll(mInterestList);
+                                    String thisUsersSuburb=allUserList.get(i).getSuburb();
+
                                         if (templist.size() >= required_common_following) {
                                             mSuggestList.add(allUserList.get(i));
                                             updateSuggestionList();
                                         }
-                                    }
+                                        else if (templist1.size() >= required_common_interests) {
+                                            mSuggestList.add(allUserList.get(i));
+                                            updateSuggestionList();
+                                        }
+                                        else if(mSuburb.toLowerCase().equals(thisUsersSuburb.toLowerCase()))
+                                        {
+                                            mSuggestList.add(allUserList.get(i));
+                                            updateSuggestionList();
+
+                                        }
+                                        else
+                                        {
+                                            continue;
+                                        }
+
+
                                 }
                             }
                         }

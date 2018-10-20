@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class UserFeed {
+public class UserFeed implements Comparable<UserFeed>{
     private UserPojo user;
     private String userId;
     private String photo;
@@ -161,6 +161,16 @@ public class UserFeed {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 '}';
+    }
+
+    @Override
+    public int compareTo(UserFeed o) {
+        if(getDate() == null || o.getDate() == null){
+            return 0;
+        }else{
+            return o.getDate().compareTo(getDate());
+        }
+
     }
 }
 

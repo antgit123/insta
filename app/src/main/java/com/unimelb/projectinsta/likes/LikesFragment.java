@@ -118,7 +118,7 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
                     if(feed != null) {
                         userLikes = feed.getLikeList();
                     }else{
-                        Toast.makeText(getContext(),"Error fetching feed document",Toast.LENGTH_SHORT);
+                        Toast.makeText(getContext(),"Error fetching feed document",Toast.LENGTH_SHORT).show();
                     }
                     adapter = new LikesArrayAdapter(getContext(),userLikes);
                     adapter.notifyDataSetChanged();
@@ -128,7 +128,7 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(),"Error fetching feed document",Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(),"Error fetching feed document",Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,6 +100,7 @@ public class ProfileFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -122,6 +124,15 @@ public class ProfileFragment extends Fragment {
             menu.add(0, v.getId(), 0, "Upload profile pic");
             menu.add(0,v.getId(), 0, "Remove profile pic");
         }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem sortDateItem=menu.findItem(R.id.action_sortDate);
+        sortDateItem.setVisible(false);
+        MenuItem sortLocationItem=menu.findItem(R.id.action_sortLocation);
+        sortLocationItem.setVisible(false);
+
     }
 
     @Override
