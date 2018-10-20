@@ -1,5 +1,7 @@
 package com.unimelb.projectinsta.util;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -9,6 +11,10 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,6 +39,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.unimelb.projectinsta.UserFeedHolder;
+import com.unimelb.projectinsta.model.Like;
 import com.unimelb.projectinsta.model.MyNotificationsPojo;
 import com.unimelb.projectinsta.model.UserFeed;
 import com.unimelb.projectinsta.model.UserPojo;
@@ -40,6 +48,7 @@ import com.unimelb.projectinsta.model.UserPojo;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -124,5 +133,70 @@ public class DatabaseUtil {
         String feedDescription = loggedInUser.getUserRealName() + " started following you";
         MyNotificationsPojo notification = new MyNotificationsPojo(user.getUserId(),type, feedDescription, loggedInUser, new Date());
         instadb.collection("myNotifications").add(notification);
+    }
+
+    public void updatePostLikes(final Context userFeedContext, UserFeed userFeed, final UserFeedHolder userFeedHolder, final boolean isLiked){
+        int feedId = userFeed.getFeed_Id();
+        loggedInUser = CommonUtil.getInstance().getLoggedInUser();
+        Like currentUserLike = new Like(loggedInUser,new Date());
+        if(isLiked){
+            //iterating through the likelist and delete the like of current user
+            Iterator iterator = userFeed.getLikeList().iterator();
+            Like like = null;
+            while (iterator.hasNext()){
+                like = (Like) iterator.next();
+                if (like.getUser().getUserId().equals(loggedInUser.getUserId())){
+                    iterator.remove();
+                }
+            }
+        }else{
+            userFeed.getLikeList().add(currentUserLike);
+        }
+        int numberOflikes = userFeed.getLikeList().size();
+        final String likesString = numberOflikes + " likes";
+        CollectionReference feedDocuments = instadb.collection("feeds");
+        final AnimatorSet animatorSet = new AnimatorSet();
+        final DecelerateInterpolator decelerate = new DecelerateInterpolator();
+        final AccelerateInterpolator accelerate = new AccelerateInterpolator();
+        feedDocuments.document(Integer.toString(feedId)).set(userFeed).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(isLiked){
+                    userFeedHolder.red_heart_icon.setScaleX(0.1f);
+                    userFeedHolder.red_heart_icon.setScaleY(0.1f);
+
+                    ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(userFeedHolder.red_heart_icon,"scaleY",1f,0f);
+                    scaleDownY.setDuration(300);
+                    scaleDownY.setInterpolator(accelerate);
+                    ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(userFeedHolder.red_heart_icon,"scaleX",1f,0f);
+                    scaleDownX.setDuration(300);
+                    scaleDownX.setInterpolator(accelerate);
+                    userFeedHolder.red_heart_icon.setVisibility(View.INVISIBLE);
+                    userFeedHolder.white_heart_icon.setVisibility(View.VISIBLE);
+                    animatorSet.playTogether(scaleDownY,scaleDownX);
+                    userFeedHolder.like_by.setText(likesString);
+                }else{
+                    userFeedHolder.red_heart_icon.setScaleX(0.1f);
+                    userFeedHolder.red_heart_icon.setScaleY(0.1f);
+
+                    ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(userFeedHolder.red_heart_icon,"scaleY",0.1f,1f);
+                    scaleDownY.setDuration(300);
+                    scaleDownY.setInterpolator(decelerate);
+                    ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(userFeedHolder.red_heart_icon,"scaleX",0.1f,1f);
+                    scaleDownX.setDuration(300);
+                    scaleDownX.setInterpolator(decelerate);
+                    userFeedHolder.red_heart_icon.setVisibility(View.VISIBLE);
+                    userFeedHolder.white_heart_icon.setVisibility(View.INVISIBLE);
+                    animatorSet.playTogether(scaleDownY,scaleDownX);
+                    userFeedHolder.like_by.setText(likesString);
+                }
+                animatorSet.start();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(userFeedContext,"Failed to update Likes, please check connection",Toast.LENGTH_SHORT);
+            }
+        });
     }
 }
