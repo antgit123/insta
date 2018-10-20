@@ -85,7 +85,7 @@
 
         <activity
             android:name=".LocationActivity"
-            android:label="@string/string_share"></activity>
+            android:label="Instagram"></activity>
     </application>
 
 </manifest>

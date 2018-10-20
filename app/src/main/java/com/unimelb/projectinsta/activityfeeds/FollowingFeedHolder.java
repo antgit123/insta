@@ -13,11 +13,14 @@ public class FollowingFeedHolder extends RecyclerView.ViewHolder implements View
     TextView feedDescription;
     Button userFollowButton;
     ItemClickListener itemClickListener;
+    TextView postedTime;
+
 
     public FollowingFeedHolder(View myFeedView) {
         super(myFeedView);
         this.feedDescription= (TextView) myFeedView.findViewById(R.id.following_feed_item_description);
         this.userProfileImage = (CircleImageView) myFeedView.findViewById(R.id.following_feed_user_profile_image);
+        this.postedTime = (TextView) myFeedView.findViewById(R.id.time_posted);
     }
 
     @Override
