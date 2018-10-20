@@ -192,7 +192,6 @@ public class LocationActivity extends AppCompatActivity implements LocationListe
         if(location != null){
             latitude = location.getLatitude();
         }
-
         // return latitude
         return latitude;
     }
@@ -205,7 +204,6 @@ public class LocationActivity extends AppCompatActivity implements LocationListe
         if(location != null){
             longitude = location.getLongitude();
         }
-
         // return longitude
         return longitude;
     }
@@ -260,14 +258,7 @@ public class LocationActivity extends AppCompatActivity implements LocationListe
 
         return null;
     }
-   /* public void share(View view) {
-        Log.d("test", "share: ");
-        savePost("test");
-        EditText caption = view.findViewById(R.id.caption);
-        EditText locationDetail = view.findViewById(R.id.location_info);
-        encodeBitmapAndSaveToFirebase(imageBitmap);
 
-    }*/
     public void encodeBitmapAndSaveToFirebase(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG,80,baos);
@@ -296,16 +287,16 @@ public class LocationActivity extends AppCompatActivity implements LocationListe
                     @Override
                     public void onSuccess(Uri uri) {
                         Log.d("test", "onSuccess: uri= "+ uri.toString());
-                        savePost(uri.toString(), caption, myLocation);
+                        savePost(uri.toString(), caption, myLocation,address);
                     }
                 });
             }
         });
     }
 
-    private void savePost(String uri, String caption, Location location) {
+    private void savePost(String uri, String caption, Location location, String address) {
         DatabaseUtil databaseUtil = new DatabaseUtil(LocationActivity.this);
-        databaseUtil.savePost(uri, caption, location);
+        databaseUtil.savePost(uri, caption, location, address);
 
     }
 

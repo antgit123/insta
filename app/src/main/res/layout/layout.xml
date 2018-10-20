@@ -45,7 +45,7 @@
                     android:layout_below="@id/username"
                     android:layout_marginStart="10dp"
                     android:layout_toEndOf="@id/profile_image"
-                    android:id="@+id/feed_title" />
+                    android:id="@+id/feed_location" />
             </RelativeLayout>
             <ImageView
                 android:layout_width="match_parent"

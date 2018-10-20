@@ -12,7 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -47,7 +50,7 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     public List<DocumentReference> mFollowingList;
-    public List<DocumentReference> feeds;
+    public List<UserFeed> feeds = new ArrayList<>();
     public List<DocumentReference> comments;
     public UserPojo loggedInUser = new UserPojo();
     public RecyclerView mUserFeedRecyclerView;
@@ -95,13 +98,11 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        queryDB();
+        queryUserFeeds();
         View homeFragmentView = inflater.inflate(R.layout.fragment_home, container, false);
         mUserFeedRecyclerView = (RecyclerView) homeFragmentView.findViewById(R.id.fragment_userfeed_recycler);
         mUserFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mUserFeedRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter = new UserFeedAdapter(getContext(),getUserFeeds());
-        mUserFeedRecyclerView.setAdapter(mAdapter);
         return homeFragmentView;
     }
 
@@ -144,7 +145,7 @@ public class HomeFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void queryDB(){
+    public void queryUserFeeds(){
         //fetches user doc, followed by users following list and the feeds which have those users to display in home view
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
@@ -158,88 +159,38 @@ public class HomeFragment extends Fragment {
                    DocumentSnapshot document = task.getResult();
                    Log.i("DB Success", document.getId() + " => " + document.getData());
                    loggedInUser = document.toObject(UserPojo.class);
-//                   for(String follower: loggedInUser.getFollowingList()) {
-//                       CollectionReference userDocuments = instadb.collection("users");
-//                       userDocuments.document(follower).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                           @Override
-//                           public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                               if (task.isSuccessful()) {
-//                                   //retrieve user Details
-//                                   DocumentSnapshot document = task.getResult();
-//                                   Log.i("DB Success", document.getId() + " => " + document.getData());
-//                                   currentUser = d
-//                   }
-
+                   getFeeds(loggedInUser);
                }
            }
        });
-        //query to fetch logged in user doc, get users following list and check with feeds
-//        userDocuments.whereEqualTo("userId",userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    //retrieve user Details
-//                    for (QueryDocumentSnapshot document : task.getResult()) {
-//                        Log.i("DB Success", document.getId() + " => " + document.getData());
-//                        final List<UserPojo> followingUsers = new ArrayList<>();
-//                        loggedInUser = returnUser(document);
-//                        List<DocumentReference> followingList = (ArrayList<DocumentReference>) document.getData().get("followingList");
-//                        mFollowingList = (ArrayList<DocumentReference>) document.getData().get("followingList");
-//                        for(DocumentReference userFollowing : followingList){
-//                            userFollowing.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                      if(task.isSuccessful()) {
-//                                          if (task.getResult().getId() != null) {
-//                                              UserPojo followingUser = task.getResult().toObject(UserPojo.class);
-//                                              followingUsers.add(followingUser);
-//                                          }
-//                                      }
-//                                }
-//                            });
-//                        }
-//                        loggedInUser.setFollowingList(followingUsers);
-//                        getFeeds();
-//                        Log.i("Logged User",loggedInUser.getEmail());
-//                    }
-//                } else {
-//                    Log.i("DB ERROR", "Error getting documents.", task.getException());
-//                }
-//            }
-//        });
     }
 
-
-
-    public ArrayList<UserFeed> getUserFeeds(){
-        ArrayList<UserFeed> users=new ArrayList<>();
-        UserPojo u1 = new UserPojo("ant_1192","ant_192" , "Ant", "Ant.mav@gmail.com", "abc123");
-        UserPojo u2 = new UserPojo("sin_1991","sin_1991" , "Sindhu", "sin.mav@gmail.com", "abc123");
-        UserFeed u1f=new UserFeed(u1,"Melbourne, Australia",R.drawable.com_facebook_profile_picture_blank_portrait,"pehla");
-        users.add(u1f);
-        UserFeed u2f = new UserFeed(u2,"Auckland,New Zealand",R.drawable.messenger_bubble_large_blue,"dusra");
-        users.add(u2f);
-        return users;
-    }
-
-    public void getFeeds(){
-        List<String> followingUserIds = loggedInUser.getFollowingList();
-
-        //query feeds
-        for(DocumentReference followingDocRef: mFollowingList){
-            Query feedQuery = instadb.collection("feeds").whereEqualTo("user",followingDocRef);
-            feedQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if(task.isSuccessful()){
-                        for(QueryDocumentSnapshot d2: task.getResult()){
-                            Log.i("feed1",d2.getId());
+    public void getFeeds(UserPojo loggedInUser) {
+        if (loggedInUser.getFollowingList().size() > 0) {
+            List<String> followingUserIds = loggedInUser.getFollowingList();
+            //query feeds
+            for(String followingId : followingUserIds) {
+                Query feedQuery = instadb.collection("feeds").whereEqualTo("userId",followingId);
+                feedQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot userFeedDocument : task.getResult()) {
+                                UserFeed userFeed = userFeedDocument.toObject(UserFeed.class);
+                                feeds.add(userFeed);
+                            }
                         }
+                        mAdapter = new UserFeedAdapter(getContext(),feeds);
+                        mUserFeedRecyclerView.setAdapter(mAdapter);
                     }
-                }
-            });
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(),"Error in fetching feed documents",Toast.LENGTH_SHORT);
+                    }
+                });
+            }
         }
-
     }
 
 }

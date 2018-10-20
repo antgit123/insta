@@ -3,6 +3,16 @@ package com.unimelb.projectinsta.model;
 import java.util.Date;
 
 public class Like {
+
+    public Like(){
+
+    }
+
+    public Like(UserPojo user, Date date){
+        this.user = user;
+        this.date = date;
+    }
+
     private UserPojo user;
     private Date date;
 

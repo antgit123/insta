@@ -18,6 +18,34 @@ public class UserFeed {
     private int feed_Id;
     private int comments;
 
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    private String locationName;
+    private double latitude;
+    private double longitude;
+
     public UserFeed(){
 
     }
@@ -27,10 +55,12 @@ public class UserFeed {
 
     }
 
-    public UserFeed(UserPojo user, String photo, Location location, String caption, Date date, Like like, Comment comment, int feed_Id) {
+    public UserFeed(UserPojo user, String photo, String locationName, double latitude, double longitude, String caption, Date date, Like like, Comment comment, int feed_Id) {
         this.user = user;
         this.photo = photo;
-        this.location = location;
+        this.locationName = locationName;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.caption = caption;
         this.date = date;
         this.likeList.add(like);
@@ -114,19 +144,22 @@ public class UserFeed {
         return commentList.size();
     }
 
-
     @Override
     public String toString() {
         return "UserFeed{" +
                 "user=" + user +
+                ", userId='" + userId + '\'' +
                 ", photo='" + photo + '\'' +
-                ", location='" + location + '\'' +
+                ", location=" + location +
                 ", caption='" + caption + '\'' +
                 ", date=" + date +
                 ", likeList=" + likeList +
                 ", commentList=" + commentList +
                 ", feed_Id=" + feed_Id +
                 ", comments=" + comments +
+                ", locationName='" + locationName + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
                 '}';
     }
 }

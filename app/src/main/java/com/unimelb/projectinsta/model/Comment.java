@@ -7,6 +7,16 @@ public class Comment {
     private Date date;
     private String description;
 
+    public Comment(){
+
+    }
+
+    public Comment(UserPojo user, Date date,String description){
+        this.user = user;
+        this.date = date;
+        this.description = description;
+    }
+
     public UserPojo getUser() {
         return user;
     }

@@ -80,9 +80,6 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_likes, container, false);
         userListView = view.findViewById(R.id.listView_followers);
-
-        // Set the adapter
-//        if (view instanceof RecyclerView) {
         Context context = view.getContext();
         if (mColumnCount <= 1) {
             userListView.setLayoutManager(new LinearLayoutManager(context));
@@ -90,7 +87,6 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
             userListView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
         queryUserLikes();
-//        }
         return view;
     }
 
