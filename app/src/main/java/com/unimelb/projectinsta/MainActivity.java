@@ -116,15 +116,21 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
     }
 
     private void sortByDate() {
-       if(HomeFragment.change.booleanValue() == Boolean.TRUE){
-           HomeFragment.change = Boolean.FALSE;
+       if(HomeFragment.changeDate.booleanValue() == Boolean.TRUE){
+           HomeFragment.changeDate = Boolean.FALSE;
        }else {
-           HomeFragment.change = Boolean.TRUE;
+           HomeFragment.changeDate = Boolean.TRUE;
        }
         loadFragment(new HomeFragment());
     }
 
     private void sortByLocation() {
+        if(HomeFragment.changeLocation.booleanValue() == Boolean.TRUE){
+            HomeFragment.changeLocation = Boolean.FALSE;
+        }else {
+            HomeFragment.changeLocation = Boolean.TRUE;
+        }
+        loadFragment(new HomeFragment());
     }
 
     private boolean loadFragment(Fragment fragment) {
@@ -153,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
 
     @Override
     public void onPhotoCaptured(Bitmap mBitmap) {
-        Log.i("Bitmap Success",mBitmap.toString());
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         mBitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
         byte[] byteArray = stream.toByteArray();
