@@ -263,7 +263,7 @@ public class EnlargedPostViewFragment extends Fragment {
                 // call becomeClient
                 // use your server device Bluetooth address
                 //
-                if (device.getAddress().equals("A8:0C:63:4D:6F:D6"))
+                if (device.getAddress().equals("64:A2:F9:7C:78:F4"))
                 {
                     becomeClient(device);
                 }
