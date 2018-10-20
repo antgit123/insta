@@ -29,6 +29,7 @@ import com.unimelb.projectinsta.model.UserFeed;
 import com.unimelb.projectinsta.util.DatabaseUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -158,6 +159,7 @@ public class CommentsFragment extends Fragment implements LikesArrayAdapter.User
                         } else {
                             Toast.makeText(getContext(), "Error fetching feed document", Toast.LENGTH_SHORT).show();
                         }
+                        Collections.sort(userComments);
                         adapter = new CommentsAdapter(getContext(), userComments);
                         commentsListView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
