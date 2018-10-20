@@ -22,6 +22,7 @@ import com.unimelb.projectinsta.likes.LikesArrayAdapter;
 import com.unimelb.projectinsta.model.MyNotificationsPojo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -135,6 +136,7 @@ public class YouFragment extends Fragment {
                         myNotifications.add(notification);
                     }
                 }
+                Collections.sort(myNotifications);
                 adapter.notifyDataSetChanged();
                 }
             });

@@ -23,6 +23,7 @@ import com.unimelb.projectinsta.model.FollowingUserNotificationsPojo;
 import com.unimelb.projectinsta.model.MyNotificationsPojo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -113,6 +114,7 @@ public class FollowingFragment extends Fragment {
                         followingFeedList.add(notification);
                     }
                 }
+                Collections.sort(followingFeedList);
                 notificationAdapter.notifyDataSetChanged();
                 }
             });

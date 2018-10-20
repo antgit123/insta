@@ -2,7 +2,7 @@ package com.unimelb.projectinsta.model;
 
 import java.util.Date;
 
-public class FollowingUserNotificationsPojo {
+public class FollowingUserNotificationsPojo implements Comparable<FollowingUserNotificationsPojo>{
     private String type;
     private String feedDescription;
     private UserPojo user1;
@@ -69,5 +69,15 @@ public class FollowingUserNotificationsPojo {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public int compareTo(FollowingUserNotificationsPojo o) {
+        if(getNotificationTimestamp() == null || o.getNotificationTimestamp() == null){
+            return 0;
+        }else{
+            return o.getNotificationTimestamp().compareTo(getNotificationTimestamp());
+        }
+
     }
 }

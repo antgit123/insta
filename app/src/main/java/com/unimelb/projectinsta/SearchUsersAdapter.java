@@ -57,7 +57,7 @@ public class SearchUsersAdapter extends ArrayAdapter<UserPojo> {
     }
 
     private static class ViewHolder {
-        TextView username, email;
+        TextView username, realname;
         CircleImageView profileimage;
         Button follow_button;
     }
@@ -72,7 +72,7 @@ public class SearchUsersAdapter extends ArrayAdapter<UserPojo> {
             holder = new ViewHolder();
 
             holder.username = (TextView) convertView.findViewById(R.id.username);
-            holder.email = (TextView) convertView.findViewById(R.id.email);
+            holder.realname = (TextView) convertView.findViewById(R.id.realname);
             holder.profileimage = (CircleImageView) convertView.findViewById(R.id.profile_image);
             holder.follow_button=(Button)convertView.findViewById(R.id.follow_user_button);
 
@@ -81,7 +81,7 @@ public class SearchUsersAdapter extends ArrayAdapter<UserPojo> {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.username.setText(getItem(position).getUserName());
-        holder.email.setText(getItem(position).getEmail());
+        holder.realname.setText(getItem(position).getUserRealName());
         Glide.with(getContext())
                 .load(getItem(position).getProfilePhoto())
                 .into(holder.profileimage);
