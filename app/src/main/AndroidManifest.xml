@@ -34,6 +34,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.hardware.location.gps" />
     <uses-permission android:name="android.hardware.location.network" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
 
     <application
@@ -86,7 +89,7 @@
 
         <activity
             android:name=".LocationActivity"
-            android:label="@string/title_activity_location"></activity>
+            android:label="@string/string_share"></activity>
     </application>
 
 </manifest>

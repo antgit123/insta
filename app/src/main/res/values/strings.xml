@@ -84,4 +84,5 @@
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_location">LocationActivity</string>
     <string name="string_share">Share</string>
+    <string name="string_caption">Caption</string>
 </resources>
