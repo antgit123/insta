@@ -16,7 +16,9 @@ public class UserFeed implements Comparable<UserFeed>{
     private List<Like> likeList = new ArrayList<>();
     private List<Comment> commentList = new ArrayList<>();
     private int feed_Id;
-    private int comments;
+    private String locationName;
+    private double latitude;
+    private double longitude;
 
     public String getLocationName() {
         return locationName;
@@ -41,10 +43,6 @@ public class UserFeed implements Comparable<UserFeed>{
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
-
-    private String locationName;
-    private double latitude;
-    private double longitude;
 
     public UserFeed(){
 
@@ -156,7 +154,6 @@ public class UserFeed implements Comparable<UserFeed>{
                 ", likeList=" + likeList +
                 ", commentList=" + commentList +
                 ", feed_Id=" + feed_Id +
-                ", comments=" + comments +
                 ", locationName='" + locationName + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
