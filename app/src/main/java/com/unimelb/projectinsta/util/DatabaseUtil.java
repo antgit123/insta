@@ -82,12 +82,14 @@ public class DatabaseUtil {
         }
     }
 
-    public void savePost(String uri, String caption, Location location) {
+    public void savePost(String uri, String caption, Location location, String address) {
         Log.d("test", "savePost: "+userID);
         final UserFeed feed = new UserFeed();
         feed.setPhoto(uri);
         feed.setCaption(caption);
-        feed.setLocation(location);
+        feed.setLocationName(address);
+        feed.setLatitude(location.getLatitude());
+        feed.setLongitude(location.getLongitude());
         feed.setUserId(userID);
         int n = 1000;
         int feedId = new Random().nextInt(n);

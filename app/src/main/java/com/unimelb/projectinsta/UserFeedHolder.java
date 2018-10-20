@@ -7,17 +7,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class UserFeedHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-    ImageView img;
-    TextView userName_txt,description_txt, title,like_by;
+    ImageView feedImageView;
+    TextView userName_txt,description_txt, location,like_by;
     ImageButton white_heart_icon,red_heart_icon,chat_icon;
     ItemClickListener itemClickListener;
+    CircleImageView userProfileImageView;
 
     public UserFeedHolder(View itemView) {
         super(itemView);
-        this.img= (ImageView) itemView.findViewById(R.id.user_story_photo);
+        this.feedImageView= (ImageView) itemView.findViewById(R.id.user_story_photo);
+        this.userProfileImageView = itemView.findViewById(R.id.profile_image);
         this.userName_txt = (TextView) itemView.findViewById(R.id.username);
-        this.title = (TextView) itemView.findViewById(R.id.feed_title);
+        this.location = (TextView) itemView.findViewById(R.id.feed_location);
         this.description_txt = (TextView) itemView.findViewById(R.id.user_story_photo_description);
         this.white_heart_icon = itemView.findViewById(R.id.like_button);
         this.red_heart_icon = itemView.findViewById(R.id.like_button_red);

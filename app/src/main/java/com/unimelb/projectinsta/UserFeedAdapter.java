@@ -5,9 +5,8 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -25,18 +25,20 @@ import com.google.firebase.storage.StorageReference;
 import com.unimelb.projectinsta.likes.LikesFragment;
 import com.unimelb.projectinsta.model.UserFeed;
 
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
 
-    ArrayList<UserFeed> userFeed;
+    List<UserFeed> userFeed;
     Context userFeedContext;
     ItemClickListener listener;
     DecelerateInterpolator decelerate = new DecelerateInterpolator();
     AccelerateInterpolator accelerate = new AccelerateInterpolator();
     View userFeedView;
 
-    public UserFeedAdapter(Context userFeedContext, ArrayList<UserFeed> userFeed){
+    public UserFeedAdapter(Context userFeedContext, List<UserFeed> userFeed){
         this.userFeedContext = userFeedContext;
         this.userFeed = userFeed;
     }
@@ -50,25 +52,35 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final UserFeedHolder userFeedHolder, int i) {
-
         userFeedHolder.userName_txt.setText(userFeed.get(i).getUser().getUserName());
         userFeedHolder.description_txt.setText(userFeed.get(i).getCaption());
-        userFeedHolder.title.setText(userFeed.get(i).getUser().getEmail());
+        userFeedHolder.location.setText(userFeed.get(i).getLocationName());
+        String photoUri = userFeed.get(i).getPhoto();
+        String userPhoto = userFeed.get(i).getUser().getProfilePhoto();
+        if(userPhoto == null){
+            Glide.with(userFeedContext).load(R.drawable.com_facebook_profile_picture_blank_square).into(userFeedHolder.userProfileImageView);
+        }else{
+            Glide.with(userFeedContext).load(userPhoto).into(userFeedHolder.userProfileImageView);
+        }
+        Glide.with(userFeedContext).load(photoUri).into(userFeedHolder.feedImageView);
 //        userFeedHolder.img.setImageResource(userFeed.get(i).getM_Img());
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         //adding image to view
-        storageRef.child("/appl.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Log.i("URI:",uri.toString());
-                Glide.with(userFeedContext).load(uri.toString()).into(userFeedHolder.img);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-            }
-        });
+//        storageRef.child("/appl.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//            @Override
+//            public void onSuccess(Uri uri) {
+//                Log.i("URI:",uri.toString());
+//                Glide.with(userFeedContext).load(uri.toString()).into(userFeedHolder.img);
+////                Glide.with(userFeedContext).load(uri.toString()).into(userFeedHolder.img);
+//
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception exception) {
+//                // Handle any errors
+//                Toast.makeText(userFeedContext,"Failed getting image",Toast.LENGTH_SHORT);
+//            }
+//        });
 
         userFeedHolder.setItemClickListener(new ItemClickListener() {
             @Override
@@ -124,4 +136,5 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
     public int getItemCount() {
         return userFeed.size();
     }
+
 }
