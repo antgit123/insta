@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -165,6 +166,10 @@ public class HomeFragment extends Fragment {
         mUserFeedRecyclerView = (RecyclerView) homeFragmentView.findViewById(R.id.fragment_userfeed_recycler);
         mUserFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mUserFeedRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mAdapter = new UserFeedAdapter(getContext(),feeds);
+        mUserFeedRecyclerView.setAdapter(mAdapter);
+
         return homeFragmentView;
     }
 
@@ -228,6 +233,8 @@ public class HomeFragment extends Fragment {
     }
 
     public void getFeeds() {
+        final Boolean[] hasFeeds = {false};
+        final TextView nofeedsText = (TextView) getView().findViewById(R.id.no_feed_display_text);
         if (loggedInUser.getFollowingList().size() > 0) {
             List<String> followingUserIds = loggedInUser.getFollowingList();
             //query feeds
@@ -240,10 +247,17 @@ public class HomeFragment extends Fragment {
                             for (QueryDocumentSnapshot userFeedDocument : task.getResult()) {
                                 UserFeed userFeed = userFeedDocument.toObject(UserFeed.class);
                                 feeds.add(userFeed);
+                                if(!hasFeeds[0]) {
+                                    hasFeeds[0] = true;
+                                }
                             }
                         }
-                        mAdapter = new UserFeedAdapter(getContext(),feeds);
-                        mUserFeedRecyclerView.setAdapter(mAdapter);
+                        if(hasFeeds[0]) {
+                            nofeedsText.setVisibility(View.INVISIBLE);
+                        } else {
+                            nofeedsText.setVisibility(View.VISIBLE);
+                        }
+                        mAdapter.notifyDataSetChanged();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -252,6 +266,8 @@ public class HomeFragment extends Fragment {
                     }
                 });
             }
+        } else {
+            nofeedsText.setVisibility(View.VISIBLE);
         }
     }
 
