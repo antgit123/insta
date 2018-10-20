@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,6 +23,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.unimelb.projectinsta.comments.CommentsAdapter;
+import com.unimelb.projectinsta.model.Comment;
 import com.unimelb.projectinsta.model.FollowingUserNotificationsPojo;
 import com.unimelb.projectinsta.UserFeedHolder;
 import com.unimelb.projectinsta.model.Like;
@@ -218,7 +221,32 @@ public class DatabaseUtil {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(userFeedContext,"Failed to update Likes, please check connection",Toast.LENGTH_SHORT);
+                Toast.makeText(userFeedContext,"Failed to update Likes, please check connection",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void postComment(final Context userFeedContext, final UserFeed userFeed, final UserFeedHolder userFeedHolder,String comment_Description){
+        int feedId = userFeed.getFeed_Id();
+        loggedInUser = CommonUtil.getInstance().getLoggedInUser();
+        Comment comment = new Comment(loggedInUser,new Date(),comment_Description);
+        userFeed.addCommentList(comment);
+        final int numberOfComments = userFeed.getCommentList().size();
+        final String commentsString = "View all " + numberOfComments + " comments";
+        CollectionReference feedDocuments = instadb.collection("feeds");
+        feedDocuments.document(Integer.toString(feedId)).set(userFeed).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()) {
+                    userFeedHolder.comments_link.setText(commentsString);
+                    userFeedHolder.userFeedEditComment.setText("");
+                    Toast.makeText(userFeedContext,"Comment Succesfully posted!",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(userFeedContext,"Failed to post comment, please check connection",Toast.LENGTH_SHORT).show();
             }
         });
     }

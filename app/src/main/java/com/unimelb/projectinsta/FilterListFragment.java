@@ -77,16 +77,6 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_thumbnail_list, container, false);
         // Set the adapter
-//        if (view instanceof RecyclerView) {
-//            Context context = view.getContext();
-//            RecyclerView recyclerView = (RecyclerView) view;
-//            if (mColumnCount <= 1) {
-//                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-//            } else {
-//                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-//            }
-//        }
-
         thumbnailItemList = new ArrayList<>();
         thumbNailListView = view.findViewById(R.id.filter_list);
         mAdapter = new ThumbnailAdapter(getContext(), thumbnailItemList, this);

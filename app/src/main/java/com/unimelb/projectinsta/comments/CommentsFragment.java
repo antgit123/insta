@@ -26,6 +26,8 @@ import com.unimelb.projectinsta.R;
 import com.unimelb.projectinsta.likes.LikesArrayAdapter;
 import com.unimelb.projectinsta.model.Comment;
 import com.unimelb.projectinsta.model.UserFeed;
+import com.unimelb.projectinsta.util.DatabaseUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +49,7 @@ public class CommentsFragment extends Fragment implements LikesArrayAdapter.User
     TextView postComment;
     EditText postCommentText;
     String feedId, trigger;
+    DatabaseUtil dbUtil = new DatabaseUtil();
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -80,6 +83,20 @@ public class CommentsFragment extends Fragment implements LikesArrayAdapter.User
         commentsListView = view.findViewById(R.id.listView_comments);
         postCommentText = view.findViewById(R.id.edit_comment);
         postComment = view.findViewById(R.id.post_comment_text);
+
+        postComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(v.getId() == postComment.getId()) {
+                    Toast.makeText(getContext(),"aaa",Toast.LENGTH_SHORT);
+                    if (postCommentText.getText().toString().equals("")) {
+                        postCommentText.setEnabled(false);
+                    } else {
+                        queryUserComments(feedId, true);
+                    }
+                }
+            }
+        });
         postComment.setEnabled(false);
         Context context = view.getContext();
         Bundle bundle = getArguments();
@@ -90,7 +107,7 @@ public class CommentsFragment extends Fragment implements LikesArrayAdapter.User
         } else {
             commentsListView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        queryUserComments(feedId);
+        queryUserComments(feedId,false);
         if(trigger.equals("icon")){
             postCommentText.requestFocus();
             InputMethodManager inputManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -103,7 +120,6 @@ public class CommentsFragment extends Fragment implements LikesArrayAdapter.User
         }
         return view;
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -122,7 +138,7 @@ public class CommentsFragment extends Fragment implements LikesArrayAdapter.User
         mListener = null;
     }
 
-    public void queryUserComments(String feedId){
+    public void queryUserComments(String feedId, final boolean postComment){
         FirebaseFirestore instadb = FirebaseFirestore.getInstance();
         CollectionReference feedDocuments = instadb.collection("feeds");
         feedDocuments.document(feedId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -134,14 +150,18 @@ public class CommentsFragment extends Fragment implements LikesArrayAdapter.User
                 if(task.isSuccessful()){
                     DocumentSnapshot feedDocument = task.getResult();
                     feed = feedDocument.toObject(UserFeed.class);
-                    if(feed != null) {
-                        userComments = feed.getCommentList();
-                    }else{
-                        Toast.makeText(getContext(),"Error fetching feed document",Toast.LENGTH_SHORT);
+                    if(postComment){
+//                        dbUtil.postComment(getContext(),feed,postCommentText.getText().toString(),postCommentText);
+                    }else {
+                        if (feed != null) {
+                            userComments = feed.getCommentList();
+                        } else {
+                            Toast.makeText(getContext(), "Error fetching feed document", Toast.LENGTH_SHORT).show();
+                        }
+                        adapter = new CommentsAdapter(getContext(), userComments);
+                        commentsListView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
                     }
-                    adapter = new CommentsAdapter(getContext(),userComments);
-                    commentsListView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
