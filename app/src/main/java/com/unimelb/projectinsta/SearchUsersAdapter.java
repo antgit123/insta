@@ -102,46 +102,7 @@ public class SearchUsersAdapter extends ArrayAdapter<UserPojo> {
             }
         });
 
-
-//        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-//        FirebaseFirestore instadb = FirebaseFirestore.getInstance();
-//
-//
-//        CollectionReference userDocuments = instadb.collection("users");
-//
-//        //com.google.firebase.firestore.Query query = userDocuments.whereEqualTo("UserId",position);
-//        userDocuments.whereEqualTo("UserName",holder.username.toString()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    QuerySnapshot doc = task.getResult();
-//                    for (UserPojo user: task.getResult().toObjects(UserPojo.class)) {
-////                        UserPojo userInfo = document.toObject(UserPojo.class);
-//
-////                        holder.profileimage.setImageURI(Uri.parse(UserInfo.getProfilePhoto()));
-//                        Glide.with(getContext())
-//                                .load(user.getProfilePhoto())
-//                                .into(holder.profileimage);
-//
-//                        //Log.d(TAG, document.getId() + " => " + document.getData());
-//                    }
-//                }
-//            }
-//        });
         return convertView;
     }
 
-    public UserPojo returnUser(DocumentSnapshot userDoc){
-        if(userDoc.getData().get("userId") != null) {
-            String userId = (String) userDoc.getData().get("userId");
-            String userName = (String) userDoc.getData().get("userName");
-            String realName = (String) userDoc.getData().get("userRealName");
-            String email = (String) userDoc.getData().get("email");
-            String password = (String) userDoc.getData().get("password");
-
-            UserPojo user = new UserPojo(userId, userName, realName, email, password);
-            return user;
-        }
-        return null;
-    }
 }
