@@ -3,6 +3,7 @@ package com.unimelb.projectinsta.profile;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,10 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.unimelb.projectinsta.OnSwipeTouchListener;
 import com.unimelb.projectinsta.R;
+
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.ByteBuffer;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -73,15 +83,24 @@ public class EnlargedPostViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_enlarged_self_posts, container, false);
         ImageView enlargedImage = (ImageView) view.findViewById(R.id.enlarged_post);
         Bundle bundle = getArguments();
-        String imageUrl = bundle.getString("imageUrl");
+        String image = bundle.getString("imageUrl");
 
         RequestOptions options = new RequestOptions();
         options.centerCrop();
         Glide.with(getContext())
-                .load(imageUrl)
+                .load(image)
                 .apply(options)
                 .into(enlargedImage);
+        enlargedImage.buildDrawingCache();
+        //Bitmap bitmap = enlargedImage.getDrawingCache();
+        //Bitmap bitmap = ((BitmapDrawable)enlargedImage.getDrawable()).getBitmap();
 
+        enlargedImage.setOnTouchListener(new OnSwipeTouchListener(getContext()) {
+            @Override
+            public void onSwipeRight() {
+                Toast.makeText(getActivity(), "swipe right!!!", Toast.LENGTH_SHORT).show();
+            }
+        });
         return view;
     }
 
