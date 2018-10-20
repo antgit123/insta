@@ -10,6 +10,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,6 +33,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.unimelb.projectinsta.util.CommonUtil;
+import com.unimelb.projectinsta.util.DatabaseUtil;
 
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -56,11 +59,12 @@ public class SearchUsersAdapter extends ArrayAdapter<UserPojo> {
     private static class ViewHolder {
         TextView username, email;
         CircleImageView profileimage;
+        Button follow_button;
     }
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final ViewHolder holder;
 
         if (convertView == null) {
@@ -70,6 +74,7 @@ public class SearchUsersAdapter extends ArrayAdapter<UserPojo> {
             holder.username = (TextView) convertView.findViewById(R.id.username);
             holder.email = (TextView) convertView.findViewById(R.id.email);
             holder.profileimage = (CircleImageView) convertView.findViewById(R.id.profile_image);
+            holder.follow_button=(Button)convertView.findViewById(R.id.follow_user_button);
 
             convertView.setTag(holder);
         } else {
@@ -80,6 +85,23 @@ public class SearchUsersAdapter extends ArrayAdapter<UserPojo> {
         Glide.with(getContext())
                 .load(getItem(position).getProfilePhoto())
                 .into(holder.profileimage);
+
+        UserPojo loggedInUser = CommonUtil.getInstance().getLoggedInUser();
+        if(!loggedInUser.getFollowingList().contains(getItem(position).getUserId())) {
+            holder.follow_button.setVisibility(View.VISIBLE);
+        } else {
+            holder.follow_button.setVisibility(View.INVISIBLE);
+        }
+        holder.follow_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseUtil dbHelper = new DatabaseUtil();
+                dbHelper.followFunction(getItem(position));
+                holder.follow_button.setEnabled(false);
+                holder.follow_button.setText("Following");
+            }
+        });
+
 
 //        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 //        FirebaseFirestore instadb = FirebaseFirestore.getInstance();
