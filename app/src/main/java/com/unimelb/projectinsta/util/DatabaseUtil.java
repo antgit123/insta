@@ -108,6 +108,21 @@ public class DatabaseUtil {
         }
     }
 
+
+    private void notifyFollowersAboutLike(UserPojo follower) {
+        String type = "like";
+        String feedDescription = loggedInUser.getUserName() + " liked the post added by " + follower.getUserName();
+
+        List<String> followersList = loggedInUser.getFollowerList();
+        for(String followerId : followersList) {
+            if (!followerId.equals(follower.getUserId())){
+                FollowingUserNotificationsPojo notification = new FollowingUserNotificationsPojo
+                        (loggedInUser, follower, type, feedDescription, new Date(), followerId);
+                instadb.collection("followersNotifications").add(notification);
+            }
+        }
+    }
+
     private void addFollowing(final UserPojo user) {
         updateFollowingList(loggedInUser, user.getUserId());
     }
@@ -127,13 +142,18 @@ public class DatabaseUtil {
 
         String type = "follow";
         String feedDescription = loggedInUser.getUserRealName() + " started following you";
-        MyNotificationsPojo notification = new MyNotificationsPojo(user.getUserId(),type, feedDescription, loggedInUser, new Date());
+        updateMyNotification(type, feedDescription, user.getUserId(), loggedInUser);
+    }
+
+    private void updateMyNotification(String type, String feedDescription, String userId, UserPojo user) {
+        MyNotificationsPojo notification = new MyNotificationsPojo(userId,type, feedDescription, user, new Date());
         instadb.collection("myNotifications").add(notification);
     }
 
-    public void updatePostLikes(final Context userFeedContext, UserFeed userFeed, final UserFeedHolder userFeedHolder, final boolean isLiked){
+    public void updatePostLikes(final Context userFeedContext, final UserFeed userFeed, final UserFeedHolder userFeedHolder, final boolean isLiked){
         int feedId = userFeed.getFeed_Id();
         loggedInUser = CommonUtil.getInstance().getLoggedInUser();
+        final String userId = userFeed.getUserId();
         Like currentUserLike = new Like(loggedInUser,new Date());
         if(isLiked){
             //iterating through the likelist and delete the like of current user
@@ -185,8 +205,15 @@ public class DatabaseUtil {
                     userFeedHolder.white_heart_icon.setVisibility(View.INVISIBLE);
                     animatorSet.playTogether(scaleDownY,scaleDownX);
                     userFeedHolder.like_by.setText(likesString);
+                    //updating notifications for like
+                    String type = "like";
+                    String feedDescription = loggedInUser.getUserRealName() + " liked your post";
+                    updateMyNotification(type, feedDescription, userId, loggedInUser);
+                    notifyFollowersAboutLike(userFeed.getUser());
                 }
                 animatorSet.start();
+
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

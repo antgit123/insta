@@ -101,6 +101,7 @@ public class FollowingFragment extends Fragment {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value,
                                     @Nullable FirebaseFirestoreException e) {
+                followingFeedList.clear();
                 if (e != null) {
                     Log.w("fail", "Listen failed.", e);
                     return;

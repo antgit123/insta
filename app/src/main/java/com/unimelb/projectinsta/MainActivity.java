@@ -1,5 +1,6 @@
 package com.unimelb.projectinsta;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -83,6 +84,11 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         CommonUtil.getInstance();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        Intent discoverableIntent = new
+                Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 3000);
+        startActivity(discoverableIntent);
+
     }
 
    @Override
