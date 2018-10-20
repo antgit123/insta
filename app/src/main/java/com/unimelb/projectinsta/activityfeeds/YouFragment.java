@@ -123,6 +123,7 @@ public class YouFragment extends Fragment {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value,
                                     @Nullable FirebaseFirestoreException e) {
+                    myNotifications.clear();
                 if (e != null) {
                     Log.w("fail", "Listen failed.", e);
                     return;

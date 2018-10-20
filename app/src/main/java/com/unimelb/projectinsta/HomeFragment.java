@@ -298,13 +298,6 @@ public class HomeFragment extends Fragment {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
 
-
-        // make this device visible to others for 3000 seconds
-        Intent discoverableIntent = new
-                Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 3000);
-        startActivity(discoverableIntent);
-
         // start server
         becomeServer();
     }

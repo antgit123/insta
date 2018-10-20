@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.unimelb.projectinsta.R;
 import com.unimelb.projectinsta.model.Like;
 import com.unimelb.projectinsta.model.UserPojo;
+import com.unimelb.projectinsta.util.CommonUtil;
 import com.unimelb.projectinsta.util.DatabaseUtil;
 
 public class LikesArrayAdapter extends RecyclerView.Adapter<LikesHolder> {
@@ -44,6 +45,15 @@ public class LikesArrayAdapter extends RecyclerView.Adapter<LikesHolder> {
         final UserPojo user = userLikesList.get(position).getUser();
         final LikesHolder likesHolderObject = likesHolder;
         likesHolderObject.userName.setText(user.getUserName());
+
+        UserPojo loggedInUser = CommonUtil.getInstance().getLoggedInUser();
+        if(!loggedInUser.getFollowingList().contains(user.getUserId()) ||
+                !user.getUserId().equals(loggedInUser.getUserId())) {
+            likesHolderObject.userFollowButton.setVisibility(View.VISIBLE);
+        } else {
+            likesHolderObject.userFollowButton.setVisibility(View.INVISIBLE);
+        }
+
         likesHolderObject.userFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
