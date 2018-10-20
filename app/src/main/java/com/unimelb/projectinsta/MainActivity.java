@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.unimelb.projectinsta.activityfeeds.YouFragment;
 import com.unimelb.projectinsta.likes.LikesFragment;
+import com.unimelb.projectinsta.profile.EnlargedPostViewFragment;
 
 import java.io.ByteArrayOutputStream;
 
@@ -26,7 +27,9 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         LikesFragment.OnListFragmentInteractionListener,
         NotificationFragment.OnFragmentInteractionListener, FollowingFragment.OnFragmentInteractionListener,
         YouFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener,
-        SearchDiscover.OnFragmentInteractionListener,DiscoverFragment.OnFragmentInteractionListener{
+        SearchDiscover.OnFragmentInteractionListener,DiscoverFragment.OnFragmentInteractionListener,
+        EnlargedPostViewFragment.OnFragmentInteractionListener {
+
 
     static
     {
