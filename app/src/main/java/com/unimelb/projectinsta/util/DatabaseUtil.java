@@ -32,11 +32,18 @@ import com.unimelb.projectinsta.model.MyNotificationsPojo;
 import com.unimelb.projectinsta.model.UserFeed;
 import com.unimelb.projectinsta.model.UserPojo;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 public class DatabaseUtil {
 
@@ -249,5 +256,31 @@ public class DatabaseUtil {
                 Toast.makeText(userFeedContext,"Failed to post comment, please check connection",Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public String getTimestampDifference(Date date){
+        String difference = "";
+        Calendar c = Calendar.getInstance();
+        DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Australia/Sydney"));
+        Date today = c.getTime();
+        simpleDateFormat.format(today);
+        difference = String.valueOf(Math.round(((today.getTime() - date.getTime()) / 1000 / 60 / 60 / 24 )));
+        if(difference.equals("0")){
+            long hours = TimeUnit.MILLISECONDS.toHours(today.getTime() - date.getTime());
+            if(Long.toString(hours).equals("0")){
+                long minutes = TimeUnit.MILLISECONDS.toMinutes(today.getTime() - date.getTime());
+                if(minutes < 1){
+                    long seconds = TimeUnit.MILLISECONDS.toSeconds(today.getTime() - date.getTime());
+                    return Long.toString(seconds) + " s ago";
+                }else{
+                    return Long.toString(minutes) + " m ago";
+                }
+            }else{
+                return Long.toString(hours) + " h ago";
+            }
+        }else{
+            return difference + " d ago";
+        }
     }
 }

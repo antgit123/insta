@@ -12,12 +12,15 @@ import com.bumptech.glide.Glide;
 import com.unimelb.projectinsta.R;
 import com.unimelb.projectinsta.model.Comment;
 import com.unimelb.projectinsta.model.UserPojo;
+import com.unimelb.projectinsta.util.DatabaseUtil;
+
 import java.util.List;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsHolder> {
 
     private Context mContext;
     private List<Comment> commentList;
+    DatabaseUtil dbUtil = new DatabaseUtil();
 
     public CommentsAdapter(Context likesContext, List<Comment> commentList){
         this.mContext = likesContext;
@@ -43,6 +46,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsHolder> {
             Glide.with(mContext).load(userProfilePhoto).into(commentsHolder.userProfileImage);
         }
         commentsHolder.commentText.setText(commentList.get(position).getDescription());
+        String diff = dbUtil.getTimestampDifference(commentList.get(position).getDate());
+        commentsHolder.postedTime.setText(diff);
     }
 
     @Override
