@@ -312,17 +312,4 @@ public class LocationActivity extends AppCompatActivity implements LocationListe
         startActivity(mainActivity);
     }
 
-    private boolean loadFragment(Fragment fragment) {
-        //check for empty fragment
-        if (fragment != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .commit();
-            return true;
-        }
-        return false;
-    }
-
-
 }
