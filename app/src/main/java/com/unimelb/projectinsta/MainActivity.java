@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.unimelb.projectinsta.activityfeeds.FollowingFragment;
 import com.unimelb.projectinsta.activityfeeds.YouFragment;
 import com.unimelb.projectinsta.likes.LikesFragment;
 import com.unimelb.projectinsta.profile.EnlargedPostViewFragment;

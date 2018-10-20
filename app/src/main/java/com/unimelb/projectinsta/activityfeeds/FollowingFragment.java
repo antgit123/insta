@@ -1,4 +1,4 @@
-package com.unimelb.projectinsta;
+package com.unimelb.projectinsta.activityfeeds;
 
 import android.content.Context;
 import android.net.Uri;
@@ -6,11 +6,11 @@ import android.os.Bundle;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.google.firebase.firestore.EventListener;
@@ -18,9 +18,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.unimelb.projectinsta.NotificationCustomAdapter;
+import com.unimelb.projectinsta.R;
+import com.unimelb.projectinsta.model.FollowingUserNotificationsPojo;
 import com.unimelb.projectinsta.util.DatabaseUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -42,8 +46,9 @@ public class FollowingFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-    private ListView followingListView;
-    ArrayList<String> followingList = new ArrayList<>();
+    private RecyclerView followingFeedListView;
+//    ArrayList<String> followingList = new ArrayList<>();
+    List<FollowingUserNotificationsPojo> followingFeedList = new ArrayList<>();
     NotificationCustomAdapter notificationAdapter;
 
     public FollowingFragment() {
@@ -82,17 +87,15 @@ public class FollowingFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_following, container, false);
-
-
-        followingListView = view.findViewById(R.id.followingListView);
+        followingFeedListView = view.findViewById(R.id.listView_followingNotifications);
         //Read all the images:
         DatabaseUtil dbHelper = new DatabaseUtil();
 
 //        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, dbHelper.getFollowingNotifications());
 //        ArrayList<String> followingNotificationList =
         getFollowingNotifications();
-        notificationAdapter = new NotificationCustomAdapter(getContext(), followingList);
-        followingListView.setAdapter(notificationAdapter);
+//        notificationAdapter = new FollowingFeedAdapter(getContext(), followingFeedList);
+//        followingFeedListView.setAdapter(notificationAdapter);
         return view;
     }
 
@@ -110,8 +113,8 @@ public class FollowingFragment extends Fragment {
                     for (QueryDocumentSnapshot doc : value) {
                         String profilePhoto = (String) doc.getData().get("profilePhoto");
                         if (profilePhoto != null) {
-                            followingList.add(profilePhoto);
-                            notificationAdapter.notifyDataSetChanged();
+//                            followingList.add(profilePhoto);
+//                            notificationAdapter.notifyDataSetChanged();
                         }
                     }
                 }

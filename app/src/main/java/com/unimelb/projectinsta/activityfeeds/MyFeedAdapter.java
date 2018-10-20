@@ -41,7 +41,9 @@ public class MyFeedAdapter extends RecyclerView.Adapter<MyFeedHolder> {
     public void onBindViewHolder(@NonNull final MyFeedHolder myFeedHolder, final int position) {
         MyNotificationsPojo notification = myNotificationsList.get(position);
         final UserPojo user = notification.getUser();
-        Glide.with(mContext).load(user.getProfilePhoto()).into(myFeedHolder.userProfileImage);
+        if(user.getProfilePhoto() != null) {
+            Glide.with(mContext).load(user.getProfilePhoto()).into(myFeedHolder.userProfileImage);
+        }
         String feed_description = myNotificationsList.get(position).getFeedDescription();
         myFeedHolder.feedDescription.setText(feed_description);
         UserPojo loggedInUser = CommonUtil.getInstance().getLoggedInUser();

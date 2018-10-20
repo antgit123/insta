@@ -3,14 +3,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FollowingFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".activityfeeds.FollowingFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <ListView
-        android:id="@+id/followingListView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/following_notifications_list_container"
+        android:layout_marginBottom="20dp">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/listView_followingNotifications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:clipChildren="false"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:context=".activityfeeds.FollowingFragment"
+            tools:listitem="@layout/fragment_following_list_item" />
+    </RelativeLayout>
 
 </FrameLayout>
