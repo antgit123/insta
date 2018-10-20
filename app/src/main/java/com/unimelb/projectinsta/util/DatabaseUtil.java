@@ -33,7 +33,6 @@ import com.unimelb.projectinsta.model.UserFeed;
 import com.unimelb.projectinsta.model.UserPojo;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,9 +46,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DatabaseUtil {
 
-    private ArrayList<String> imageList = new ArrayList<>();
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
     private StorageReference mStorageReference;
@@ -57,8 +54,6 @@ public class DatabaseUtil {
     private Context mContext;
     public UserPojo loggedInUser = new UserPojo();
     public FirebaseFirestore instadb = FirebaseFirestore.getInstance();
-    private ArrayList<String> followingNotificationList = new ArrayList<>();
-    private ArrayList<UserPojo> allUsers = new ArrayList<>();
 
     public DatabaseUtil() {
         mAuth = FirebaseAuth.getInstance();
@@ -98,6 +93,9 @@ public class DatabaseUtil {
         feed.setUser(loggedInUser);
         feed.setDate(new Date());
         feed.setFeed_Id(feedId);
+        feed.setLocation(location);
+        FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+        instadb.collection("feeds").document(String.valueOf(feedId)).set(feed);
     }
 
     public void followFunction(UserPojo follower) {
@@ -233,11 +231,12 @@ public class DatabaseUtil {
         });
     }
 
-    public void postComment(final Context userFeedContext, final UserFeed userFeed, final UserFeedHolder userFeedHolder,String comment_Description){
+    public void postComment(final Context userFeedContext, final UserFeed userFeed, final UserFeedHolder userFeedHolder, final String comment_Description){
         int feedId = userFeed.getFeed_Id();
         loggedInUser = CommonUtil.getInstance().getLoggedInUser();
         Comment comment = new Comment(loggedInUser,new Date(),comment_Description);
         userFeed.addCommentList(comment);
+        final String userId = userFeed.getUserId();
         final int numberOfComments = userFeed.getCommentList().size();
         final String commentsString = "View all " + numberOfComments + " comments";
         CollectionReference feedDocuments = instadb.collection("feeds");
@@ -247,6 +246,14 @@ public class DatabaseUtil {
                 if(task.isSuccessful()) {
                     userFeedHolder.comments_link.setText(commentsString);
                     userFeedHolder.userFeedEditComment.setText("");
+
+                    //updating notifications for comment
+                    String type = "comment";
+                    String feedDescription = loggedInUser.getUserRealName() + " commented on your post: '"
+                            + comment_Description + "'";
+                    updateMyNotification(type, feedDescription, userId, loggedInUser);
+                    notifyFollowersAboutComments(userFeed.getUser(), comment_Description);
+
                     Toast.makeText(userFeedContext,"Comment Succesfully posted!",Toast.LENGTH_SHORT).show();
                 }
             }
@@ -256,6 +263,21 @@ public class DatabaseUtil {
                 Toast.makeText(userFeedContext,"Failed to post comment, please check connection",Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void notifyFollowersAboutComments(UserPojo follower, String comment) {
+        String type = "comment";
+        String feedDescription = loggedInUser.getUserName() + " commented on the post added by "
+                + follower.getUserName() + ": '" + comment + "'";
+
+        List<String> followersList = loggedInUser.getFollowerList();
+        for(String followerId : followersList) {
+            if (!followerId.equals(follower.getUserId())){
+                FollowingUserNotificationsPojo notification = new FollowingUserNotificationsPojo
+                        (loggedInUser, follower, type, feedDescription, new Date(), followerId);
+                instadb.collection("followersNotifications").add(notification);
+            }
+        }
     }
 
     public String getTimestampDifference(Date date){
