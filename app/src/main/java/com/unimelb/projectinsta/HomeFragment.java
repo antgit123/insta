@@ -50,6 +50,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -75,6 +77,7 @@ public class HomeFragment extends Fragment {
     private TextView nofeedsTextView;
     public UserFeedAdapter mAdapter;
     public FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+    public static Boolean change = Boolean.TRUE;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -167,12 +170,9 @@ public class HomeFragment extends Fragment {
         mUserFeedRecyclerView = (RecyclerView) homeFragmentView.findViewById(R.id.fragment_userfeed_recycler);
         mUserFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mUserFeedRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
         nofeedsTextView = (TextView) homeFragmentView.findViewById(R.id.no_feed_display_text);
-
         mAdapter = new UserFeedAdapter(getContext(),feeds);
         mUserFeedRecyclerView.setAdapter(mAdapter);
-
         return homeFragmentView;
     }
 
@@ -258,6 +258,17 @@ public class HomeFragment extends Fragment {
                             nofeedsTextView.setVisibility(View.INVISIBLE);
                         } else {
                             nofeedsTextView.setVisibility(View.VISIBLE);
+                        }
+                        if(change){
+                            Collections.sort(feeds, new Comparator<UserFeed>() {
+                                public int compare(UserFeed o1, UserFeed o2) {
+                                    if (o1.getDate() == null || o2.getDate() == null)
+                                        return 0;
+                                    return o1.getDate().compareTo(o2.getDate());
+                                }
+                            });
+                        }else {
+                            Collections.sort(feeds);
                         }
                         mAdapter.notifyDataSetChanged();
                     }

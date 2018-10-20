@@ -105,8 +105,26 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         if (id == R.id.action_logout) {
             logout();
             return true;
+        }else if(id == R.id.action_sortDate){
+            sortByDate();
+            return true;
+        }else if(id == R.id.action_sortLocation){
+            sortByLocation();
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sortByDate() {
+       if(HomeFragment.change.booleanValue() == Boolean.TRUE){
+           HomeFragment.change = Boolean.FALSE;
+       }else {
+           HomeFragment.change = Boolean.TRUE;
+       }
+        loadFragment(new HomeFragment());
+    }
+
+    private void sortByLocation() {
     }
 
     private boolean loadFragment(Fragment fragment) {

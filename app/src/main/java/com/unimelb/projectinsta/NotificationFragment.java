@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -69,6 +71,7 @@ public class NotificationFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         setRetainInstance(true);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -86,6 +89,15 @@ public class NotificationFragment extends Fragment {
         tabs.setupWithViewPager(viewPager);
 
         return view;
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem sortDateItem=menu.findItem(R.id.action_sortDate);
+        sortDateItem.setVisible(false);
+        MenuItem sortLocationItem=menu.findItem(R.id.action_sortLocation);
+        sortLocationItem.setVisible(false);
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
