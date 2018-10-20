@@ -30,7 +30,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.unimelb.projectinsta.model.UserPojo;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -43,6 +46,8 @@ public class RegisterActivity extends AppCompatActivity {
     private View registerFormView;
     private View registerInfoView;
     private AutoCompleteTextView realNameView;
+    private AutoCompleteTextView locationView;
+    private AutoCompleteTextView interestView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +58,8 @@ public class RegisterActivity extends AppCompatActivity {
         usernameView = (AutoCompleteTextView) findViewById(R.id.register_userName);
         passwordView = (EditText) findViewById(R.id.register_password);
         realNameView = (AutoCompleteTextView) findViewById(R.id.register_realName);
+        locationView = findViewById(R.id.suburb);
+        interestView = findViewById(R.id.interests);
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_register_in_button);
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
@@ -62,7 +69,9 @@ public class RegisterActivity extends AppCompatActivity {
                 String password = passwordView.getText().toString();
                 String username = usernameView.getText().toString();
                 String realName = realNameView.getText().toString();
-                register(email,username,realName, password);
+                String suburb = locationView.getText().toString();
+                List<String> interests =  Arrays.asList(interestView.getText().toString().split(","));
+                register(email,username,realName, password, suburb, interests);
             }
         });
         registerFormView = findViewById(R.id.register_form);
@@ -126,7 +135,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    private void register(final String email, final String username,final String realName, final String password) {
+    private void register(final String email, final String username,final String realName,
+                          final String password, final String suburb, final List<String> interests) {
 
         if (!isEmailValid(email) || !isPasswordValid(password)) {
             return;
@@ -147,7 +157,9 @@ public class RegisterActivity extends AppCompatActivity {
                                         username,
                                         realName,
                                         email,
-                                        password
+                                        password,
+                                        suburb,
+                                        interests
                                 );
                                 FirebaseFirestore instadb = FirebaseFirestore.getInstance();
                                 instadb.collection("users").document(user.getUid()).set(currentUser);

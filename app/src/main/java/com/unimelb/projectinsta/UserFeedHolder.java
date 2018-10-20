@@ -11,8 +11,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserFeedHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
     ImageView feedImageView;
-    TextView userName_txt,description_txt, location,like_by, comments_link,description_username;
-    ImageButton white_heart_icon,red_heart_icon,chat_icon;
+    TextView userName_txt,description_txt, location, comments_link,description_username;
+    public ImageButton white_heart_icon,red_heart_icon,chat_icon;
+    public TextView like_by;
     ItemClickListener itemClickListener;
     CircleImageView userProfileImageView, commentProfileImageView;
 

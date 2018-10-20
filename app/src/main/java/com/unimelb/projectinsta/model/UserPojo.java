@@ -15,12 +15,15 @@ public class UserPojo {
     private String password;
     private List<String> followerList;
     private List<String> followingList;
+    private String suburb;
+    private List<String> interests;
 
     public UserPojo(){
 
     }
 
-    public UserPojo(String userId, String userName, String userRealName, String email, String password) {
+    public UserPojo(String userId, String userName, String userRealName, String email,
+                    String password, String suburb, List<String> interests) {
         this.userId = userId;
         this.userName = userName;
         this.userRealName = userRealName;
@@ -28,6 +31,26 @@ public class UserPojo {
         this.password = password;
         this.followerList = new ArrayList<String>();
         this.followingList = new ArrayList<String>();
+        this.suburb = suburb;
+        this.interests = interests;
+    }
+
+
+    public String getSuburb() {
+        return suburb;
+    }
+
+    public void setSuburb(String suburb) {
+        this.suburb = suburb;
+    }
+
+
+    public List<String> getInterests() {
+        return interests;
+    }
+
+    public void setInterests(List<String> interests) {
+        this.interests = interests;
     }
 
     public String getUserId() {

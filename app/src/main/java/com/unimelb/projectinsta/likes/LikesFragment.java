@@ -14,9 +14,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.data.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,6 +29,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.unimelb.projectinsta.R;
+import com.unimelb.projectinsta.model.Like;
+import com.unimelb.projectinsta.model.UserFeed;
 import com.unimelb.projectinsta.model.UserPojo;
 
 
@@ -49,6 +53,7 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
     RecyclerView userListView;
     List<UserPojo> userLikes = new ArrayList<>();
     ImageView likesBackArrow;
+    String feedId;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -81,12 +86,14 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
         View view = inflater.inflate(R.layout.fragment_likes, container, false);
         userListView = view.findViewById(R.id.listView_followers);
         Context context = view.getContext();
+        Bundle bundle = getArguments();
+        feedId = (String) bundle.get("feedId");
         if (mColumnCount <= 1) {
             userListView.setLayoutManager(new LinearLayoutManager(context));
         } else {
             userListView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        queryUserLikes();
+        queryUserLikes(feedId);
         return view;
     }
 
@@ -108,32 +115,33 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
         mListener = null;
     }
 
-    public void queryUserLikes(){
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-        final String userId = user.getUid();
+    public void queryUserLikes(String feedId){
         FirebaseFirestore instadb = FirebaseFirestore.getInstance();
-        final List<UserPojo> users = new ArrayList<>();
-        CollectionReference userDocuments = instadb.collection("users");
-        userDocuments.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        CollectionReference feedDocuments = instadb.collection("feeds");
+        feedDocuments.document(feedId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    //retrieve user Details
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.i("DB Success", document.getId() + " => " + document.getData());
-
-                        UserPojo user = document.toObject(UserPojo.class);
-                        if(user != null && (user.getUserId() != userId) ) {
-                            users.add(user);
-                        }
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                List<Like> userLikes = new ArrayList<>();
+                UserFeed feed;
+                LikesArrayAdapter adapter = new LikesArrayAdapter(getContext(),userLikes);
+                if(task.isSuccessful()){
+                    DocumentSnapshot feedDocument = task.getResult();
+                    feed = feedDocument.toObject(UserFeed.class);
+//                    userLikes = (List<Like>) feedDocument.get("likeList");
+                    if(feed != null) {
+                        userLikes = feed.getLikeList();
+                    }else{
+                        Toast.makeText(getContext(),"Error fetching feed document",Toast.LENGTH_SHORT);
                     }
-                    LikesArrayAdapter adapter = new LikesArrayAdapter(getContext(),users);
+                    adapter = new LikesArrayAdapter(getContext(),userLikes);
                     userListView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                } else {
-                    Log.i("Db Users Error", "Error fettching documents.", task.getException());
                 }
+                adapter.notifyDataSetChanged();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(),"Error fetching feed document",Toast.LENGTH_SHORT);
             }
         });
     }
