@@ -70,10 +70,6 @@
             android:label="@string/title_activity_photo_view_pager"
             android:parentActivityName=".MainActivity" >
             </activity>
-            android:label="@string/title_activity_photo_view_pager" />
-        <activity
-            android:name=".NotificationActivity"
-            android:label="Notification" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
