@@ -7,38 +7,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.unimelb.projectinsta.R;
+import com.unimelb.projectinsta.model.Like;
 import com.unimelb.projectinsta.model.UserPojo;
 import com.unimelb.projectinsta.util.DatabaseUtil;
 
 public class LikesArrayAdapter extends RecyclerView.Adapter<LikesHolder> {
 
-    private List<UserPojo> userList;
-    private UserItemListener listener;
+    private List<Like> userLikesList;
     private Context mContext;
     private UserPojo loggedInUser;
     private String currentUserId;
     private FirebaseFirestore instadb = FirebaseFirestore.getInstance();
 
-    public LikesArrayAdapter(Context likesContext, List<UserPojo> userList){
+    public LikesArrayAdapter(Context likesContext, List<Like> userLikesList){
         this.mContext = likesContext;
-        this.userList = userList;
-        Log.i("USERList",this.userList.get(0).getEmail());
-
+        this.userLikesList = userLikesList;
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         currentUserId = user.getUid();
-
-//        this.listener = listener;
     }
 
     @NonNull
@@ -51,14 +41,14 @@ public class LikesArrayAdapter extends RecyclerView.Adapter<LikesHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull LikesHolder likesHolder, final int position) {
-        final UserPojo user = userList.get(position);
+        final UserPojo user = userLikesList.get(position).getUser();
         final LikesHolder likesHolderObject = likesHolder;
         likesHolderObject.userName.setText(user.getUserName());
         likesHolderObject.userFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
             DatabaseUtil dbHelper = new DatabaseUtil();
-            dbHelper.followFunction(userList.get(position));
+            dbHelper.followFunction(userLikesList.get(position).getUser());
             likesHolderObject.userFollowButton.setEnabled(false);
             likesHolderObject.userFollowButton.setText("Following");
             }
@@ -67,7 +57,7 @@ public class LikesArrayAdapter extends RecyclerView.Adapter<LikesHolder> {
 
     @Override
     public int getItemCount() {
-        return userList.size();
+        return userLikesList.size();
     }
 
     public interface UserItemListener {

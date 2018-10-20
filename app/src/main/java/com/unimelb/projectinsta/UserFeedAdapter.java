@@ -1,6 +1,7 @@
 package com.unimelb.projectinsta;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -45,25 +46,28 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
     @Override
     public void onBindViewHolder(@NonNull final UserFeedHolder userFeedHolder, int i) {
         UserPojo currentUser = CommonUtil.getInstance().getLoggedInUser();
+        final UserFeed selectedUserFeed = userFeed.get(i);
         boolean isLiked = false;
         String currentUserProfilePhoto = currentUser.getProfilePhoto();
-        String userName = userFeed.get(i).getUser().getUserName();
+        String userName = selectedUserFeed.getUser().getUserName();
         userFeedHolder.userName_txt.setText(userName);
         userFeedHolder.description_username.setText(userName);
-        userFeedHolder.description_txt.setText(userFeed.get(i).getCaption());
-        userFeedHolder.location.setText(userFeed.get(i).getLocationName());
-        String photoUri = userFeed.get(i).getPhoto();
-        String userPhoto = userFeed.get(i).getUser().getProfilePhoto();
-        List<Comment> commentsList = userFeed.get(i).getCommentList();
+        userFeedHolder.description_txt.setText(selectedUserFeed.getCaption());
+        userFeedHolder.location.setText(selectedUserFeed.getLocationName());
+        String photoUri = selectedUserFeed.getPhoto();
+        String userPhoto = selectedUserFeed.getUser().getProfilePhoto();
+        List<Comment> commentsList = selectedUserFeed.getCommentList();
         String commentString = "View all " + commentsList.size() + " comments";
         userFeedHolder.comments_link.setText(commentString);
-        List<Like> likeList = userFeed.get(i).getLikeList();
-        Iterator iterator = userFeed.get(i).getLikeList().iterator();
-        Like like = null;
-        while (iterator.hasNext()){
-            like = (Like) iterator.next();
-            if (like.getUser().getUserId().equals(currentUser.getUserId())){
-                isLiked = true;
+        List<Like> likeList = selectedUserFeed.getLikeList();
+        if(likeList.size() != 0) {
+            Iterator iterator = likeList.iterator();
+            Like like = null;
+            while (iterator.hasNext()) {
+                like = (Like) iterator.next();
+                if (like.getUser().getUserId().equals(currentUser.getUserId())) {
+                    isLiked = true;
+                }
             }
         }
         //toggle heart display
@@ -102,6 +106,9 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
                 }
                 if(v.getId() == userFeedHolder.like_by.getId()){
                     LikesFragment fragment  = new LikesFragment();
+                    Bundle likeBundle = new Bundle();
+                    likeBundle.putString("feedId",Integer.toString(selectedUserFeed.getFeed_Id()));
+                    fragment.setArguments(likeBundle);
                     MainActivity mainActivity = (MainActivity)userFeedContext;
                     mainActivity.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
                 }
