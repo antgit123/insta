@@ -8,10 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.unimelb.projectinsta.model.UserPojo;
+import com.unimelb.projectinsta.util.CommonUtil;
+import com.unimelb.projectinsta.util.DatabaseUtil;
 
 import java.util.List;
 
@@ -35,11 +38,12 @@ public class DiscoverUsersAdapter extends ArrayAdapter<UserPojo> {
     private static class ViewHolder {
         TextView username_d, displayname;
         CircleImageView profileimage;
+        Button follow_button;
     }
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final ViewHolder holder;
         if(convertView==null)
         {
@@ -49,6 +53,7 @@ public class DiscoverUsersAdapter extends ArrayAdapter<UserPojo> {
             holder.username_d = (TextView) convertView.findViewById(R.id.username);
             holder.displayname = (TextView) convertView.findViewById(R.id.display_name);
             holder.profileimage = (CircleImageView) convertView.findViewById(R.id.profile_image);
+            holder.follow_button=(Button) convertView.findViewById(R.id.follow_user_button);
             convertView.setTag(holder);
         }
         else {
@@ -59,6 +64,16 @@ public class DiscoverUsersAdapter extends ArrayAdapter<UserPojo> {
         Glide.with(getContext())
                 .load(getItem(position).getProfilePhoto())
                 .into(holder.profileimage);
+
+        holder.follow_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseUtil dbHelper = new DatabaseUtil();
+                dbHelper.followFunction(getItem(position));
+                holder.follow_button.setEnabled(false);
+                holder.follow_button.setText("Following");
+            }
+        });
 
         return convertView;
 
