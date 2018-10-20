@@ -91,7 +91,7 @@ public class EnlargedPostViewFragment extends Fragment {
                 .load(image)
                 .apply(options)
                 .into(enlargedImage);
-        enlargedImage.buildDrawingCache();
+        //enlargedImage.buildDrawingCache();
         //Bitmap bitmap = enlargedImage.getDrawingCache();
         //Bitmap bitmap = ((BitmapDrawable)enlargedImage.getDrawable()).getBitmap();
 
