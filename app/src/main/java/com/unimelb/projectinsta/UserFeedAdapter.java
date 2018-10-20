@@ -57,6 +57,7 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
         userFeedHolder.location.setText(selectedUserFeed.getLocationName());
         String photoUri = selectedUserFeed.getPhoto();
         String userPhoto = selectedUserFeed.getUser().getProfilePhoto();
+        String currentUserPhoto = currentUser.getProfilePhoto();
         List<Comment> commentsList = selectedUserFeed.getCommentList();
         String commentString = "View all " + commentsList.size() + " comments";
         userFeedHolder.comments_link.setText(commentString);
@@ -89,8 +90,9 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
         if(currentUserProfilePhoto == null){
             Glide.with(userFeedContext).load(R.drawable.com_facebook_profile_picture_blank_square).into(userFeedHolder.commentProfileImageView);
         }else{
-            Glide.with(userFeedContext).load(userPhoto).into(userFeedHolder.commentProfileImageView);
+            Glide.with(userFeedContext).load(currentUserPhoto).into(userFeedHolder.commentProfileImageView);
         }
+
         Glide.with(userFeedContext).load(photoUri).into(userFeedHolder.feedImageView);
 
         userFeedHolder.setItemClickListener(new ItemClickListener() {
