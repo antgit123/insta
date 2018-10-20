@@ -12,28 +12,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.firebase.ui.auth.data.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.unimelb.projectinsta.R;
 import com.unimelb.projectinsta.model.Like;
 import com.unimelb.projectinsta.model.UserFeed;
-import com.unimelb.projectinsta.model.UserPojo;
-
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +39,6 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     RecyclerView userListView;
-    List<UserPojo> userLikes = new ArrayList<>();
     ImageView likesBackArrow;
     String feedId;
     /**
@@ -123,7 +110,7 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 List<Like> userLikes = new ArrayList<>();
                 UserFeed feed;
-                LikesArrayAdapter adapter = new LikesArrayAdapter(getContext(),userLikes);
+                LikesArrayAdapter adapter;
                 if(task.isSuccessful()){
                     DocumentSnapshot feedDocument = task.getResult();
                     feed = feedDocument.toObject(UserFeed.class);
@@ -134,9 +121,9 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
                         Toast.makeText(getContext(),"Error fetching feed document",Toast.LENGTH_SHORT);
                     }
                     adapter = new LikesArrayAdapter(getContext(),userLikes);
+                    adapter.notifyDataSetChanged();
                     userListView.setAdapter(adapter);
                 }
-                adapter.notifyDataSetChanged();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

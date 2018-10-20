@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.unimelb.projectinsta.comments.CommentsFragment;
 import com.unimelb.projectinsta.likes.LikesFragment;
 import com.unimelb.projectinsta.model.Comment;
 import com.unimelb.projectinsta.model.Like;
@@ -91,9 +92,6 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
             Glide.with(userFeedContext).load(userPhoto).into(userFeedHolder.commentProfileImageView);
         }
         Glide.with(userFeedContext).load(photoUri).into(userFeedHolder.feedImageView);
-//        userFeedHolder.img.setImageResource(userFeed.get(i).getM_Img());
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-
 
         userFeedHolder.setItemClickListener(new ItemClickListener() {
             @Override
@@ -110,7 +108,28 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
                     likeBundle.putString("feedId",Integer.toString(selectedUserFeed.getFeed_Id()));
                     fragment.setArguments(likeBundle);
                     MainActivity mainActivity = (MainActivity)userFeedContext;
-                    mainActivity.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+                    mainActivity.getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+                }
+                if(v.getId() == userFeedHolder.comments_link.getId()){
+                    CommentsFragment fragment = new CommentsFragment();
+                    Bundle commentsBundle = new Bundle();
+                    commentsBundle.putString("feedId",Integer.toString(selectedUserFeed.getFeed_Id()));
+                    commentsBundle.putString("trigger","textLink");
+                    fragment.setArguments(commentsBundle);
+                    MainActivity mainActivity = (MainActivity)userFeedContext;
+                    mainActivity.getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+                }
+                if(v.getId() ==  userFeedHolder.chat_icon.getId()){
+                    CommentsFragment fragment = new CommentsFragment();
+                    Bundle commentsBundle = new Bundle();
+                    commentsBundle.putString("feedId",Integer.toString(selectedUserFeed.getFeed_Id()));
+                    commentsBundle.putString("trigger","icon");
+                    fragment.setArguments(commentsBundle);
+                    MainActivity mainActivity = (MainActivity)userFeedContext;
+                    mainActivity.getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
                 }
             }
         });
