@@ -31,6 +31,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.unimelb.projectinsta.model.UserFeed;
 import com.unimelb.projectinsta.model.UserPojo;
+import com.unimelb.projectinsta.util.CommonUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,7 +100,12 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        queryUserFeeds();
+        loggedInUser = CommonUtil.getInstance().getLoggedInUser();
+        if(loggedInUser != null) {
+            getFeeds();
+        } else {
+            queryUserFeeds();
+        }
         View homeFragmentView = inflater.inflate(R.layout.fragment_home, container, false);
         mUserFeedRecyclerView = (RecyclerView) homeFragmentView.findViewById(R.id.fragment_userfeed_recycler);
         mUserFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -159,13 +166,13 @@ public class HomeFragment extends Fragment {
                    DocumentSnapshot document = task.getResult();
                    Log.i("DB Success", document.getId() + " => " + document.getData());
                    loggedInUser = document.toObject(UserPojo.class);
-                   getFeeds(loggedInUser);
+                   getFeeds();
                }
            }
        });
     }
 
-    public void getFeeds(UserPojo loggedInUser) {
+    private void getFeeds() {
         if (loggedInUser.getFollowingList().size() > 0) {
             List<String> followingUserIds = loggedInUser.getFollowingList();
             //query feeds
