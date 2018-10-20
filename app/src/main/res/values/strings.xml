@@ -64,6 +64,9 @@
     <string name="crop_existing_photo"> Crop Photo</string>
     <string name="hint_comment">Add a comment...</string>
     <string name="post_comment">Post</string>
+    <string name="sample_comment">This is a sample comment</string>
+    <string name="comment_username">Sample user</string>
+    <string name="sample_time">3d</string>
     <string name="top_comments">Comments</string>
     <string name="top_likes">Likes</string>
     <string name="follow_user">Follow</string>

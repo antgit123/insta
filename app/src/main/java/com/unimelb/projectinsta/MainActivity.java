@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.unimelb.projectinsta.activityfeeds.FollowingFragment;
 import com.unimelb.projectinsta.activityfeeds.YouFragment;
+import com.unimelb.projectinsta.comments.CommentsFragment;
 import com.unimelb.projectinsta.likes.LikesFragment;
 import com.unimelb.projectinsta.profile.EnlargedPostViewFragment;
 import com.unimelb.projectinsta.profile.ProfileFragment;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         NotificationFragment.OnFragmentInteractionListener, FollowingFragment.OnFragmentInteractionListener,
         YouFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener,
         SearchDiscover.OnFragmentInteractionListener,DiscoverFragment.OnFragmentInteractionListener,
-        EnlargedPostViewFragment.OnFragmentInteractionListener {
+        EnlargedPostViewFragment.OnFragmentInteractionListener, CommentsFragment.OnListFragmentInteractionListener {
 
 
     static
@@ -100,14 +101,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
             return true;
         }
         return super.onOptionsItemSelected(item);
-//        Button mSignOutButton = (Button) findViewById(R.id.email_sign_out_button);
-//        mSignOutButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                signOut();
-//            }
-//        });
-
     }
 
     private boolean loadFragment(Fragment fragment) {
