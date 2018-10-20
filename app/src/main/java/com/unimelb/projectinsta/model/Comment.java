@@ -1,8 +1,9 @@
 package com.unimelb.projectinsta.model;
 
+import java.util.Comparator;
 import java.util.Date;
 
-public class Comment {
+public class Comment implements Comparable<Comment>{
     private UserPojo user;
     private Date date;
     private String description;
@@ -39,5 +40,15 @@ public class Comment {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public int compareTo(Comment o) {
+        if(getDate() == null || o.getDate() == null){
+            return 0;
+        }else{
+            return o.getDate().compareTo(getDate());
+        }
+
     }
 }
