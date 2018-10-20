@@ -2,6 +2,7 @@ package com.unimelb.projectinsta.activityfeeds;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.unimelb.projectinsta.ItemClickListener;
@@ -12,12 +13,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MyFeedHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     CircleImageView userProfileImage;
     TextView feedDescription;
+    Button userFollowButton;
     ItemClickListener itemClickListener;
 
     public MyFeedHolder(View myFeedView) {
         super(myFeedView);
         this.feedDescription= (TextView) myFeedView.findViewById(R.id.myfeed_item_description);
         this.userProfileImage = (CircleImageView) myFeedView.findViewById(R.id.feed_user_profile_image);
+        this.userFollowButton = myFeedView.findViewById(R.id.follow_user_button);
     }
 
     @Override
