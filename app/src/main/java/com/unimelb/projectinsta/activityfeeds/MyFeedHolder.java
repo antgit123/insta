@@ -10,6 +10,9 @@ import com.unimelb.projectinsta.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * A custom holder class for the recycler view.
+ */
 public class MyFeedHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     CircleImageView userProfileImage;
     TextView feedDescription;

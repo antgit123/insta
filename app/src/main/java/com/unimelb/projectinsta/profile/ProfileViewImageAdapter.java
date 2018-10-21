@@ -1,8 +1,6 @@
 package com.unimelb.projectinsta.profile;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,11 +12,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.unimelb.projectinsta.MainActivity;
 import com.unimelb.projectinsta.R;
-import com.unimelb.projectinsta.profile.EnlargedPostViewFragment;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
+/**
+ * A custom adapter to display the posts in the grid view.
+ */
 public class ProfileViewImageAdapter extends BaseAdapter {
 
     Context context;
@@ -55,10 +54,6 @@ public class ProfileViewImageAdapter extends BaseAdapter {
         }
 
         ImageView image = (ImageView) grid.findViewById(R.id.myPostedImage);
-//        Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
-//        ByteArrayOutputStream stream=new ByteArrayOutputStream();
-//        bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
-//        final byte[] imagebytes=stream.toByteArray();
 
         RequestOptions options = new RequestOptions();
         options.centerCrop();
@@ -67,6 +62,7 @@ public class ProfileViewImageAdapter extends BaseAdapter {
                 .apply(options)
                 .into(image);
 
+        //Listener to view the image in enlarged view.
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -46,20 +45,13 @@ import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ProfileFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A fragment for the entire profile view
  */
 public class ProfileFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     public static final int PICK_IMAGE = 1;
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     private ImageView profileImageView;
@@ -76,7 +68,7 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
-     * Use this factory method to create a new instance of
+     * This factory method create a new instance of
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
@@ -132,18 +124,15 @@ public class ProfileFragment extends Fragment {
         sortDateItem.setVisible(false);
         MenuItem sortLocationItem=menu.findItem(R.id.action_sortLocation);
         sortLocationItem.setVisible(false);
-
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if(item.getTitle().equals("Upload profile pic")) { //Add pic
-            Log.d("debug", "onContextItemSelected: profile pic");
             Intent intent = new Intent(Intent.ACTION_PICK);
             intent.setType("image/*");
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
         } else { //Remove pic
-            Log.d("debug", "onContextItemSelected: remove pic");
             profileImageView.setImageResource(R.drawable.com_facebook_profile_picture_blank_portrait);
             updateUserProfile(currentUser, null);
         }
@@ -155,7 +144,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        Log.d("debug", "onActivityResult: picked pic from gallery");
         try {
             final Uri imageUri = data.getData();
             final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
@@ -166,7 +154,10 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    public void encodeBitmapAndSaveToFirebase(Bitmap bitmap) {
+    /**
+     * Saves the image bitmap (profle photo) to firebase
+     */
+    private void encodeBitmapAndSaveToFirebase(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG,80,baos);
         byte[] data = baos.toByteArray();
@@ -184,25 +175,24 @@ public class ProfileFragment extends Fragment {
         uploadtask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-                Log.i("PHOTO FAIL", "Upload Failed");
-
-
+            // Handle unsuccessful uploads
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Log.d("test", "onSuccess: uri= "+ uri.toString());
-                        updateUserProfile(currentUser, uri.toString());
-                    }
-                });
+            taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    updateUserProfile(currentUser, uri.toString());
+                }
+            });
             }
         });
     }
 
+    /**
+     * Updates the profile pic.
+     */
     private void updateUserProfile(UserPojo user, String uri) {
         user.setProfilePhoto(uri);
         DocumentReference userRef = instadb.collection("users")
@@ -228,12 +218,18 @@ public class ProfileFragment extends Fragment {
         setValuesToProfile(v);
     }
 
+    /**
+     * This function fetches the posts and display it in the grid view.
+     */
     private void addPostedImages(View view) {
         postedImagesList = getImagesPosted(view);
         imageAdapter = new ProfileViewImageAdapter(getContext(), postedImagesList);
         gridViewofPost.setAdapter(imageAdapter);
     }
 
+    /**
+     * This function fetches all the posts added by the current user from firebase.
+     */
     private ArrayList<String> getImagesPosted(final View view) {
         CollectionReference feedsDocuments = instadb.collection("feeds");
         feedsDocuments.whereEqualTo("userId", currentUser.getUserId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -252,9 +248,12 @@ public class ProfileFragment extends Fragment {
         });
 
         return postedImagesList;
-
     }
 
+    /**
+     * This function sets the values fetched from firebase to the views
+     * Values include - Followers, Following, Posts, Profile pic.
+     */
     private void setValuesToProfile(View view) {
         TextView name = (TextView) view.findViewById(R.id.profile_name);
         TextView followers = (TextView) view.findViewById(R.id.no_of_followers);
@@ -279,7 +278,6 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -308,15 +306,8 @@ public class ProfileFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
 }
