@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -25,8 +26,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -45,7 +49,11 @@ import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
- * A fragment for the entire profile view
+ * Activities that contain this fragment must implement the
+ * {@link ProfileFragment.OnFragmentInteractionListener} interface
+ * to handle interaction events.
+ * Use the {@link ProfileFragment#newInstance} factory method to
+ * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
@@ -65,6 +73,24 @@ public class ProfileFragment extends Fragment {
 
     public ProfileFragment() {
         currentUser = CommonUtil.getInstance().getLoggedInUser();
+        if(currentUser == null || currentUser.getUserId() == null){
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            FirebaseUser user = mAuth.getCurrentUser();
+            final String userId = user.getUid();
+            CollectionReference userDocuments = instadb.collection("users");
+            userDocuments.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        //retrieve user Details
+                        DocumentSnapshot document = task.getResult();
+                        Log.i("DB Success", document.getId() + " => " + document.getData());
+                        currentUser = document.toObject(UserPojo.class);
+                    }
+                }
+            });
+
+        }
     }
 
     /**
