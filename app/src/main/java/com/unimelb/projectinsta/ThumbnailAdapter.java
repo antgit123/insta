@@ -1,3 +1,8 @@
+/*
+    The purpose of this class file is to define the view adapter for the thumbnail images present
+    in the thumbnail recycler view. This adapter links to the thumbnail view holder
+ */
+
 package com.unimelb.projectinsta;
 
 import android.content.Context;

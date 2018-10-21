@@ -1,3 +1,8 @@
+/*
+    The purpose of this java class file is to add utility methods for managing and processing
+    bitmaps
+ */
+
 package com.unimelb.projectinsta.util;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -98,22 +103,6 @@ public class BitmapUtils {
 
         return inSampleSize;
     }
-
-//    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-//                                                         int reqWidth, int reqHeight) {
-//
-//        // First decode with inJustDecodeBounds=true to check dimensions
-//        final BitmapFactory.Options options = new BitmapFactory.Options();
-//        options.inJustDecodeBounds = true;
-//        BitmapFactory.decodeResource(res, resId, options);
-//
-//        // Calculate inSampleSize
-//        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-//
-//        // Decode bitmap with inSampleSize set
-//        options.inJustDecodeBounds = false;
-//        return BitmapFactory.decodeResource(res, resId, options);
-//    }
 
     /**
      * Storing image to device gallery

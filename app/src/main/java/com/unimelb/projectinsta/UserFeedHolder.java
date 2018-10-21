@@ -1,12 +1,14 @@
-package com.unimelb.projectinsta;
+/*
+    The purpose of this class is to define the view elements present in the userfeed view
+ */
 
+package com.unimelb.projectinsta;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 

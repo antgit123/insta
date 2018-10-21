@@ -1,3 +1,11 @@
+/*
+The purpose of this class file is to implement the view pager which displays the fragments
+for displaying image filters and editing filters.
+The image filters are filters which change the look of the image by adding effects to it.
+The edit filters are used for changing the brightness, contrast and saturation of the image clicked
+*/
+
+
 package com.unimelb.projectinsta;
 
 import android.Manifest;
@@ -137,6 +145,9 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    /*
+    util method to request permission to write image to storage
+     */
     public void requestWritePermission() {
         if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             new PhotoViewPager.ConfirmationDialog().show(getSupportFragmentManager(), FRAGMENT_DIALOG);
@@ -145,6 +156,9 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         }
     }
 
+    /*
+        util method which gets called based on user input on dialog permission
+   */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -178,18 +192,20 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         if (id == R.id.action_settings) {
             return true;
         }
+        // select image from another gallery on click of button
         if (id ==R.id.select_gallery_photo){
             Intent intent = new Intent(Intent.ACTION_PICK);
             intent.setType("image/*");
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
             return true;
         }
+        // process crop functionality on click of crop button
         if (id == R.id.crop_existing_photo){
             performCrop(clickedImageUri);
             return true;
         }
         if(id == R.id.next_edit_action){
-            //send final image to share Activity
+            //send final filtered image to share Activity on click of next
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             finalImage.compress(Bitmap.CompressFormat.JPEG, 80, stream);
             byte[] byteArray = stream.toByteArray();
@@ -197,10 +213,15 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
             shareActivity.putExtra("shareImage",byteArray);
             startActivity(shareActivity);
         }
-
         return super.onOptionsItemSelected(item);
     }
 
+    /*
+        Util method which gets called on performing cropping functionality or selecting image
+        from gallery
+        Cropping functionality returns the processed crop photo and select image from gallery
+        returns the gallery from image
+    */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && (requestCode == PICK_IMAGE || requestCode == CROP_IMAGE)) {
@@ -231,6 +252,9 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         }
     }
 
+    /*
+        Util method to change brightness of selected image
+     */
     @Override
     public void onBrightnessChanged(int brightness) {
         brightnessFinal = brightness;
@@ -240,6 +264,9 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         filterPhotoView.setImageBitmap(brightnessFilter.processFilter(filteredImage));
     }
 
+    /*
+        Util method to change saturation of selected image
+     */
     @Override
     public void onSaturationChanged(float saturation) {
         saturationFinal = saturation;
@@ -249,6 +276,9 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         filterPhotoView.setImageBitmap(saturationFilter.processFilter(filteredImage));
     }
 
+    /*
+        Util method to change contrast of selected image
+     */
     @Override
     public void onContrastChanged(float contrast) {
         contrastFinal = contrast;
@@ -263,6 +293,9 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
 
     }
 
+    /*
+        Util method to apply all edit filter changes and convert filtered image to final image
+     */
     @Override
     public void onEditCompleted() {
         final Bitmap imageBitmap = filteredImage.copy(Bitmap.Config.ARGB_8888, true);
@@ -273,6 +306,9 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         finalImage = editFilter.processFilter(imageBitmap);
     }
 
+    /*
+        Util method to reset controls of edit filter seekbars
+     */
     private void resetControls() {
         if (editPhotoFragment != null) {
             editPhotoFragment.resetControls();
@@ -282,6 +318,9 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         contrastFinal = 1.0f;
     }
 
+    /*
+        Util method to apply filtering changes
+     */
     @Override
     public void onFilterSelected(Filter filter) {
         // Function to add filtering changes to original clicked image
@@ -291,6 +330,9 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
         finalImage = filteredImage.copy(Bitmap.Config.ARGB_8888, true);
     }
 
+    /*
+        Util method to open android app cropping functionality
+    */
     private void performCrop(Uri picUri) {
         try {
             Intent cropIntent = new Intent("com.android.camera.action.CROP");
