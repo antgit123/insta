@@ -23,6 +23,9 @@ import com.unimelb.projectinsta.comments.CommentsFragment;
 import com.unimelb.projectinsta.likes.LikesFragment;
 import com.unimelb.projectinsta.profile.EnlargedPostViewFragment;
 import com.unimelb.projectinsta.profile.ProfileFragment;
+import com.unimelb.projectinsta.search.DiscoverFragment;
+import com.unimelb.projectinsta.search.SearchDiscover;
+import com.unimelb.projectinsta.search.SearchFragment;
 import com.unimelb.projectinsta.util.CommonUtil;
 
 import java.io.ByteArrayOutputStream;
