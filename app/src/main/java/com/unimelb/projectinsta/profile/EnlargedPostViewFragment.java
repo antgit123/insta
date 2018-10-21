@@ -174,7 +174,7 @@ public class EnlargedPostViewFragment extends Fragment {
         enlargedImage.setOnTouchListener(new OnSwipeTouchListener(getContext()) {
             @Override
             public void onSwipeRight() {
-                Toast.makeText(getActivity(), "swipe right!!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Sending photo to nearby friends...", Toast.LENGTH_SHORT).show();
                 startBluetoothSensor();
             }
         });
