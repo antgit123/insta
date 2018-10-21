@@ -1,4 +1,6 @@
-package com.unimelb.projectinsta;
+/*Purpose of file: To display tab layouts for Search and Discover*/
+
+package com.unimelb.projectinsta.search;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,10 +13,9 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import com.unimelb.projectinsta.R;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,7 +78,6 @@ public class SearchDiscover extends Fragment {
         // Set Tabs inside Toolbar
         TabLayout tabs = (TabLayout) view.findViewById(R.id.searchDiscoverResult_tabs);
         tabs.setupWithViewPager(viewPager);
-
         return view;
     }
 
