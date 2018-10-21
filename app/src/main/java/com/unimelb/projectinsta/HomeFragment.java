@@ -196,7 +196,7 @@ public class HomeFragment extends Fragment implements LocationListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         loggedInUser = CommonUtil.getInstance().getLoggedInUser();
-        if(loggedInUser != null) {
+        if(loggedInUser != null && loggedInUser.getUserId() != null) {
             getFeeds();
         } else {
             queryUserFeeds();
@@ -309,41 +309,41 @@ public class HomeFragment extends Fragment implements LocationListener {
                             Collections.sort(feeds);
                         }
 
-//                        if(changeLocation){
-//                            Collections.sort(feeds, new Comparator<UserFeed>() {
-//                                public int compare(UserFeed o1, UserFeed o2) {
-//                                    tempLocation1.setLatitude(o1.getLatitude());
-//                                    tempLocation1.setLongitude(o1.getLongitude());
-//                                    tempLocation2.setLatitude(o2.getLatitude());
-//                                    tempLocation2.setLongitude(o2.getLongitude());
-//                                    if (tempLocation1.distanceTo(myLocation) > tempLocation2.distanceTo(myLocation))
-//                                        return 1;
-//                                    else if (tempLocation1.distanceTo(myLocation) < tempLocation2.distanceTo(myLocation))
-//                                        return -1;
-//                                    else
-//                                        return 0;
-//                                }
-//                            });
-//
-//                            System.out.println("comparator");
-//
-//                        }else {
-//                            Collections.sort(feeds, new Comparator<UserFeed>() {
-//                                public int compare(UserFeed o1, UserFeed o2) {
-//                                    tempLocation1.setLatitude(o1.getLatitude());
-//                                    tempLocation1.setLongitude(o1.getLongitude());
-//                                    tempLocation2.setLatitude(o2.getLatitude());
-//                                    tempLocation2.setLongitude(o2.getLongitude());
-//                                    if (tempLocation1.distanceTo(myLocation) > tempLocation2.distanceTo(myLocation))
-//                                        return -1;
-//                                    else if (tempLocation1.distanceTo(myLocation) < tempLocation2.distanceTo(myLocation))
-//                                        return 1;
-//                                    else
-//                                        return 0;
-//                                }
-//                            });
+                        if(changeLocation){
+                            Collections.sort(feeds, new Comparator<UserFeed>() {
+                                public int compare(UserFeed o1, UserFeed o2) {
+                                    tempLocation1.setLatitude(o1.getLatitude());
+                                    tempLocation1.setLongitude(o1.getLongitude());
+                                    tempLocation2.setLatitude(o2.getLatitude());
+                                    tempLocation2.setLongitude(o2.getLongitude());
+                                    if (tempLocation1.distanceTo(myLocation) > tempLocation2.distanceTo(myLocation))
+                                        return 1;
+                                    else if (tempLocation1.distanceTo(myLocation) < tempLocation2.distanceTo(myLocation))
+                                        return -1;
+                                    else
+                                        return 0;
+                                }
+                            });
 
-//                        }
+                            System.out.println("comparator");
+
+                        }else {
+                            Collections.sort(feeds, new Comparator<UserFeed>() {
+                                public int compare(UserFeed o1, UserFeed o2) {
+                                    tempLocation1.setLatitude(o1.getLatitude());
+                                    tempLocation1.setLongitude(o1.getLongitude());
+                                    tempLocation2.setLatitude(o2.getLatitude());
+                                    tempLocation2.setLongitude(o2.getLongitude());
+                                    if (tempLocation1.distanceTo(myLocation) > tempLocation2.distanceTo(myLocation))
+                                        return -1;
+                                    else if (tempLocation1.distanceTo(myLocation) < tempLocation2.distanceTo(myLocation))
+                                        return 1;
+                                    else
+                                        return 0;
+                                }
+                            });
+
+                        }
 
                         mAdapter.notifyDataSetChanged();
                     }
