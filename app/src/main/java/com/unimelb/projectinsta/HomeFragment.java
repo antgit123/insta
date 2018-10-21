@@ -84,6 +84,7 @@ public class HomeFragment extends Fragment implements LocationListener {
     public FirebaseFirestore instadb = FirebaseFirestore.getInstance();
     public static Boolean changeDate = Boolean.TRUE;
     public static Boolean changeLocation = Boolean.TRUE;
+    public static Boolean sortByDate = Boolean.TRUE;
     private static Location myLocation = null;
 
     // TODO: Rename and change types of parameters
@@ -297,51 +298,56 @@ public class HomeFragment extends Fragment implements LocationListener {
                         } else {
                             nofeedsTextView.setVisibility(View.VISIBLE);
                         }
-                        if(changeDate){
-                            Collections.sort(feeds, new Comparator<UserFeed>() {
-                                public int compare(UserFeed o1, UserFeed o2) {
-                                    if (o1.getDate() == null || o2.getDate() == null)
-                                        return 0;
-                                    return o1.getDate().compareTo(o2.getDate());
-                                }
-                            });
-                        }else {
-                            Collections.sort(feeds);
-                        }
 
-                        if(changeLocation){
-                            Collections.sort(feeds, new Comparator<UserFeed>() {
-                                public int compare(UserFeed o1, UserFeed o2) {
-                                    tempLocation1.setLatitude(o1.getLatitude());
-                                    tempLocation1.setLongitude(o1.getLongitude());
-                                    tempLocation2.setLatitude(o2.getLatitude());
-                                    tempLocation2.setLongitude(o2.getLongitude());
-                                    if (tempLocation1.distanceTo(myLocation) > tempLocation2.distanceTo(myLocation))
-                                        return 1;
-                                    else if (tempLocation1.distanceTo(myLocation) < tempLocation2.distanceTo(myLocation))
-                                        return -1;
-                                    else
-                                        return 0;
-                                }
-                            });
-
-                            System.out.println("comparator");
+                        if(sortByDate){
+                            if(changeDate){
+                                Collections.sort(feeds, new Comparator<UserFeed>() {
+                                    public int compare(UserFeed o1, UserFeed o2) {
+                                        if (o1.getDate() == null || o2.getDate() == null)
+                                            return 0;
+                                        return o1.getDate().compareTo(o2.getDate());
+                                    }
+                                });
+                            }else {
+                                Collections.sort(feeds);
+                            }
 
                         }else {
-                            Collections.sort(feeds, new Comparator<UserFeed>() {
-                                public int compare(UserFeed o1, UserFeed o2) {
-                                    tempLocation1.setLatitude(o1.getLatitude());
-                                    tempLocation1.setLongitude(o1.getLongitude());
-                                    tempLocation2.setLatitude(o2.getLatitude());
-                                    tempLocation2.setLongitude(o2.getLongitude());
-                                    if (tempLocation1.distanceTo(myLocation) > tempLocation2.distanceTo(myLocation))
-                                        return -1;
-                                    else if (tempLocation1.distanceTo(myLocation) < tempLocation2.distanceTo(myLocation))
-                                        return 1;
-                                    else
-                                        return 0;
-                                }
-                            });
+                            if(changeLocation){
+                                Collections.sort(feeds, new Comparator<UserFeed>() {
+                                    public int compare(UserFeed o1, UserFeed o2) {
+                                        tempLocation1.setLatitude(o1.getLatitude());
+                                        tempLocation1.setLongitude(o1.getLongitude());
+                                        tempLocation2.setLatitude(o2.getLatitude());
+                                        tempLocation2.setLongitude(o2.getLongitude());
+                                        if (tempLocation1.distanceTo(myLocation) > tempLocation2.distanceTo(myLocation))
+                                            return 1;
+                                        else if (tempLocation1.distanceTo(myLocation) < tempLocation2.distanceTo(myLocation))
+                                            return -1;
+                                        else
+                                            return 0;
+                                    }
+                                });
+
+                                System.out.println("comparator");
+
+                            }else {
+                                Collections.sort(feeds, new Comparator<UserFeed>() {
+                                    public int compare(UserFeed o1, UserFeed o2) {
+                                        tempLocation1.setLatitude(o1.getLatitude());
+                                        tempLocation1.setLongitude(o1.getLongitude());
+                                        tempLocation2.setLatitude(o2.getLatitude());
+                                        tempLocation2.setLongitude(o2.getLongitude());
+                                        if (tempLocation1.distanceTo(myLocation) > tempLocation2.distanceTo(myLocation))
+                                            return -1;
+                                        else if (tempLocation1.distanceTo(myLocation) < tempLocation2.distanceTo(myLocation))
+                                            return 1;
+                                        else
+                                            return 0;
+                                    }
+                                });
+
+                            }
 
                         }
 

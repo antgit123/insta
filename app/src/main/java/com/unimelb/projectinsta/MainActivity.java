@@ -143,7 +143,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
        }else {
            HomeFragment.changeDate = Boolean.TRUE;
        }
-        loadFragment(new HomeFragment());
+       HomeFragment.sortByDate = Boolean.TRUE;
+       loadFragment(new HomeFragment());
     }
 
     private void sortByLocation() {
@@ -152,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         }else {
             HomeFragment.changeLocation = Boolean.TRUE;
         }
+        HomeFragment.sortByDate = Boolean.FALSE;
         loadFragment(new HomeFragment());
     }
 
