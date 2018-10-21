@@ -196,7 +196,7 @@ public class HomeFragment extends Fragment implements LocationListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         loggedInUser = CommonUtil.getInstance().getLoggedInUser();
-        if(loggedInUser != null) {
+        if(loggedInUser != null && loggedInUser.getUserId() != null) {
             getFeeds();
         } else {
             queryUserFeeds();

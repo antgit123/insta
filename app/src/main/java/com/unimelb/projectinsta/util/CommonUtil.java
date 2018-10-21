@@ -52,4 +52,8 @@ public class CommonUtil {
     public UserPojo getLoggedInUser() {
         return loggedInUser;
     }
+
+    public void setLoggedInUserNull(){
+        loggedInUser = new UserPojo();
+    }
 }
