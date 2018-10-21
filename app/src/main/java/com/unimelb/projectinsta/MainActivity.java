@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         Intent discoverableIntent = new
                 Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 3000);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 1000);
         startActivity(discoverableIntent);
 
     }
