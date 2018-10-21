@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,6 +23,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.unimelb.projectinsta.comments.CommentsAdapter;
+import com.unimelb.projectinsta.model.Comment;
 import com.unimelb.projectinsta.model.FollowingUserNotificationsPojo;
 import com.unimelb.projectinsta.UserFeedHolder;
 import com.unimelb.projectinsta.model.Like;
@@ -29,17 +32,21 @@ import com.unimelb.projectinsta.model.MyNotificationsPojo;
 import com.unimelb.projectinsta.model.UserFeed;
 import com.unimelb.projectinsta.model.UserPojo;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 public class DatabaseUtil {
 
-    private ArrayList<String> imageList = new ArrayList<>();
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
     private StorageReference mStorageReference;
@@ -47,8 +54,6 @@ public class DatabaseUtil {
     private Context mContext;
     public UserPojo loggedInUser = new UserPojo();
     public FirebaseFirestore instadb = FirebaseFirestore.getInstance();
-    private ArrayList<String> followingNotificationList = new ArrayList<>();
-    private ArrayList<UserPojo> allUsers = new ArrayList<>();
 
     public DatabaseUtil() {
         mAuth = FirebaseAuth.getInstance();
@@ -88,6 +93,8 @@ public class DatabaseUtil {
         feed.setUser(loggedInUser);
         feed.setDate(new Date());
         feed.setFeed_Id(feedId);
+        FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+        instadb.collection("feeds").document(String.valueOf(feedId)).set(feed);
     }
 
     public void followFunction(UserPojo follower) {
@@ -218,8 +225,83 @@ public class DatabaseUtil {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(userFeedContext,"Failed to update Likes, please check connection",Toast.LENGTH_SHORT);
+                Toast.makeText(userFeedContext,"Failed to update Likes, please check connection",Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void postComment(final Context userFeedContext, final UserFeed userFeed, final UserFeedHolder userFeedHolder, final String comment_Description){
+        int feedId = userFeed.getFeed_Id();
+        loggedInUser = CommonUtil.getInstance().getLoggedInUser();
+        Comment comment = new Comment(loggedInUser,new Date(),comment_Description);
+        userFeed.addCommentList(comment);
+        final String userId = userFeed.getUserId();
+        final int numberOfComments = userFeed.getCommentList().size();
+        final String commentsString = "View all " + numberOfComments + " comments";
+        CollectionReference feedDocuments = instadb.collection("feeds");
+        feedDocuments.document(Integer.toString(feedId)).set(userFeed).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()) {
+                    userFeedHolder.comments_link.setText(commentsString);
+                    userFeedHolder.userFeedEditComment.setText("");
+
+                    //updating notifications for comment
+                    String type = "comment";
+                    String feedDescription = loggedInUser.getUserRealName() + " commented on your post: '"
+                            + comment_Description + "'";
+                    updateMyNotification(type, feedDescription, userId, loggedInUser);
+                    notifyFollowersAboutComments(userFeed.getUser(), comment_Description);
+
+                    Toast.makeText(userFeedContext,"Comment Succesfully posted!",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(userFeedContext,"Failed to post comment, please check connection",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void notifyFollowersAboutComments(UserPojo follower, String comment) {
+        String type = "comment";
+        String feedDescription = loggedInUser.getUserName() + " commented on the post added by "
+                + follower.getUserName() + ": '" + comment + "'";
+
+        List<String> followersList = loggedInUser.getFollowerList();
+        for(String followerId : followersList) {
+            if (!followerId.equals(follower.getUserId())){
+                FollowingUserNotificationsPojo notification = new FollowingUserNotificationsPojo
+                        (loggedInUser, follower, type, feedDescription, new Date(), followerId);
+                instadb.collection("followersNotifications").add(notification);
+            }
+        }
+    }
+
+    public String getTimestampDifference(Date date){
+        String difference = "";
+        Calendar c = Calendar.getInstance();
+        DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Australia/Sydney"));
+        Date today = c.getTime();
+        simpleDateFormat.format(today);
+        difference = String.valueOf(Math.round(((today.getTime() - date.getTime()) / 1000 / 60 / 60 / 24 )));
+        if(difference.equals("0")){
+            long hours = TimeUnit.MILLISECONDS.toHours(today.getTime() - date.getTime());
+            if(Long.toString(hours).equals("0")){
+                long minutes = TimeUnit.MILLISECONDS.toMinutes(today.getTime() - date.getTime());
+                if(minutes < 1){
+                    long seconds = TimeUnit.MILLISECONDS.toSeconds(today.getTime() - date.getTime());
+                    return Long.toString(seconds) + "s ago";
+                }else{
+                    return Long.toString(minutes) + "m ago";
+                }
+            }else{
+                return Long.toString(hours) + "h ago";
+            }
+        }else{
+            return difference + "d ago";
+        }
     }
 }

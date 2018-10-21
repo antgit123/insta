@@ -24,6 +24,7 @@ public class FollowingFeedAdapter extends RecyclerView.Adapter<FollowingFeedHold
 
     private List<FollowingUserNotificationsPojo> followingNotificationsList;
     private Context mContext;
+    private DatabaseUtil dbUtil = new DatabaseUtil();
 
     public FollowingFeedAdapter(Context likesContext, List<FollowingUserNotificationsPojo> followingNotificationsList){
         this.mContext = likesContext;
@@ -48,7 +49,13 @@ public class FollowingFeedAdapter extends RecyclerView.Adapter<FollowingFeedHold
 
         if(user1.getProfilePhoto() != null) {
             Glide.with(mContext).load(user1.getProfilePhoto()).into(followingFeedHolder.userProfileImage);
+        } else {
+            Glide.with(mContext).load(R.drawable.com_facebook_profile_picture_blank_square).into(followingFeedHolder.userProfileImage);
         }
+
+        String diff = dbUtil.getTimestampDifference(followingNotificationsList.get(position).getNotificationTimestamp());
+        followingFeedHolder.postedTime.setText(diff);
+
     }
 
     @Override

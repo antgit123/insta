@@ -23,6 +23,7 @@ public class MyFeedAdapter extends RecyclerView.Adapter<MyFeedHolder> {
 
     private List<MyNotificationsPojo> myNotificationsList;
     private Context mContext;
+    DatabaseUtil dbUtil = new DatabaseUtil();
 
     public MyFeedAdapter(Context likesContext, List<MyNotificationsPojo> myNotificationsList){
         this.mContext = likesContext;
@@ -43,6 +44,8 @@ public class MyFeedAdapter extends RecyclerView.Adapter<MyFeedHolder> {
         final UserPojo user = notification.getUser();
         if(user.getProfilePhoto() != null) {
             Glide.with(mContext).load(user.getProfilePhoto()).into(myFeedHolder.userProfileImage);
+        } else {
+            Glide.with(mContext).load(R.drawable.com_facebook_profile_picture_blank_square).into(myFeedHolder.userProfileImage);
         }
         String feed_description = myNotificationsList.get(position).getFeedDescription();
         myFeedHolder.feedDescription.setText(feed_description);
@@ -52,6 +55,9 @@ public class MyFeedAdapter extends RecyclerView.Adapter<MyFeedHolder> {
         } else {
             myFeedHolder.userFollowButton.setVisibility(View.INVISIBLE);
         }
+
+        String diff = dbUtil.getTimestampDifference(myNotificationsList.get(position).getNotificationTimestamp());
+        myFeedHolder.postedTime.setText(diff);
 
         myFeedHolder.userFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override

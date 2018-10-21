@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +26,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -101,6 +100,7 @@ public class ProfileFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -124,6 +124,15 @@ public class ProfileFragment extends Fragment {
             menu.add(0, v.getId(), 0, "Upload profile pic");
             menu.add(0,v.getId(), 0, "Remove profile pic");
         }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem sortDateItem=menu.findItem(R.id.action_sortDate);
+        sortDateItem.setVisible(false);
+        MenuItem sortLocationItem=menu.findItem(R.id.action_sortLocation);
+        sortLocationItem.setVisible(false);
+
     }
 
     @Override
@@ -163,8 +172,10 @@ public class ProfileFragment extends Fragment {
         bitmap.compress(Bitmap.CompressFormat.JPEG,80,baos);
         byte[] data = baos.toByteArray();
         final UploadTask uploadtask;
-        int n = 100;
-        n = new Random().nextInt(n);
+        Random r = new Random();
+        int low = 2000;
+        int high = 3000;
+        int n = r.nextInt(high-low) + low;
         String fname = "Image-" + n ;
         String path = "images/"+fname;
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();

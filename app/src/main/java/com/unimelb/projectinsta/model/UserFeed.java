@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class UserFeed {
+public class UserFeed implements Comparable<UserFeed>{
     private UserPojo user;
     private String userId;
     private String photo;
@@ -16,7 +16,9 @@ public class UserFeed {
     private List<Like> likeList = new ArrayList<>();
     private List<Comment> commentList = new ArrayList<>();
     private int feed_Id;
-    private int comments;
+    private String locationName;
+    private double latitude;
+    private double longitude;
 
     public String getLocationName() {
         return locationName;
@@ -41,10 +43,6 @@ public class UserFeed {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
-
-    private String locationName;
-    private double latitude;
-    private double longitude;
 
     public UserFeed(){
 
@@ -156,11 +154,20 @@ public class UserFeed {
                 ", likeList=" + likeList +
                 ", commentList=" + commentList +
                 ", feed_Id=" + feed_Id +
-                ", comments=" + comments +
                 ", locationName='" + locationName + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 '}';
+    }
+
+    @Override
+    public int compareTo(UserFeed o) {
+        if(getDate() == null || o.getDate() == null){
+            return 0;
+        }else{
+            return o.getDate().compareTo(getDate());
+        }
+
     }
 }
 

@@ -8,6 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
@@ -50,8 +53,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+
+import static android.content.Context.LOCATION_SERVICE;
 
 
 /**
@@ -62,7 +69,7 @@ import java.util.UUID;
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements LocationListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -75,6 +82,9 @@ public class HomeFragment extends Fragment {
     private TextView nofeedsTextView;
     public UserFeedAdapter mAdapter;
     public FirebaseFirestore instadb = FirebaseFirestore.getInstance();
+    public static Boolean changeDate = Boolean.TRUE;
+    public static Boolean changeLocation = Boolean.TRUE;
+    private static Location myLocation = null;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -95,11 +105,36 @@ public class HomeFragment extends Fragment {
 
     private volatile boolean isServerRunning = false;
 
+    private Location tempLocation1 = new Location(LocationManager.NETWORK_PROVIDER);
+    private Location tempLocation2 = new Location(LocationManager.NETWORK_PROVIDER);
+
     private static final int MESSAGE_RECEIVED = 0;
     private static final int CONNECTION_SUCCESSFUL = 1;
 
     InputStream ServerInStream = null;
     OutputStream ServerOutStream = null;
+
+    boolean isGPSEnabled = false;
+
+    // Flag for network status
+    boolean isNetworkEnabled = false;
+
+    // Flag for GPS status
+    boolean canGetLocation = false;
+
+    Location location; // Location
+    double latitude; // Latitude
+    double longitude; // Longitude
+
+    // The minimum distance to change Updates in meters
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
+
+    // The minimum time between updates in milliseconds
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
+
+    private static final int LOCATION_REQUEST_CODE = 123;
+    // Declaring a Location Manager
+    protected LocationManager locationManager;
 
     private static android.os.Handler handler_process = new android.os.Handler(){
         public void handleMessage(Message msg){
@@ -150,6 +185,9 @@ public class HomeFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         MY_UUID = new DeviceUuidFactory(getContext()).getDeviceUuid();
+        if (myLocation == null){
+            myLocation = getLocation();
+        }
         startBluetoothSensor();
     }
 
@@ -167,12 +205,9 @@ public class HomeFragment extends Fragment {
         mUserFeedRecyclerView = (RecyclerView) homeFragmentView.findViewById(R.id.fragment_userfeed_recycler);
         mUserFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mUserFeedRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
         nofeedsTextView = (TextView) homeFragmentView.findViewById(R.id.no_feed_display_text);
-
         mAdapter = new UserFeedAdapter(getContext(),feeds);
         mUserFeedRecyclerView.setAdapter(mAdapter);
-
         return homeFragmentView;
     }
 
@@ -259,6 +294,54 @@ public class HomeFragment extends Fragment {
                         } else {
                             nofeedsTextView.setVisibility(View.VISIBLE);
                         }
+                        if(changeDate){
+                            Collections.sort(feeds, new Comparator<UserFeed>() {
+                                public int compare(UserFeed o1, UserFeed o2) {
+                                    if (o1.getDate() == null || o2.getDate() == null)
+                                        return 0;
+                                    return o1.getDate().compareTo(o2.getDate());
+                                }
+                            });
+                        }else {
+                            Collections.sort(feeds);
+                        }
+
+//                        if(changeLocation){
+//                            Collections.sort(feeds, new Comparator<UserFeed>() {
+//                                public int compare(UserFeed o1, UserFeed o2) {
+//                                    tempLocation1.setLatitude(o1.getLatitude());
+//                                    tempLocation1.setLongitude(o1.getLongitude());
+//                                    tempLocation2.setLatitude(o2.getLatitude());
+//                                    tempLocation2.setLongitude(o2.getLongitude());
+//                                    if (tempLocation1.distanceTo(myLocation) > tempLocation2.distanceTo(myLocation))
+//                                        return 1;
+//                                    else if (tempLocation1.distanceTo(myLocation) < tempLocation2.distanceTo(myLocation))
+//                                        return -1;
+//                                    else
+//                                        return 0;
+//                                }
+//                            });
+//
+//                            System.out.println("comparator");
+//
+//                        }else {
+//                            Collections.sort(feeds, new Comparator<UserFeed>() {
+//                                public int compare(UserFeed o1, UserFeed o2) {
+//                                    tempLocation1.setLatitude(o1.getLatitude());
+//                                    tempLocation1.setLongitude(o1.getLongitude());
+//                                    tempLocation2.setLatitude(o2.getLatitude());
+//                                    tempLocation2.setLongitude(o2.getLongitude());
+//                                    if (tempLocation1.distanceTo(myLocation) > tempLocation2.distanceTo(myLocation))
+//                                        return -1;
+//                                    else if (tempLocation1.distanceTo(myLocation) < tempLocation2.distanceTo(myLocation))
+//                                        return 1;
+//                                    else
+//                                        return 0;
+//                                }
+//                            });
+
+//                        }
+
                         mAdapter.notifyDataSetChanged();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -271,6 +354,78 @@ public class HomeFragment extends Fragment {
         } else {
             nofeedsTextView.setVisibility(View.VISIBLE);
         }
+    }
+
+    public Location getLocation() {
+        try {
+            locationManager = (LocationManager) getContext()
+                    .getSystemService(LOCATION_SERVICE);
+
+            // Getting GPS status
+            isGPSEnabled = locationManager
+                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+            // Getting network status
+            isNetworkEnabled = locationManager
+                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+            if (!isGPSEnabled && !isNetworkEnabled) {
+                // No network provider is enabled
+            } else {
+                this.canGetLocation = true;
+                if (isNetworkEnabled) {
+                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
+                    }else {
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                        myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                /*if (locationManager != null){
+                    Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                }*/
+                    }
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                    Log.d("Network", "Network");
+                    if (locationManager != null) {
+                        location = locationManager
+                                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        if (location != null) {
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                        }
+                    }
+                }
+                // If GPS enabled, get latitude/longitude using GPS Services
+                if (isGPSEnabled) {
+                    if (location == null) {
+                        locationManager.requestLocationUpdates(
+                                LocationManager.GPS_PROVIDER,
+                                MIN_TIME_BW_UPDATES,
+                                MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                        Log.d("GPS Enabled", "GPS Enabled");
+                        if (locationManager != null) {
+                            location = locationManager
+                                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                            if (location != null) {
+                                latitude = location.getLatitude();
+                                longitude = location.getLongitude();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return location;
     }
 
     public void startBluetoothSensor(){
@@ -533,6 +688,20 @@ public class HomeFragment extends Fragment {
                     Log.d("haha", "all permissions granted");
 
                 }
+                break;
+            case LOCATION_REQUEST_CODE:
+                if (grantResults.length > 0) {
+                    for (int grantResult : grantResults) {
+                        if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                            Log.d("haha", "one or more permission denied");
+                            return;
+                        }
+                    }
+                    Log.d("haha", "all permissions granted");
+
+                }
+                break;
+
 
         }
     }
@@ -548,6 +717,25 @@ public class HomeFragment extends Fragment {
         }
 
         return true;
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+    }
+
+
+    @Override
+    public void onProviderDisabled(String provider) {
+    }
+
+
+    @Override
+    public void onProviderEnabled(String provider) {
+    }
+
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
     }
 
 }

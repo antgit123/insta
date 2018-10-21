@@ -1,6 +1,7 @@
 package com.unimelb.projectinsta;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,7 +10,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.unimelb.projectinsta.comments.CommentsFragment;
@@ -55,8 +61,11 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
         userFeedHolder.description_username.setText(userName);
         userFeedHolder.description_txt.setText(selectedUserFeed.getCaption());
         userFeedHolder.location.setText(selectedUserFeed.getLocationName());
+        String timeStamp = dbUtil.getTimestampDifference(selectedUserFeed.getDate());
+        userFeedHolder.feedTimeStamp.setText(timeStamp);
         String photoUri = selectedUserFeed.getPhoto();
         String userPhoto = selectedUserFeed.getUser().getProfilePhoto();
+        String currentUserPhoto = currentUser.getProfilePhoto();
         List<Comment> commentsList = selectedUserFeed.getCommentList();
         String commentString = "View all " + commentsList.size() + " comments";
         userFeedHolder.comments_link.setText(commentString);
@@ -89,9 +98,18 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
         if(currentUserProfilePhoto == null){
             Glide.with(userFeedContext).load(R.drawable.com_facebook_profile_picture_blank_square).into(userFeedHolder.commentProfileImageView);
         }else{
-            Glide.with(userFeedContext).load(userPhoto).into(userFeedHolder.commentProfileImageView);
+            Glide.with(userFeedContext).load(currentUserPhoto).into(userFeedHolder.commentProfileImageView);
         }
-        Glide.with(userFeedContext).load(photoUri).into(userFeedHolder.feedImageView);
+        RequestOptions options = new RequestOptions();
+        Glide.with(userFeedContext)
+                .asBitmap()
+                .load(photoUri).apply(options)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                        userFeedHolder.feedImageView.setImageBitmap(resource);
+                    }
+                });
 
         userFeedHolder.setItemClickListener(new ItemClickListener() {
             @Override
@@ -130,6 +148,14 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
                     MainActivity mainActivity = (MainActivity)userFeedContext;
                     mainActivity.getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+                }
+                if(v.getId() == userFeedHolder.userFeedPostCommentText.getId()){
+                    String commentDescription = userFeedHolder.userFeedEditComment.getText().toString();
+                    if(!commentDescription.equals("")){
+                        dbUtil.postComment(userFeedContext,selectedUserFeed,userFeedHolder,commentDescription);
+                    }else{
+                        Toast.makeText(userFeedContext,"Add some text",Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

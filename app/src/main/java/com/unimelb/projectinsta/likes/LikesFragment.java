@@ -72,6 +72,7 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_likes, container, false);
         userListView = view.findViewById(R.id.listView_followers);
+        likesBackArrow = view.findViewById(R.id.backArrow_likes);
         Context context = view.getContext();
         Bundle bundle = getArguments();
         feedId = (String) bundle.get("feedId");
@@ -81,6 +82,12 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
             userListView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
         queryUserLikes(feedId);
+        likesBackArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
         return view;
     }
 
@@ -118,7 +125,7 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
                     if(feed != null) {
                         userLikes = feed.getLikeList();
                     }else{
-                        Toast.makeText(getContext(),"Error fetching feed document",Toast.LENGTH_SHORT);
+                        Toast.makeText(getContext(),"Error fetching feed document",Toast.LENGTH_SHORT).show();
                     }
                     adapter = new LikesArrayAdapter(getContext(),userLikes);
                     adapter.notifyDataSetChanged();
@@ -128,7 +135,7 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(),"Error fetching feed document",Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(),"Error fetching feed document",Toast.LENGTH_SHORT).show();
             }
         });
     }

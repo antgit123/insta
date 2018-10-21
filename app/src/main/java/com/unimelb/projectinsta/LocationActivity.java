@@ -256,7 +256,6 @@ public class LocationActivity extends AppCompatActivity implements LocationListe
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -265,8 +264,10 @@ public class LocationActivity extends AppCompatActivity implements LocationListe
         bitmap.compress(Bitmap.CompressFormat.JPEG,80,baos);
         byte[] data = baos.toByteArray();
         final UploadTask uploadtask;
-        int n = 100;
-        n = new Random().nextInt(n);
+        Random r = new Random();
+        int low = 200;
+        int high = 1999;
+        int n = r.nextInt(high-low) + low;
         String fname = "Image-" + n ;
         String path = "images/"+fname;
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();

@@ -39,6 +39,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -120,7 +124,16 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
             String img_path = BitmapUtils.insertImage(getContentResolver(), originalImage, System.currentTimeMillis() + "_pic.jpg", null);
             clickedImageUri = Uri.parse(img_path);
         }
-        filterPhotoView.setImageBitmap(imageBitmap);
+        RequestOptions options = new RequestOptions();
+        Glide.with(this)
+                .asBitmap()
+                .load(imageBitmap).apply(options)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                        filterPhotoView.setImageBitmap(resource);
+                    }
+                });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -191,7 +204,6 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && (requestCode == PICK_IMAGE || requestCode == CROP_IMAGE)) {
-//            Bitmap bitmap = BitmapUtils.getBitmapFromGallery(this, data.getData(), 800, 800);
             try {
                 final Uri imageUri = data.getData();
                 clickedImageUri = imageUri;
@@ -202,7 +214,15 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
                 finalImage.recycle();
                 originalImage = selectedImage.copy(Bitmap.Config.ARGB_8888, true);
                 finalImage = originalImage;
-                filterPhotoView.setImageBitmap(selectedImage);
+                Glide.with(this)
+                        .asBitmap()
+                        .load(selectedImage)
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                                filterPhotoView.setImageBitmap(resource);
+                            }
+                        });
                 FilterListFragment filterListFragment = (FilterListFragment) fragmentHashMap.get(0);
                 filterListFragment.prepareThumbnail(originalImage);
             } catch (FileNotFoundException e) {
@@ -296,22 +316,6 @@ public class PhotoViewPager extends AppCompatActivity implements FilterListFragm
             toast.show();
         }
     }
-
-
-//    @Override
-//    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-//        // When the given tab is selected, switch to the corresponding page in
-//        // the ViewPager.
-//        mViewPager.setCurrentItem(tab.getPosition());
-//    }
-//
-//    @Override
-//    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-//    }
-//
-//    @Override
-//    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-//    }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to

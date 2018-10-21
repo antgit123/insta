@@ -28,6 +28,9 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.unimelb.projectinsta.DeviceUuidFactory;
 import com.unimelb.projectinsta.OnSwipeTouchListener;
 import com.unimelb.projectinsta.R;
@@ -142,19 +145,22 @@ public class EnlargedPostViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_enlarged_self_posts, container, false);
-        ImageView enlargedImage = (ImageView) view.findViewById(R.id.enlarged_post);
+        final ImageView enlargedImage = (ImageView) view.findViewById(R.id.enlarged_post);
         Bundle bundle = getArguments();
         String image = bundle.getString("imageUrl");
 
         RequestOptions options = new RequestOptions();
-        options.centerCrop();
-        Glide.with(getContext())
-                .load(image)
-                .apply(options)
-                .into(enlargedImage);
-        //enlargedImage.buildDrawingCache();
-        //Bitmap bitmap = enlargedImage.getDrawingCache();
-        //Bitmap bitmap = ((BitmapDrawable)enlargedImage.getDrawable()).getBitmap();
+        Glide.with(this)
+                .asBitmap()
+                .load(image).apply(options)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                        enlargedImage.setImageBitmap(resource);
+                        Log.i("Enlarged",resource.toString());
+                    }
+                });
+
 
         enlargedImage.setOnTouchListener(new OnSwipeTouchListener(getContext()) {
             @Override
