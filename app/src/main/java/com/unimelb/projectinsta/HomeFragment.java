@@ -275,6 +275,7 @@ public class HomeFragment extends Fragment implements LocationListener {
         if (loggedInUser.getFollowingList().size() > 0) {
             List<String> followingUserIds = loggedInUser.getFollowingList();
             //query feeds
+            feeds.clear();
             for(String followingId : followingUserIds) {
                 Query feedQuery = instadb.collection("feeds").whereEqualTo("userId",followingId);
                 feedQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

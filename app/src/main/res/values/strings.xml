@@ -71,6 +71,7 @@
     <string name="sample_time">3d</string>
     <string name="top_comments">Comments</string>
     <string name="top_likes">Likes</string>
+    <string name="top_enlarged_view">Your Post</string>
     <string name="follow_user">Follow</string>
     <string name="section_format">Hello World from section: %1$d</string>
 

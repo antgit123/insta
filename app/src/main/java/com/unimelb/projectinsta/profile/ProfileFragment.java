@@ -236,6 +236,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
+                    postedImagesList.clear();
                     //retrieve user Details
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         postedImagesList.add((String) document.get("photo"));
