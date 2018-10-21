@@ -60,9 +60,6 @@
             android:name=".MainActivity"
             android:label="Instagram" />
         <activity
-            android:name=".Startup_activity"
-            android:label="Sign up" />
-        <activity
             android:name=".RegisterActivity"
             android:label="Register" />
         <activity

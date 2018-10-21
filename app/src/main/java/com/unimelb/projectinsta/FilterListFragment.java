@@ -1,3 +1,8 @@
+/*
+    The purpose of this java class is to implement the fragment functionality for photo
+    filters present under filter tab in Edit photo screen
+ */
+
 package com.unimelb.projectinsta;
 
 import android.content.Context;
@@ -5,18 +10,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-
 import com.unimelb.projectinsta.util.ThumbnailFormatter;
 import com.zomato.photofilters.FilterPack;
 import com.zomato.photofilters.imageprocessors.Filter;
@@ -72,6 +72,9 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
         }
     }
 
+    /*
+        On create view method that sets adapter to list of image thumbnail
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -125,16 +128,14 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
         void onListFragmentInteraction(List<String> frag);
     }
 
+    /*
+        Util method to retrieve the list of filters and prepare thumbnail image
+     */
     public void prepareThumbnail(final Bitmap bitmap) {
         Runnable r = new Runnable() {
             public void run() {
                 Bitmap thumbImage;
                 thumbImage = bitmap;
-//                if (bitmap == null) {
-//                    thumbImage = BitmapUtils.getBitmapFromAssets(getActivity(), MainActivity.IMAGE_NAME, 100, 100);
-//                } else {
-//                    thumbImage = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
-//                }
                 if(bitmap == null){
                     thumbImage = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
                 }
@@ -178,7 +179,10 @@ public class FilterListFragment extends Fragment implements  ThumbnailAdapter.Th
         new Thread(r).start();
     }
 
-
+    /*
+        Interface which defines the onFilter selected interaction which gets triggered on
+        touching a thumbnail filter item
+     */
     @Override
     public void onFilterSelected(Filter filter) {
         if (listener != null)

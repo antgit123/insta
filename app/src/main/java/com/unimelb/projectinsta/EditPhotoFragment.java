@@ -1,5 +1,9 @@
-package com.unimelb.projectinsta;
+/*
+    The purpose of this java class is to implement the fragment functionality for edit
+    filters present under edit tab in Edit photo screen
+ */
 
+package com.unimelb.projectinsta;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,9 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-
-import java.nio.channels.SeekableByteChannel;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -73,6 +74,9 @@ public class EditPhotoFragment extends Fragment implements SeekBar.OnSeekBarChan
         }
     }
 
+    /*
+        On create view method which sets the listeners for the elements present in the edit view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -91,11 +95,9 @@ public class EditPhotoFragment extends Fragment implements SeekBar.OnSeekBarChan
         contrastSeekbar.setProgress(0);
         saturationSeekbar.setMax(30);
         saturationSeekbar.setProgress(10);
-//
         brightnessSeekbar.setOnSeekBarChangeListener(this);
         contrastSeekbar.setOnSeekBarChangeListener(this);
         saturationSeekbar.setOnSeekBarChangeListener(this);
-
         return view;
     }
 
@@ -138,6 +140,9 @@ public class EditPhotoFragment extends Fragment implements SeekBar.OnSeekBarChan
         void onFragmentInteraction(Uri uri);
     }
 
+    /*
+        Util method which is called on change of seekbar values
+     */
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
         if (photoListener != null) {
@@ -177,12 +182,18 @@ public class EditPhotoFragment extends Fragment implements SeekBar.OnSeekBarChan
             photoListener.onEditCompleted();
     }
 
+    /*
+        Util method to reset controls of seekbars
+     */
     public void resetControls() {
         brightnessSeekbar.setProgress(100);
         contrastSeekbar.setProgress(0);
         saturationSeekbar.setProgress(10);
     }
 
+    /*
+        Interface which contains methods implemented by the min activity on change of seekbar values
+     */
     public interface EditPhotoFragmentListener {
         void onBrightnessChanged(int brightness);
 

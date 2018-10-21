@@ -1,9 +1,12 @@
+/*
+    The purpose of this class file is to format the appearence and look and feel of the thumbnail
+    items present in the filter recycler view list
+ */
 package com.unimelb.projectinsta.util;
+
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-
-//optional
 
 public class ThumbnailFormatter extends RecyclerView.ItemDecoration {
     private int space;

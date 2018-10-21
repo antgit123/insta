@@ -1,12 +1,16 @@
-package com.unimelb.projectinsta;
+/*
+    The purpose of this java class is to add the userfeed adapter which links to the Userfeed
+    holder for the userfeed recycler view.
+    It includes util methods to add on click listeners to different items present in the userfeed
+    such as chat icon, heart icon and add functionality for event changes on these icons
+ */
 
+package com.unimelb.projectinsta;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +20,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.unimelb.projectinsta.comments.CommentsFragment;
 import com.unimelb.projectinsta.likes.LikesFragment;
 import com.unimelb.projectinsta.model.Comment;
@@ -34,7 +36,6 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
 
     List<UserFeed> userFeed;
     Context userFeedContext;
-    ItemClickListener listener;
     View userFeedView;
     DatabaseUtil dbUtil = new DatabaseUtil();
 
@@ -50,6 +51,9 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
         return feedHolder;
     }
 
+    /*
+        Util method to to bind the userfeed view elements with the adpater
+     */
     @Override
     public void onBindViewHolder(@NonNull final UserFeedHolder userFeedHolder, int i) {
         UserPojo currentUser = CommonUtil.getInstance().getLoggedInUser();
@@ -111,6 +115,7 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
                     }
                 });
 
+        //item click listeners for different elements in userfeed such as heart, chat icon
         userFeedHolder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onItemClick(View v, int pos) {
@@ -161,6 +166,9 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
         });
     }
 
+    /*
+        Method to change the display of heart icon and update likes for the user feed
+     */
     public void toggleLike(int position,boolean isLiked,UserFeedHolder userFeedHolder){
         UserFeed selectedUserFeed = userFeed.get(position);
         dbUtil.updatePostLikes(userFeedContext, selectedUserFeed, userFeedHolder, isLiked);

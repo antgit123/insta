@@ -1,5 +1,9 @@
-package com.unimelb.projectinsta.util;
+/*
+    The purpose of this java class file is to add utility functions for updating the Firestore
+    database
+ */
 
+package com.unimelb.projectinsta.util;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -9,9 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -23,7 +25,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.unimelb.projectinsta.comments.CommentsAdapter;
 import com.unimelb.projectinsta.model.Comment;
 import com.unimelb.projectinsta.model.FollowingUserNotificationsPojo;
 import com.unimelb.projectinsta.UserFeedHolder;
@@ -31,10 +32,8 @@ import com.unimelb.projectinsta.model.Like;
 import com.unimelb.projectinsta.model.MyNotificationsPojo;
 import com.unimelb.projectinsta.model.UserFeed;
 import com.unimelb.projectinsta.model.UserPojo;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -79,6 +78,9 @@ public class DatabaseUtil {
         }
     }
 
+    /*
+        Util method to save feeds to the database
+     */
     public void savePost(String uri, String caption, Location location, String address) {
         Log.d("test", "savePost: "+userID);
         final UserFeed feed = new UserFeed();
@@ -97,12 +99,18 @@ public class DatabaseUtil {
         instadb.collection("feeds").document(String.valueOf(feedId)).set(feed);
     }
 
+    /*
+        Util method to add followers and following users to the database
+     */
     public void followFunction(UserPojo follower) {
         addFollowing(follower);
         addFollowers(follower);
         notifyFollowers(follower);
     }
 
+    /*
+        Util method which stores follow type activities of users in the database
+     */
     private void notifyFollowers(UserPojo follower) {
         String type = "follow";
         String feedDescription = loggedInUser.getUserName() + " started following " + follower.getUserName();
@@ -115,7 +123,9 @@ public class DatabaseUtil {
         }
     }
 
-
+    /*
+        Util method which stores like type activities of users in the database
+     */
     private void notifyFollowersAboutLike(UserPojo follower) {
         String type = "like";
         String feedDescription = loggedInUser.getUserName() + " liked the post added by " + follower.getUserName();
@@ -134,6 +144,9 @@ public class DatabaseUtil {
         updateFollowingList(loggedInUser, user.getUserId());
     }
 
+    /*
+        Util method which updates the following users list in the database
+     */
     private void updateFollowingList(UserPojo user, String followingUserId) {
         user.getFollowingList().add(followingUserId);
         DocumentReference userRef = instadb.collection("users")
@@ -152,11 +165,17 @@ public class DatabaseUtil {
         updateMyNotification(type, feedDescription, user.getUserId(), loggedInUser);
     }
 
+    /*
+        Util method to update my notification entries in the database
+     */
     private void updateMyNotification(String type, String feedDescription, String userId, UserPojo user) {
         MyNotificationsPojo notification = new MyNotificationsPojo(userId,type, feedDescription, user, new Date());
         instadb.collection("myNotifications").add(notification);
     }
 
+    /*
+        Util method to update the user likes for the userfeed in the database
+     */
     public void updatePostLikes(final Context userFeedContext, final UserFeed userFeed, final UserFeedHolder userFeedHolder, final boolean isLiked){
         int feedId = userFeed.getFeed_Id();
         loggedInUser = CommonUtil.getInstance().getLoggedInUser();
@@ -185,6 +204,7 @@ public class DatabaseUtil {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(isLiked){
+                    //toggling heart display
                     userFeedHolder.red_heart_icon.setScaleX(0.1f);
                     userFeedHolder.red_heart_icon.setScaleY(0.1f);
 
@@ -199,6 +219,7 @@ public class DatabaseUtil {
                     animatorSet.playTogether(scaleDownY,scaleDownX);
                     userFeedHolder.like_by.setText(likesString);
                 }else{
+                    //toggling heart display
                     userFeedHolder.red_heart_icon.setScaleX(0.1f);
                     userFeedHolder.red_heart_icon.setScaleY(0.1f);
 
@@ -219,8 +240,6 @@ public class DatabaseUtil {
                     notifyFollowersAboutLike(userFeed.getUser());
                 }
                 animatorSet.start();
-
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -230,6 +249,9 @@ public class DatabaseUtil {
         });
     }
 
+    /*
+        Util method to store comments for a userfeed in the database
+     */
     public void postComment(final Context userFeedContext, final UserFeed userFeed, final UserFeedHolder userFeedHolder, final String comment_Description){
         int feedId = userFeed.getFeed_Id();
         loggedInUser = CommonUtil.getInstance().getLoggedInUser();
@@ -264,6 +286,9 @@ public class DatabaseUtil {
         });
     }
 
+    /*
+        Util method to update following notifications for comments activity in the database
+     */
     private void notifyFollowersAboutComments(UserPojo follower, String comment) {
         String type = "comment";
         String feedDescription = loggedInUser.getUserName() + " commented on the post added by "
@@ -279,6 +304,10 @@ public class DatabaseUtil {
         }
     }
 
+    /*
+        Util method to update the timestamp difference in posts and notifications for userfeeds
+        in the database
+     */
     public String getTimestampDifference(Date date){
         String difference = "";
         Calendar c = Calendar.getInstance();
