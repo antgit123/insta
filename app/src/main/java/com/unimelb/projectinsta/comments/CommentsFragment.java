@@ -1,5 +1,9 @@
-package com.unimelb.projectinsta.comments;
+/*
+ The purpose of this java class is to add functionality to display comments in the comments
+ fragment view
+ */
 
+package com.unimelb.projectinsta.comments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -77,6 +81,10 @@ public class CommentsFragment extends Fragment implements LikesArrayAdapter.User
         }
     }
 
+    /*
+        On create view method which defines the different elements present in the comments fragment
+        view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -90,7 +98,6 @@ public class CommentsFragment extends Fragment implements LikesArrayAdapter.User
             @Override
             public void onClick(View v) {
                 if(v.getId() == postComment.getId()) {
-                    Toast.makeText(getContext(),"aaa",Toast.LENGTH_SHORT);
                     if (postCommentText.getText().toString().equals("")) {
                         postCommentText.setEnabled(false);
                     } else {
@@ -147,6 +154,9 @@ public class CommentsFragment extends Fragment implements LikesArrayAdapter.User
         mListener = null;
     }
 
+    /*
+        Util method to query comments of the selected userfeed from the database
+     */
     public void queryUserComments(String feedId, final boolean postComment){
         FirebaseFirestore instadb = FirebaseFirestore.getInstance();
         CollectionReference feedDocuments = instadb.collection("feeds");

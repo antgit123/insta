@@ -1,5 +1,8 @@
-package com.unimelb.projectinsta.comments;
+/*
+    The purpose of this class is to define the view elements present in the comments view
+ */
 
+package com.unimelb.projectinsta.comments;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;

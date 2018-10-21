@@ -1,3 +1,8 @@
+/*
+ The purpose of this java class is to add functionality to display list of user who liked
+   a userfeed in the user likes fragment view
+ */
+
 package com.unimelb.projectinsta.likes;
 
 import android.content.Context;
@@ -67,6 +72,10 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
         }
     }
 
+    /*
+        On create view method which defines the elements present in the user likes fragment view
+        and adding listeners for them
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -109,6 +118,9 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
         mListener = null;
     }
 
+    /*
+        Util method to query list of user likes of the selected userfeed from the database
+     */
     public void queryUserLikes(String feedId){
         FirebaseFirestore instadb = FirebaseFirestore.getInstance();
         CollectionReference feedDocuments = instadb.collection("feeds");
@@ -121,7 +133,6 @@ public class LikesFragment extends Fragment implements LikesArrayAdapter.UserIte
                 if(task.isSuccessful()){
                     DocumentSnapshot feedDocument = task.getResult();
                     feed = feedDocument.toObject(UserFeed.class);
-//                    userLikes = (List<Like>) feedDocument.get("likeList");
                     if(feed != null) {
                         userLikes = feed.getLikeList();
                     }else{
