@@ -57,9 +57,16 @@ public class SearchUsersAdapter extends ArrayAdapter<UserPojo> {
         }
         holder.username.setText(getItem(position).getUserName());
         holder.realname.setText(getItem(position).getUserRealName());
-        Glide.with(getContext())
-                .load(getItem(position).getProfilePhoto())
-                .into(holder.profileimage);
+        String photourl = getItem(position).getProfilePhoto();
+        if (photourl != null) {
+            Glide.with(getContext())
+                    .load(photourl)
+                    .into(holder.profileimage);
+
+        } else {
+            Glide.with(mContext).load(R.drawable.com_facebook_profile_picture_blank_square).
+                    into(holder.profileimage);
+        }
         UserPojo loggedInUser = CommonUtil.getInstance().getLoggedInUser();
         if(!loggedInUser.getFollowingList().contains(getItem(position).getUserId())) {
             holder.follow_button.setVisibility(View.VISIBLE);
