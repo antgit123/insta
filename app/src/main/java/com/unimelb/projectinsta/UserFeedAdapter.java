@@ -1,6 +1,7 @@
 package com.unimelb.projectinsta;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.unimelb.projectinsta.comments.CommentsFragment;
@@ -96,8 +100,16 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedHolder> {
         }else{
             Glide.with(userFeedContext).load(currentUserPhoto).into(userFeedHolder.commentProfileImageView);
         }
-
-        Glide.with(userFeedContext).load(photoUri).into(userFeedHolder.feedImageView);
+        RequestOptions options = new RequestOptions();
+        Glide.with(userFeedContext)
+                .asBitmap()
+                .load(photoUri).apply(options)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                        userFeedHolder.feedImageView.setImageBitmap(resource);
+                    }
+                });
 
         userFeedHolder.setItemClickListener(new ItemClickListener() {
             @Override
