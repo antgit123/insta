@@ -19,7 +19,7 @@
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginEnd="20dp"
+                    android:layout_marginEnd="15dp"
                     android:layout_centerVertical="true"
                     android:id="@+id/backArrow_likes"
                     android:src="@drawable/ic_backarrow"/>
@@ -29,8 +29,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/top_likes"
                     android:layout_toEndOf="@+id/backArrow_likes"
-                    android:layout_marginEnd="15dp"
-                    android:textSize="20sp"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
                     android:textColor="@color/black"
                     android:layout_centerVertical="true"
                     android:id="@+id/like_title"
