@@ -1,4 +1,5 @@
-package com.unimelb.projectinsta;
+/*Purpose of the File: To return a view to Display Suggested Users Results*/
+package com.unimelb.projectinsta.search;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
@@ -10,21 +11,17 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
+import com.unimelb.projectinsta.R;
 import com.unimelb.projectinsta.model.UserPojo;
-import com.unimelb.projectinsta.util.CommonUtil;
 import com.unimelb.projectinsta.util.DatabaseUtil;
-
 import java.util.List;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class DiscoverUsersAdapter extends ArrayAdapter<UserPojo> {
     private LayoutInflater mInflator;
     private List<UserPojo> mUsers = null;
     private int layoutResource;
-
     private Context mContext;
 
     public DiscoverUsersAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<UserPojo> objects) {
@@ -49,7 +46,6 @@ public class DiscoverUsersAdapter extends ArrayAdapter<UserPojo> {
         {
             convertView = mInflator.inflate(layoutResource, parent, false);
             holder = new ViewHolder();
-
             holder.username_d = (TextView) convertView.findViewById(R.id.username);
             holder.displayname = (TextView) convertView.findViewById(R.id.display_name);
             holder.profileimage = (CircleImageView) convertView.findViewById(R.id.profile_image);
@@ -74,10 +70,6 @@ public class DiscoverUsersAdapter extends ArrayAdapter<UserPojo> {
                 holder.follow_button.setText("Following");
             }
         });
-
         return convertView;
-
-
-
     }
 }
