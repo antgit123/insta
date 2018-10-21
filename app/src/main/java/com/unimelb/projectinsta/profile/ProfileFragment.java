@@ -145,7 +145,7 @@ public class ProfileFragment extends Fragment {
         } else { //Remove pic
             Log.d("debug", "onContextItemSelected: remove pic");
             profileImageView.setImageResource(R.drawable.com_facebook_profile_picture_blank_portrait);
-            updateUserProfile(currentUser, "");
+            updateUserProfile(currentUser, null);
         }
 
         return super.onContextItemSelected(item);
@@ -160,7 +160,6 @@ public class ProfileFragment extends Fragment {
             final Uri imageUri = data.getData();
             final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
             final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-            profileImageView.setImageBitmap(selectedImage);
             encodeBitmapAndSaveToFirebase(selectedImage);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -209,6 +208,19 @@ public class ProfileFragment extends Fragment {
         DocumentReference userRef = instadb.collection("users")
                 .document(user.getUserId());
         userRef.set(user);
+        RequestOptions options = new RequestOptions();
+        options.centerCrop();
+
+        if(uri != null) {
+            Glide.with(ProfileFragment.this)
+                    .load(uri)
+                    .apply(options)
+                    .into(profileImageView);
+        } else {
+            Glide.with(ProfileFragment.this)
+                    .load(R.drawable.com_facebook_profile_picture_blank_square)
+                    .into(profileImageView);
+        }
     }
 
     private void addUserDetails(final View v) {
@@ -256,7 +268,7 @@ public class ProfileFragment extends Fragment {
         followers.setText(Integer.toString(followersValue));
         followings.setText(Integer.toString(followingValue));
 
-        if(url != "") {
+        if(url != null) {
             RequestOptions options = new RequestOptions();
             options.centerCrop();
 
