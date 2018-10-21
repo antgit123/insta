@@ -272,8 +272,10 @@ public class HomeFragment extends Fragment implements LocationListener {
 
     public void getFeeds() {
         final Boolean[] hasFeeds = {false};
-        if (loggedInUser.getFollowingList().size() > 0) {
-            List<String> followingUserIds = loggedInUser.getFollowingList();
+
+        List<String> followingUserIds = loggedInUser.getFollowingList();
+        followingUserIds.add(loggedInUser.getUserId()); //Adding current user's post too.
+        if (followingUserIds.size() > 0) {
             //query feeds
             feeds.clear();
             for(String followingId : followingUserIds) {
@@ -352,9 +354,11 @@ public class HomeFragment extends Fragment implements LocationListener {
                     }
                 });
             }
+            followingUserIds.remove(loggedInUser.getUserId());
         } else {
             nofeedsTextView.setVisibility(View.VISIBLE);
         }
+
     }
 
     public Location getLocation() {
