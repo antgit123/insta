@@ -63,6 +63,7 @@
     <string name="select_gallery_photo">Select Photo From Gallery</string>
     <string name="crop_existing_photo"> Crop Photo</string>
     <string name="hint_comment">Add a comment...</string>
+    <string name="feed_description"> notification feed</string>
     <string name="post_comment">Post</string>
     <string name="sample_comment">This is a sample comment</string>
     <string name="comment_username">Sample user</string>

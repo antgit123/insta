@@ -26,12 +26,12 @@
                     android:layout_marginStart="78dp"
                     android:paddingEnd="8dp"
                     android:paddingStart="8dp"
-                    android:text="xyz"
+                    android:text="@string/feed_description"
                     android:textSize="8pt" />
 
                 <TextView
                     android:id="@+id/time_posted"
-                    android:layout_width="38dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/following_feed_item_description"
                     android:layout_marginEnd="15dp"
