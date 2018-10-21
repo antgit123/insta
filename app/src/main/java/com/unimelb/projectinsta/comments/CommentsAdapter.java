@@ -1,10 +1,14 @@
+/*
+    /*
+    The purpose of this java class is to add the comments adapter which links to the comments
+    holder for the comments recycler view.
+ */
+
 package com.unimelb.projectinsta.comments;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +17,6 @@ import com.unimelb.projectinsta.R;
 import com.unimelb.projectinsta.model.Comment;
 import com.unimelb.projectinsta.model.UserPojo;
 import com.unimelb.projectinsta.util.DatabaseUtil;
-
 import java.util.List;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsHolder> {
@@ -35,6 +38,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsHolder> {
         return commentsHolder;
     }
 
+    /*
+        View holder function which defines the elements and displays data from database in each item
+        of the comments list
+     */
     @Override
     public void onBindViewHolder(@NonNull CommentsHolder commentsHolder, final int position) {
         final UserPojo user = commentList.get(position).getUser();

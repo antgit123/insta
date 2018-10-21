@@ -1,12 +1,18 @@
+/*
+    The purpose of this java class is to add the likes adapter which links to the likes
+    holder for the user likes recycler view.
+ */
+
 package com.unimelb.projectinsta.likes;
 import java.util.List;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -40,12 +46,21 @@ public class LikesArrayAdapter extends RecyclerView.Adapter<LikesHolder> {
         return likesHolder;
     }
 
+    /*
+        View holder function which defines the elements and displays data from database in each item
+        of the user likes list
+     */
     @Override
     public void onBindViewHolder(@NonNull LikesHolder likesHolder, final int position) {
         final UserPojo user = userLikesList.get(position).getUser();
         final LikesHolder likesHolderObject = likesHolder;
         likesHolderObject.userName.setText(user.getUserName());
-
+        String userProfilePhoto = userLikesList.get(position).getUser().getProfilePhoto();
+        if(userProfilePhoto == null){
+            Glide.with(mContext).load(R.drawable.com_facebook_profile_picture_blank_square).into(likesHolder.userImageView);
+        }else{
+            Glide.with(mContext).load(userProfilePhoto).into(likesHolder.userImageView);
+        }
         UserPojo loggedInUser = CommonUtil.getInstance().getLoggedInUser();
         if(!loggedInUser.getFollowingList().contains(user.getUserId()) ||
                 !user.getUserId().equals(loggedInUser.getUserId())) {

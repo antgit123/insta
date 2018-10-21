@@ -57,9 +57,16 @@ public class DiscoverUsersAdapter extends ArrayAdapter<UserPojo> {
         }
         holder.username_d.setText(getItem(position).getUserName());
         holder.displayname.setText(getItem(position).getUserRealName());
-        Glide.with(getContext())
-                .load(getItem(position).getProfilePhoto())
-                .into(holder.profileimage);
+        String photourl = getItem(position).getProfilePhoto();
+        if (photourl != null) {
+            Glide.with(getContext())
+                    .load(photourl)
+                    .into(holder.profileimage);
+
+        } else {
+            Glide.with(mContext).load(R.drawable.com_facebook_profile_picture_blank_square).
+                    into(holder.profileimage);
+        }
 
         holder.follow_button.setOnClickListener(new View.OnClickListener() {
             @Override
