@@ -30,12 +30,15 @@
         android:id="@+id/userfeed_post_comment_text"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:textSize="17sp"
+        android:textStyle="bold"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@id/comment_post"
         android:layout_alignParentEnd="true"
         android:paddingTop="7dp"
         android:layout_marginEnd="10dp"
+        android:textColor="@color/black"
         android:text="@string/post_comment"
-        android:textColor="#64B5F6" />
+         />
 
 </merge>

@@ -19,7 +19,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <android.support.design.widget.TabLayout
             android:id="@+id/result_tabs"
-            android:background="@color/grey"
+            android:background="@color/white"
             app:tabSelectedTextColor="@color/colorPrimary"
             app:tabIndicatorColor="@color/colorPrimary"
             android:layout_width="match_parent"

@@ -293,15 +293,15 @@ public class DatabaseUtil {
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(today.getTime() - date.getTime());
                 if(minutes < 1){
                     long seconds = TimeUnit.MILLISECONDS.toSeconds(today.getTime() - date.getTime());
-                    return Long.toString(seconds) + " s ago";
+                    return Long.toString(seconds) + "s ago";
                 }else{
-                    return Long.toString(minutes) + " m ago";
+                    return Long.toString(minutes) + "m ago";
                 }
             }else{
-                return Long.toString(hours) + " h ago";
+                return Long.toString(hours) + "h ago";
             }
         }else{
-            return difference + " d ago";
+            return difference + "d ago";
         }
     }
 }

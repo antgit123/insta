@@ -3,26 +3,25 @@ import java.util.List;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
-import com.unimelb.projectinsta.MainActivity;
 import com.unimelb.projectinsta.R;
-import com.unimelb.projectinsta.likes.LikesHolder;
 import com.unimelb.projectinsta.model.MyNotificationsPojo;
 import com.unimelb.projectinsta.model.UserPojo;
 import com.unimelb.projectinsta.util.CommonUtil;
 import com.unimelb.projectinsta.util.DatabaseUtil;
 
-import java.util.List;
-
+/**
+ * A custom adapter to display a list of my notifications
+ */
 public class MyFeedAdapter extends RecyclerView.Adapter<MyFeedHolder> {
 
     private List<MyNotificationsPojo> myNotificationsList;
     private Context mContext;
+    DatabaseUtil dbUtil = new DatabaseUtil();
 
     public MyFeedAdapter(Context likesContext, List<MyNotificationsPojo> myNotificationsList){
         this.mContext = likesContext;
@@ -54,6 +53,9 @@ public class MyFeedAdapter extends RecyclerView.Adapter<MyFeedHolder> {
         } else {
             myFeedHolder.userFollowButton.setVisibility(View.INVISIBLE);
         }
+
+        String diff = dbUtil.getTimestampDifference(myNotificationsList.get(position).getNotificationTimestamp());
+        myFeedHolder.postedTime.setText(diff);
 
         myFeedHolder.userFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override

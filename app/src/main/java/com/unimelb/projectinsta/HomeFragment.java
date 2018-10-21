@@ -275,6 +275,7 @@ public class HomeFragment extends Fragment implements LocationListener {
         if (loggedInUser.getFollowingList().size() > 0) {
             List<String> followingUserIds = loggedInUser.getFollowingList();
             //query feeds
+            feeds.clear();
             for(String followingId : followingUserIds) {
                 Query feedQuery = instadb.collection("feeds").whereEqualTo("userId",followingId);
                 feedQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -306,41 +307,41 @@ public class HomeFragment extends Fragment implements LocationListener {
                             Collections.sort(feeds);
                         }
 
-                        if(changeLocation){
-                            Collections.sort(feeds, new Comparator<UserFeed>() {
-                                public int compare(UserFeed o1, UserFeed o2) {
-                                    tempLocation1.setLatitude(o1.getLatitude());
-                                    tempLocation1.setLongitude(o1.getLongitude());
-                                    tempLocation2.setLatitude(o2.getLatitude());
-                                    tempLocation2.setLongitude(o2.getLongitude());
-                                    if (tempLocation1.distanceTo(myLocation) > tempLocation2.distanceTo(myLocation))
-                                        return 1;
-                                    else if (tempLocation1.distanceTo(myLocation) < tempLocation2.distanceTo(myLocation))
-                                        return -1;
-                                    else
-                                        return 0;
-                                }
-                            });
+//                        if(changeLocation){
+//                            Collections.sort(feeds, new Comparator<UserFeed>() {
+//                                public int compare(UserFeed o1, UserFeed o2) {
+//                                    tempLocation1.setLatitude(o1.getLatitude());
+//                                    tempLocation1.setLongitude(o1.getLongitude());
+//                                    tempLocation2.setLatitude(o2.getLatitude());
+//                                    tempLocation2.setLongitude(o2.getLongitude());
+//                                    if (tempLocation1.distanceTo(myLocation) > tempLocation2.distanceTo(myLocation))
+//                                        return 1;
+//                                    else if (tempLocation1.distanceTo(myLocation) < tempLocation2.distanceTo(myLocation))
+//                                        return -1;
+//                                    else
+//                                        return 0;
+//                                }
+//                            });
+//
+//                            System.out.println("comparator");
+//
+//                        }else {
+//                            Collections.sort(feeds, new Comparator<UserFeed>() {
+//                                public int compare(UserFeed o1, UserFeed o2) {
+//                                    tempLocation1.setLatitude(o1.getLatitude());
+//                                    tempLocation1.setLongitude(o1.getLongitude());
+//                                    tempLocation2.setLatitude(o2.getLatitude());
+//                                    tempLocation2.setLongitude(o2.getLongitude());
+//                                    if (tempLocation1.distanceTo(myLocation) > tempLocation2.distanceTo(myLocation))
+//                                        return -1;
+//                                    else if (tempLocation1.distanceTo(myLocation) < tempLocation2.distanceTo(myLocation))
+//                                        return 1;
+//                                    else
+//                                        return 0;
+//                                }
+//                            });
 
-                            System.out.println("comparator");
-
-                        }else {
-                            Collections.sort(feeds, new Comparator<UserFeed>() {
-                                public int compare(UserFeed o1, UserFeed o2) {
-                                    tempLocation1.setLatitude(o1.getLatitude());
-                                    tempLocation1.setLongitude(o1.getLongitude());
-                                    tempLocation2.setLatitude(o2.getLatitude());
-                                    tempLocation2.setLongitude(o2.getLongitude());
-                                    if (tempLocation1.distanceTo(myLocation) > tempLocation2.distanceTo(myLocation))
-                                        return -1;
-                                    else if (tempLocation1.distanceTo(myLocation) < tempLocation2.distanceTo(myLocation))
-                                        return 1;
-                                    else
-                                        return 0;
-                                }
-                            });
-
-                        }
+//                        }
 
                         mAdapter.notifyDataSetChanged();
                     }

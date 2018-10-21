@@ -1,17 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".profile.EnlargedPostViewFragment">
 
-    <ImageView
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/top_enlarged_bar">
+        <include layout="@layout/snippet_top_enlarged_view"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/enlarged_container"
+        android:layout_below="@+id/top_enlarged_bar"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="10dp"
         android:layout_centerVertical="true"
         android:id="@+id/enlarged_post"
         android:src="@drawable/ic_backarrow"/>
+    </RelativeLayout>
 
 
-</FrameLayout>
+</RelativeLayout>
+
+
+
+
+
+
+
+
+
+

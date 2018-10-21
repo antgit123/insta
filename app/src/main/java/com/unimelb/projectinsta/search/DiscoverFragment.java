@@ -1,4 +1,5 @@
-package com.unimelb.projectinsta;
+/*Purpose of the file:To create Layout for Discover and Display the discover results */
+package com.unimelb.projectinsta.search;
 
 import android.content.Context;
 import android.net.Uri;
@@ -9,24 +10,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.unimelb.projectinsta.R;
 import com.unimelb.projectinsta.model.UserPojo;
-import com.unimelb.projectinsta.DiscoverUsersAdapter;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,10 +49,11 @@ public class DiscoverFragment extends Fragment {
     private List<String> mInterestList;
     private String mSuburb;
     private UserPojo currentUser = null;
+    /*Specify number of common following users required for suggestions*/
     private int required_common_following=1;
+    /*Specify number of common interests required for suggestions*/
     private int required_common_interests=1;
     private DiscoverUsersAdapter discoverUsersAdapter;
-
     private OnFragmentInteractionListener mListener;
 
     public DiscoverFragment() {
@@ -97,20 +94,9 @@ public class DiscoverFragment extends Fragment {
         View view= inflater.inflate(R.layout.fragment_discover, container, false);
         listView=view.findViewById(R.id.suggestlist);
         getSuggestedUsers();
-
-
-
-
-
-
-
-
-
-
         return view;
-
     }
-
+    /*Contains Logic to generate the list of suggested users for a current user based on Algorithm*/
     private void getSuggestedUsers() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -119,8 +105,6 @@ public class DiscoverFragment extends Fragment {
         mFollowingList=new ArrayList<String>();
         mInterestList=new ArrayList<String>();
         String userId = user.getUid();
-
-
         CollectionReference FollowingUserDocuments=instadb.collection("users");
         FollowingUserDocuments.document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -132,16 +116,17 @@ public class DiscoverFragment extends Fragment {
                     mFollowingList=currentUser.getFollowingList();
                     mInterestList=currentUser.getInterests();
                     mSuburb=currentUser.getSuburb();
-
                 }
+                /*Algorithm for Getting Suggested Users
+                * Based on Following List:Will suggest users who have specified number of Common Following users
+                  Based on Interests:Will suggest users who have specified number of Common Interests
+                  Based on Suburb:Will suggest users who have same Suburb*/
                 CollectionReference userDocuments = instadb.collection("users");
                 userDocuments.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                //Log.d("jj", documentSnapshot.getId() + " => " + documentSnapshot.getData());
-                                //mUserList.add(documentSnapshot.toObject(UserPojo.class));
                                 allUserList.add(documentSnapshot.toObject(UserPojo.class));
                             }
                             for (int i = 0; i < allUserList.size(); i++) {
@@ -155,7 +140,6 @@ public class DiscoverFragment extends Fragment {
                                     List<String> templist1 = new ArrayList<String>(allUserList.get(i).getInterests());
                                     templist1.retainAll(mInterestList);
                                     String thisUsersSuburb=allUserList.get(i).getSuburb();
-
                                         if (templist.size() >= required_common_following) {
                                             mSuggestList.add(allUserList.get(i));
                                             updateSuggestionList();
@@ -168,43 +152,23 @@ public class DiscoverFragment extends Fragment {
                                         {
                                             mSuggestList.add(allUserList.get(i));
                                             updateSuggestionList();
-
                                         }
                                         else
                                         {
                                             continue;
                                         }
-
-
                                 }
                             }
                         }
-
                     }
-
                 });
-
-
-
             }
         });
-
-
-
-
 }
-
-
-
-
-
-
+    /*Display the Results retrieved by the getSuggestedUsers method*/
     private void updateSuggestionList() {
         discoverUsersAdapter = new DiscoverUsersAdapter(getContext(), R.layout.discover_userlist, mSuggestList);
         listView.setAdapter(discoverUsersAdapter);
-
-
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -230,7 +194,6 @@ public class DiscoverFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -245,5 +208,4 @@ public class DiscoverFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
 }

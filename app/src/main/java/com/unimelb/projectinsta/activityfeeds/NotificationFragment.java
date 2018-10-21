@@ -1,4 +1,4 @@
-package com.unimelb.projectinsta;
+package com.unimelb.projectinsta.activityfeeds;
 
 import android.content.Context;
 import android.net.Uri;
@@ -14,8 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.unimelb.projectinsta.activityfeeds.FollowingFragment;
-import com.unimelb.projectinsta.activityfeeds.YouFragment;
+import com.unimelb.projectinsta.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,34 +22,24 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link NotificationFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link NotificationFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A base notification fragment which includes 2 tabs - Following and You
  */
 public class NotificationFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
     public NotificationFragment() {
-        // Required empty public constructor
     }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment NotificationFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -77,13 +66,12 @@ public class NotificationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-//        return inflater.inflate(R.layout.fragment_notification, container, false);
-
         View view = inflater.inflate(R.layout.fragment_notification,container, false);
+
         // Setting ViewPager for each Tabs
         ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
         setupViewPager(viewPager);
+
         // Set Tabs inside Toolbar
         TabLayout tabs = (TabLayout) view.findViewById(R.id.result_tabs);
         tabs.setupWithViewPager(viewPager);
@@ -97,19 +85,15 @@ public class NotificationFragment extends Fragment {
         sortDateItem.setVisible(false);
         MenuItem sortLocationItem=menu.findItem(R.id.action_sortLocation);
         sortLocationItem.setVisible(false);
-
     }
 
     private void setupViewPager(ViewPager viewPager) {
-
-
         Adapter adapter = new Adapter(getChildFragmentManager());
         adapter.addFragment(new FollowingFragment(), "Following");
         adapter.addFragment(new YouFragment(), "You");
         viewPager.setAdapter(adapter);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -138,16 +122,14 @@ public class NotificationFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * A static class Adapter used for displaying the tabs
+     */
     static class Adapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();

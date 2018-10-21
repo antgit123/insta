@@ -1,50 +1,33 @@
-package com.unimelb.projectinsta;
+/*Purpose of the file:To create Layout for search and Display the search results */
 
-import java.util.Locale;
+package com.unimelb.projectinsta.search;
+
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.unimelb.projectinsta.R;
 import com.unimelb.projectinsta.model.UserPojo;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nullable;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -72,7 +55,6 @@ public class SearchFragment extends Fragment {
 
     //vars
     private List<UserPojo> mUserList;
-
     private OnFragmentInteractionListener mListener;
 
     public SearchFragment() {
@@ -109,6 +91,7 @@ public class SearchFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
+
         MenuItem sortDateItem=menu.findItem(R.id.action_sortDate);
         sortDateItem.setVisible(false);
         MenuItem sortLocationItem=menu.findItem(R.id.action_sortLocation);
@@ -123,21 +106,14 @@ public class SearchFragment extends Fragment {
         View view= inflater.inflate(R.layout.fragment_search, container, false);
         listView=view.findViewById(R.id.list_view);
 
-        //listView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-
         search_users=view.findViewById(R.id.search_users);
         search_users.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                //searchForMatch(charSequence.toString());
-
-
             }
 
             @Override
@@ -146,14 +122,10 @@ public class SearchFragment extends Fragment {
                 mUserList=new ArrayList<>();
                 String text = editable.toString();
                 searchForMatch(text);
-
-
             }
         });
         return view;
-
     }
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -171,7 +143,6 @@ public class SearchFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
-
     @Override
     public void onDetach() {
         super.onDetach();
@@ -193,81 +164,36 @@ public class SearchFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    /*Get the string entered in Search field and Retrieve users matching by Username*/
     private void searchForMatch(String keyword) {
-
         mUserList.clear();
-        //update the users list view
         if (keyword.length() == 0) {
-
         } else {
-
-            //FirebaseAuth mAuth = FirebaseAuth.getInstance();
-            //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-
             CollectionReference userDocuments = instadb.collection("users");
-
-            //myRef.orderBy("name").startAt(searchText).endAt(searchText + "\uf8ff");
-            //userDocuments.orderBy("UserName").startAt(keyword).
-
-
-
             userDocuments.orderBy("userName").startAt(keyword).endAt(keyword+"\uf8ff").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
                         mUserList.clear();
                         for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                            //Log.d("jj", documentSnapshot.getId() + " => " + documentSnapshot.getData());
-                            //mUserList.add(documentSnapshot.toObject(UserPojo.class));
-
-
                                 mUserList.add(documentSnapshot.toObject(UserPojo.class));
-
-
-
-
-
-
-
-                            //Log.d(TAG, document.getId() + " => " + document.getData());
                         }
                     }
                     UpdateUsersList();
                 }
             });
-
-        }
-
+            }
     }
 
-
+/*Display the Results retrieved by the Search For Match method*/
             private void UpdateUsersList() {
-        listView.setAdapter(null);
+                listView.setAdapter(null);
                 searchUsersAdapter = new SearchUsersAdapter(getContext(), R.layout.search_userlist, mUserList);
                 listView.setAdapter(searchUsersAdapter);
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-
                     }
-
-
                 });
             }
-
    }
-
-
-
-
-
-
-
-
-
-
-
-
-

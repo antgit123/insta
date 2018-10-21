@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.unimelb.projectinsta.R;
-import com.unimelb.projectinsta.likes.LikesArrayAdapter;
 import com.unimelb.projectinsta.model.MyNotificationsPojo;
 
 import java.util.ArrayList;
@@ -28,19 +26,12 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link YouFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link YouFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A fragment which displays a list of all the notifications
  */
 public class YouFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     RecyclerView myFeedRecyclerView;
@@ -50,7 +41,6 @@ public class YouFragment extends Fragment {
     private String currentUserId;
 
     public YouFragment() {
-        // Required empty public constructor
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
@@ -62,7 +52,6 @@ public class YouFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment YouFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static YouFragment newInstance(String param1, String param2) {
         YouFragment fragment = new YouFragment();
         Bundle args = new Bundle();
@@ -84,17 +73,16 @@ public class YouFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_you, container, false);
         myFeedRecyclerView = view.findViewById(R.id.listView_myNotifications);
-        //adapter logic
+
+        //Adapter logic to load the list in the recycler view
         getMyNotifications();
         adapter = new MyFeedAdapter(getContext(),myNotifications);
         myFeedRecyclerView.setAdapter(adapter);
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -118,6 +106,10 @@ public class YouFragment extends Fragment {
         mListener = null;
     }
 
+    /**
+     * Fetches all the notifications for the current user and displays notifications
+     * with recent ones displayed first
+     */
     public void getMyNotifications() {
         FirebaseFirestore.getInstance().collection("myNotifications")
             .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -126,7 +118,6 @@ public class YouFragment extends Fragment {
                                     @Nullable FirebaseFirestoreException e) {
                     myNotifications.clear();
                 if (e != null) {
-                    Log.w("fail", "Listen failed.", e);
                     return;
                 }
 
@@ -148,10 +139,6 @@ public class YouFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

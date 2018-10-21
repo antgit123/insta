@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.unimelb.projectinsta.R;
 import com.unimelb.projectinsta.model.FollowingUserNotificationsPojo;
-import com.unimelb.projectinsta.model.MyNotificationsPojo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,19 +27,13 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FollowingFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FollowingFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A fragment class to display a list of notificaions of followers the current user is following
+
  */
 public class FollowingFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -52,7 +44,6 @@ public class FollowingFragment extends Fragment {
     private String currentUserId;
 
     public FollowingFragment() {
-        // Required empty public constructor
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
@@ -64,7 +55,6 @@ public class FollowingFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment FollowingFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static FollowingFragment newInstance(String param1, String param2) {
         FollowingFragment fragment = new FollowingFragment();
         Bundle args = new Bundle();
@@ -90,12 +80,16 @@ public class FollowingFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_following, container, false);
         followingFeedListView = view.findViewById(R.id.listView_followingNotifications);
 
+        //Adapter logic to fetch the list of notifications
         getFollowingNotifications();
         notificationAdapter = new FollowingFeedAdapter(getContext(), followingFeedList);
         followingFeedListView.setAdapter(notificationAdapter);
         return view;
     }
 
+    /**
+     * Fetches the list of notifications for the current user logged in
+     */
     private void getFollowingNotifications() {
         FirebaseFirestore.getInstance().collection("followersNotifications")
             .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -104,7 +98,6 @@ public class FollowingFragment extends Fragment {
                                     @Nullable FirebaseFirestoreException e) {
                 followingFeedList.clear();
                 if (e != null) {
-                    Log.w("fail", "Listen failed.", e);
                     return;
                 }
 
@@ -121,8 +114,6 @@ public class FollowingFragment extends Fragment {
 
     }
 
-
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -151,13 +142,8 @@ public class FollowingFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }
