@@ -6,11 +6,11 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="90dp">
+            android:layout_height="95dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/following_feed_user_profile_image"
-                    android:layout_width="59dp"
+                    android:layout_width="53dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:src="@drawable/com_facebook_profile_picture_blank_square"
@@ -19,8 +19,8 @@
 
                 <TextView
                     android:id="@+id/following_feed_item_description"
-                    android:layout_width="278dp"
-                    android:layout_height="52dp"
+                    android:layout_width="314dp"
+                    android:layout_height="54dp"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="78dp"
@@ -28,6 +28,17 @@
                     android:paddingStart="8dp"
                     android:text="xyz"
                     android:textSize="8pt" />
+
+                <TextView
+                    android:id="@+id/time_posted"
+                    android:layout_width="38dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/following_feed_item_description"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="0dp"
+                    android:text="@string/sample_time"
+                    android:textSize="14sp" />
 
         </RelativeLayout>
 

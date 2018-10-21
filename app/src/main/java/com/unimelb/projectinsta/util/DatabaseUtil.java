@@ -93,7 +93,6 @@ public class DatabaseUtil {
         feed.setUser(loggedInUser);
         feed.setDate(new Date());
         feed.setFeed_Id(feedId);
-        feed.setLocation(location);
         FirebaseFirestore instadb = FirebaseFirestore.getInstance();
         instadb.collection("feeds").document(String.valueOf(feedId)).set(feed);
     }
